@@ -115,6 +115,15 @@ const HiperApp = (() => {
     if (!inicial) { try { inicial = localStorage.getItem("hiperapp-ultima"); } catch (e) {} }
     mostrar(inicial);
     if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(() => {});
+
+    // Cambio de día: si la app se quedó abierta (o en segundo plano) de un día para otro,
+    // se recarga sola para que todas las pestañas vuelvan a "hoy". Los datos no se tocan.
+    const fecha = () => new Date().toDateString();
+    const diaInicio = fecha();
+    const comprobarDia = () => { if (fecha() !== diaInicio) location.reload(); };
+    document.addEventListener("visibilitychange", () => { if (!document.hidden) comprobarDia(); });
+    window.addEventListener("focus", comprobarDia);
+    setInterval(comprobarDia, 60000);
   }
 
   return { registrar, iniciar };
