@@ -1,0 +1,106 @@
+:root {
+  --fondo: #EEF1EC;
+  --papel: #FFFFFF;
+  --tinta: #1E2A2F;
+  --tinta-suave: #5C6B70;
+  --linea: #D6DDD6;
+  --acento: #3E7C59;
+  --barra-alto: 64px;
+  color-scheme: light dark;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --fondo: #141A1C;
+    --papel: #1E2629;
+    --tinta: #E6ECE8;
+    --tinta-suave: #93A3A6;
+    --linea: #2E393C;
+  }
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif;
+  background: var(--fondo);
+  color: var(--tinta);
+  -webkit-tap-highlight-color: transparent;
+  -webkit-text-size-adjust: 100%;
+}
+
+/* Cabecera: se tiñe con el color de la pestaña activa */
+.top {
+  position: sticky; top: 0; z-index: 5;
+  display: flex; align-items: flex-end; justify-content: space-between;
+  padding: calc(env(safe-area-inset-top, 0px) + 14px) 20px 12px;
+  background: var(--fondo);
+  border-bottom: 3px solid var(--acento);
+  transition: border-color .25s;
+}
+.top h1 {
+  margin: 0; font-size: 32px; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em;
+  color: var(--acento); transition: color .25s;
+}
+.ajustes-btn {
+  background: none; border: 0; color: var(--tinta-suave); padding: 6px; cursor: pointer;
+}
+
+main {
+  padding: 20px 20px calc(var(--barra-alto) + env(safe-area-inset-bottom, 0px) + 24px);
+  max-width: 640px; margin: 0 auto;
+}
+
+/* Barra de pestañas inferior */
+.barra {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 5;
+  display: flex; justify-content: space-around;
+  padding: 6px 4px calc(env(safe-area-inset-bottom, 0px) + 6px);
+  background: var(--papel);
+  border-top: 1px solid var(--linea);
+}
+.barra button {
+  flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px;
+  background: none; border: 0; padding: 6px 0; cursor: pointer;
+  color: var(--tinta-suave); font: inherit; font-size: 11px; font-weight: 600;
+}
+.barra button svg { width: 24px; height: 24px; }
+.barra button[aria-current="page"] { color: var(--tab-color); }
+
+/* Elementos comunes que usarán todas las pestañas */
+.bloque {
+  background: var(--papel);
+  border-radius: 14px;
+  padding: 18px;
+  margin-bottom: 14px;
+  border: 1px solid var(--linea);
+}
+.bloque h2 { margin: 0 0 8px; font-size: 19px; }
+.bloque p { margin: 0 0 10px; line-height: 1.5; color: var(--tinta-suave); }
+.vacio { text-align: center; padding: 36px 18px; }
+.vacio p { max-width: 32ch; margin: 8px auto 0; }
+
+.boton {
+  display: inline-block; border: 0; border-radius: 10px;
+  padding: 12px 16px; font: inherit; font-weight: 600; font-size: 15px;
+  background: var(--acento); color: #fff; cursor: pointer;
+}
+.boton.secundario { background: transparent; color: var(--acento); border: 1.5px solid var(--acento); }
+.boton + .boton { margin-left: 8px; }
+button:focus-visible { outline: 3px solid var(--acento); outline-offset: 2px; }
+
+/* Panel de ajustes */
+.panel-fondo {
+  position: fixed; inset: 0; z-index: 10; background: rgba(0,0,0,.35);
+  display: flex; align-items: flex-end;
+}
+.panel {
+  width: 100%; background: var(--fondo); border-radius: 18px 18px 0 0;
+  padding: 22px 20px calc(env(safe-area-inset-bottom, 0px) + 22px);
+  max-width: 640px; margin: 0 auto;
+}
+.panel h2 { margin: 0 0 6px; }
+.aviso { font-size: 14px; color: var(--tinta-suave); margin-top: 14px; }
+
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "Mi app",
+  "short_name": "Mi app",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#EEF1EC",
+  "theme_color": "#EEF1EC",
+  "icons": [{ "src": "icon.png", "sizes": "512x512", "type": "image/png" }]
+}
