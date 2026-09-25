@@ -2,17 +2,18 @@
    Colores y tipografía de toda la app. Cambiando estos valores
    cambia el aspecto de todas las pestañas a la vez. */
 :root {
-  --fondo: #141516;        /* gris casi negro */
-  --papel: #1D1F21;        /* tarjetas */
-  --papel-2: #26292C;      /* elementos sobre tarjetas */
-  --tinta: #EDEAE4;        /* texto principal, blanco cálido */
-  --tinta-suave: #8D9194;  /* texto secundario */
-  --linea: #2C2F32;
-  --naranja: #F2884B;      /* color de acento */
-  --naranja-suave: rgba(242, 136, 75, 0.14);
+  --fondo: #0A0A0B;        /* casi negro, mate */
+  --papel: #141416;        /* tarjetas */
+  --papel-2: #1E1E21;      /* elementos sobre tarjetas */
+  --tinta: #F6F4F0;        /* texto principal */
+  --tinta-suave: #A2A2A8;  /* texto secundario */
+  --linea: #25252A;
+  --rojo: #FF4D5E;         /* negativos y avisos */
+  --naranja: #FF7A1A;      /* color de acento: lo cambia cada pantalla (ver PANTALLAS en app.js) */
+  --naranja-suave: rgba(255, 122, 26, 0.16);
   --titulos: "Instrument Serif", "Iowan Old Style", Georgia, serif;
   --texto: "Manrope", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  --barra-alto: 64px;
+  --barra-alto: 0px;
   color-scheme: dark;
 }
 
@@ -31,12 +32,12 @@ body {
 /* Cabecera */
 .top {
   position: sticky; top: 0; z-index: 5;
-  display: flex; align-items: flex-end; justify-content: space-between;
+  display: flex; align-items: center; gap: 12px;
   padding: calc(env(safe-area-inset-top, 0px) + 18px) 22px 14px;
-  background: linear-gradient(var(--fondo) 75%, rgba(20, 21, 22, 0));
+  background: linear-gradient(var(--fondo) 78%, rgba(10, 10, 11, 0));
 }
 .top h1 {
-  margin: 0;
+  margin: 0; flex: 1; min-width: 0;
   font-family: var(--titulos);
   font-weight: 400;
   font-size: 42px; line-height: 1; letter-spacing: -0.01em;
@@ -44,7 +45,13 @@ body {
 }
 .ajustes-btn {
   background: none; border: 0; color: var(--tinta-suave);
-  padding: 8px; margin: 0 -8px -2px 0; cursor: pointer;
+  padding: 8px; margin-right: -8px; cursor: pointer;
+}
+.menu-btn {
+  flex: none; width: 42px; height: 42px; margin-left: -6px;
+  display: grid; place-items: center;
+  background: var(--papel); border: 0; border-radius: 12px;
+  color: var(--tinta); cursor: pointer;
 }
 
 main {
@@ -52,26 +59,39 @@ main {
   max-width: 640px; margin: 0 auto;
 }
 
-/* Barra de pestañas inferior */
-.barra {
-  position: fixed; left: 0; right: 0; bottom: 0; z-index: 5;
-  display: flex; justify-content: space-around;
-  padding: 8px 6px calc(env(safe-area-inset-bottom, 0px) + 6px);
-  background: rgba(24, 25, 27, 0.88);
-  -webkit-backdrop-filter: blur(18px); backdrop-filter: blur(18px);
-  border-top: 1px solid var(--linea);
+/* Menú lateral */
+.menu-fondo {
+  position: fixed; inset: 0; z-index: 20; background: rgba(0, 0, 0, 0.6);
+  opacity: 0; pointer-events: none; transition: opacity .25s;
 }
-.barra button {
-  flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px;
-  background: none; border: 0; padding: 4px 0 6px; cursor: pointer;
-  color: var(--tinta-suave); font: inherit; font-size: 10.5px; font-weight: 600;
-  letter-spacing: 0.01em; position: relative;
+.menu {
+  position: fixed; top: 0; bottom: 0; left: 0; z-index: 21;
+  width: min(80vw, 300px);
+  display: flex; flex-direction: column;
+  padding: calc(env(safe-area-inset-top, 0px) + 22px) 14px calc(env(safe-area-inset-bottom, 0px) + 18px);
+  background: #101012;
+  border-right: 1px solid var(--linea);
+  transform: translateX(-102%); transition: transform .28s cubic-bezier(.2, .8, .2, 1);
 }
-.barra button svg { width: 23px; height: 23px; stroke-width: 1.7; }
-.barra button[aria-current="page"] { color: var(--naranja); }
-.barra button[aria-current="page"]::after {
-  content: ""; position: absolute; bottom: -2px;
-  width: 4px; height: 4px; border-radius: 50%; background: var(--naranja);
+.menu-abierto .menu { transform: none; }
+.menu-abierto .menu-fondo { opacity: 1; pointer-events: auto; }
+.menu-abierto { overflow: hidden; }
+.menu-marca {
+  font-family: var(--titulos); font-size: 34px; color: var(--tinta);
+  padding: 0 10px 22px;
+}
+#menuLista { display: flex; flex-direction: column; gap: 4px; }
+#menuLista button {
+  display: flex; align-items: center; gap: 14px;
+  width: 100%; padding: 14px 12px; border: 0; border-radius: 14px;
+  background: none; color: var(--tinta); font: inherit; font-size: 17px; font-weight: 600;
+  text-align: left; cursor: pointer;
+}
+#menuLista button svg { width: 24px; height: 24px; color: var(--c); flex: none; }
+#menuLista button[aria-current="page"] { background: var(--c-suave); color: var(--c); }
+.menu-copias {
+  margin-top: auto; background: none; border: 0; color: var(--tinta-suave);
+  font: inherit; font-size: 14px; font-weight: 600; text-align: left; padding: 12px; cursor: pointer;
 }
 
 /* Piezas comunes que usarán todas las pestañas */
@@ -125,3 +145,9 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--n
 .aviso { font-size: 14px; line-height: 1.55; color: var(--tinta-suave); margin-top: 10px; }
 
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+
+/* Rojo más vivo para negativos y avisos en todas las pantallas */
+body .pt-neg, body .pt-fila .sub.pt-neg, body .pt-peligro, body .gy-peligro, body .oc-peligro { color: var(--rojo); }
+body .al-barra div.pasado { background: var(--rojo); }
+body .gy-res.D { background: rgba(255, 77, 94, 0.16); color: var(--rojo); }
+@media (prefers-reduced-motion: reduce) { .menu, .menu-fondo { transition: none; } }

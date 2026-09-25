@@ -1,12 +1,22 @@
 /*
   NÚCLEO DE LA APP
   - Guarda los datos en el propio iPhone (cada pestaña en su propio "cajón").
-  - Monta la barra de pestañas y cambia entre ellas.
+  - Monta el menú lateral y cambia entre pantallas.
   - Exporta e importa copias de seguridad.
   Normalmente no hará falta tocar este archivo al trabajar en una pestaña.
 */
 const HiperApp = (() => {
   const CLAVE = "hiperapp-datos";
+
+  // NOMBRE Y COLOR DE CADA PANTALLA (se cambian aquí, para todas a la vez)
+  const PANTALLAS = {
+    habitos:      { titulo: "Hábitos",      color: "#A970FF" },
+    patrimonio:   { titulo: "Finanzas",     color: "#1FD67A" },
+    alimentacion: { titulo: "Alimentación", color: "#FF7A1A" },
+    gimnasio:     { titulo: "Deporte",      color: "#3B9EFF" },
+    ocio:         { titulo: "Ocio",         color: "#B8814F" }
+  };
+  const suave = (hex, a) => { const n = parseInt(hex.slice(1), 16); return `rgba(${n >> 16}, ${(n >> 8) & 255}, ${n & 255}, ${a})`; };
   const pestanas = [];
   let datos = {};
 
@@ -27,14 +37,17 @@ const HiperApp = (() => {
     };
   }
 
-  function registrar(p) { pestanas.push(p); }
+  function registrar(p) { Object.assign(p, PANTALLAS[p.id] || {}); p.nombreCorto = p.titulo; pestanas.push(p); }
 
   function mostrar(id) {
     const p = pestanas.find(x => x.id === id) || pestanas[0];
-    document.documentElement.style.setProperty("--acento", p.color);
+    const raizCss = document.documentElement.style;
+    raizCss.setProperty("--naranja", p.color);        // color de acento que usan todas las pantallas
+    raizCss.setProperty("--naranja-suave", suave(p.color, 0.16));
+    raizCss.setProperty("--acento", p.color);
     document.getElementById("titulo").textContent = p.titulo;
     document.title = p.titulo;
-    document.querySelectorAll(".barra button").forEach(b => {
+    document.querySelectorAll("#menuLista button").forEach(b => {
       if (b.dataset.id === p.id) b.setAttribute("aria-current", "page");
       else b.removeAttribute("aria-current");
     });
@@ -45,16 +58,31 @@ const HiperApp = (() => {
     try { localStorage.setItem("hiperapp-ultima", p.id); } catch (e) {}
   }
 
-  function montarBarra() {
-    const barra = document.getElementById("barra");
+  // ---------- Menú lateral ----------
+  function abrirMenu(abrir) {
+    document.body.classList.toggle("menu-abierto", abrir);
+    document.getElementById("menu").setAttribute("aria-hidden", !abrir);
+    document.getElementById("btnMenu").setAttribute("aria-expanded", abrir);
+  }
+  function montarMenu() {
+    const lista = document.getElementById("menuLista");
     pestanas.forEach(p => {
       const b = document.createElement("button");
       b.dataset.id = p.id;
-      b.style.setProperty("--tab-color", p.color);
-      b.innerHTML = p.icono + "<span>" + p.nombreCorto + "</span>";
-      b.addEventListener("click", () => { location.hash = p.id; });
-      barra.appendChild(b);
+      b.style.setProperty("--c", p.color);
+      b.style.setProperty("--c-suave", suave(p.color, 0.14));
+      b.innerHTML = p.icono + "<span>" + p.titulo + "</span>";
+      b.addEventListener("click", () => { abrirMenu(false); location.hash = p.id; });
+      lista.appendChild(b);
     });
+    document.getElementById("btnMenu").onclick = () => abrirMenu(true);
+    document.getElementById("menuFondo").onclick = () => abrirMenu(false);
+    document.getElementById("btnCopias").onclick = () => { abrirMenu(false); abrirAjustes(); };
+    // Deslizar hacia la izquierda cierra el menú
+    let x0 = null;
+    const menu = document.getElementById("menu");
+    menu.addEventListener("touchstart", e => { x0 = e.touches[0].clientX; }, { passive: true });
+    menu.addEventListener("touchend", e => { if (x0 !== null && x0 - e.changedTouches[0].clientX > 50) abrirMenu(false); x0 = null; });
   }
 
   // ---------- Copias de seguridad ----------
@@ -108,7 +136,7 @@ const HiperApp = (() => {
 
   function iniciar() {
     cargar();
-    montarBarra();
+    montarMenu();
     document.getElementById("btnAjustes").onclick = abrirAjustes;
     window.addEventListener("hashchange", () => mostrar(location.hash.slice(1)));
     let inicial = location.hash.slice(1);
