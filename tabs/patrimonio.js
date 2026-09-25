@@ -66,6 +66,20 @@
   .pt-acciones .boton { flex:1; margin:0; }
   .pt-peligro { background:none; border:0; color:#E5776B; font:inherit; font-weight:600; margin-top:14px; cursor:pointer; padding:6px 0; }
   .panel { max-height:88vh; overflow-y:auto; }
+  .pt-importar { width:100%; border:1.5px dashed var(--linea); background:none; color:var(--naranja); font:inherit; font-weight:700; font-size:15px; padding:13px; border-radius:14px; cursor:pointer; margin-bottom:12px; }
+  .pt-archivo { display:block; width:100%; border:0; background:var(--papel-2); color:var(--tinta); font:inherit; font-weight:600; padding:16px; border-radius:12px; text-align:center; cursor:pointer; }
+  .pt-archivo input { display:none; }
+  .pt-imp { display:grid; grid-template-columns:22px 1fr auto; gap:10px; align-items:start; padding:11px 0; border-top:1px solid var(--linea); }
+  .pt-imp input[type=checkbox], .pt-check input { width:20px; height:20px; accent-color:var(--naranja); margin:2px 0 0; padding:0; }
+  .pt-imp .t { font-size:14.5px; line-height:1.3; word-break:break-word; }
+  .pt-imp .sub { font-size:12.5px; color:var(--tinta-suave); margin-top:3px; }
+  .pt-imp select { margin-top:6px; padding:7px 9px; font-size:13.5px; }
+  .pt-imp .imp { font-weight:700; white-space:nowrap; font-size:14.5px; }
+  .pt-imp.dup { opacity:.5; }
+  .pt-form .pt-check, .pt-check { display:flex; gap:10px; align-items:flex-start; background:var(--papel-2); border-radius:12px; padding:12px; margin-top:10px; font-size:14px; line-height:1.4; }
+  .pt-cargando { text-align:center; padding:30px 0 10px; color:var(--tinta-suave); }
+  .pt-cargando i { display:block; width:34px; height:34px; margin:0 auto 14px; border-radius:50%; border:3px solid var(--papel-2); border-top-color:var(--naranja); animation:pt-gira .9s linear infinite; }
+  @keyframes pt-gira { to { transform:rotate(360deg); } }
   `;
   const st = document.createElement("style"); st.textContent = css; document.head.appendChild(st);
 
@@ -86,8 +100,14 @@
   const CLASES = [
     { id: "acciones", nombre: "Acciones", color: "#1FD67A" },
     { id: "etfs", nombre: "ETFs", color: "#A3F0C8" },
-    { id: "materias", nombre: "Materias primas", color: "#0F8A4F" }
+    { id: "materias", nombre: "Materias primas", color: "#0F8A4F" },
+    { id: "crypto", nombre: "Crypto", color: "#C6F25E" }
   ];
+  // Modelo de Claude que lee los documentos (se puede cambiar aquí)
+  const MODELO_IA = "claude-sonnet-5";
+  const CLAVE_IA = "hiperapp-clave-claude"; // la clave se guarda aparte: no va en las copias de seguridad
+  const leerClaveIA = () => { try { return localStorage.getItem(CLAVE_IA) || ""; } catch (e) { return ""; } };
+  const MESES = ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic"];
   const COLOR_LIQ = "#5A5A61";
   const TIPOS = [
     { id: "gasto", nombre: "Gasto" }, { id: "ingreso", nombre: "Ingreso" },
@@ -96,7 +116,7 @@
   ];
 
   // Estado de pantalla
-  let vista = "resumen", rango = "todo", mesSel = null, tipoSel = "gasto";
+  let vista = "resumen", rango = "1a", mesSel = null, tipoSel = "gasto";
 
   HiperApp.registrar({
     id: "patrimonio",
@@ -115,6 +135,8 @@
         ingreso: ["Nómina", "Beca", "Regalos", "Otros"]
       };
       d.fotos = d.fotos || {};  // {"AAAA-MM-DD": {liq, inv:{acciones:[valor,aportado],...}}}
+      CLASES.forEach(c => { d.inv[c.id] = d.inv[c.id] || { aportado: 0, valor: 0 }; });   // añade Crypto a datos antiguos
+      ["Intereses y dividendos", "Devoluciones"].forEach(c => { if (!d.cats.ingreso.includes(c)) d.cats.ingreso.splice(d.cats.ingreso.length - 1, 0, c); });
       if (!mesSel) mesSel = hoyK().slice(0, 7);
 
       // ---------- Cálculos ----------
@@ -131,9 +153,10 @@
         store.set(d);
       }
       const fotosOrdenadas = () => Object.keys(d.fotos).sort().map(k => {
-        const f = d.fotos[k];
-        const v = CLASES.reduce((s, c) => s + f.inv[c.id][0], 0), a = CLASES.reduce((s, c) => s + f.inv[c.id][1], 0);
-        return { k, t: aFecha(k).getTime(), liq: f.liq, inv: f.inv, valor: v, aportado: a, total: f.liq + v };
+        const f = d.fotos[k], inv = {};
+        CLASES.forEach(c => inv[c.id] = (f.inv && f.inv[c.id]) || [0, 0]);
+        const v = CLASES.reduce((s, c) => s + inv[c.id][0], 0), a = CLASES.reduce((s, c) => s + inv[c.id][1], 0);
+        return { k, t: aFecha(k).getTime(), liq: f.liq, inv, valor: v, aportado: a, total: f.liq + v };
       });
 
       // Serie de rentabilidades: simple (valor/aportado - 1) y TWR encadenada entre fotos.
@@ -185,45 +208,33 @@
       }
       const compacto = v => Math.abs(v) >= 1000 ? (v / 1000).toLocaleString("es-ES", { maximumFractionDigits: 1 }) + "k" : Math.round(v).toString();
 
-      function grafPatrimonio(fs) {
-        const W = 340, H = 190, pad = { t: 10, r: 8, b: 22, l: 38 };
-        const t0 = fs[0].t, t1 = fs[fs.length - 1].t;
-        const max = Math.max(...fs.map(f => f.total), 1) * 1.08;
-        const X = t => pad.l + (W - pad.l - pad.r) * (t1 === t0 ? 1 : (t - t0) / (t1 - t0));
+      // Gráfico de barras por meses. series: [{color, vals}], apiladas o agrupadas; linea opcional (discontinua)
+      function grafBarras(meses, series, opc = {}) {
+        const W = 340, H = 190, pad = { t: 10, r: 6, b: 22, l: 38 };
+        const n = meses.length, ancho = (W - pad.l - pad.r) / n;
+        const alturas = meses.map((_, i) => opc.agrupadas ? Math.max(...series.map(s => s.vals[i] || 0)) : series.reduce((t, s) => t + Math.max(s.vals[i] || 0, 0), 0));
+        const max = Math.max(...alturas, ...(opc.linea ? opc.linea.vals.filter(v => v != null) : []), 1) * 1.1;
         const Y = v => H - pad.b - (H - pad.t - pad.b) * v / max;
-        const capas = [{ color: COLOR_LIQ, val: f => f.liq }].concat(CLASES.slice().reverse().map(c => ({ color: c.color, val: f => f.inv[c.id][0] })));
-        let base = fs.map(() => 0), areas = "";
-        capas.forEach(cp => {
-          const top = fs.map((f, i) => base[i] + Math.max(cp.val(f), 0));
-          const arriba = fs.map((f, i) => `${X(f.t)},${Y(top[i])}`).join(" ");
-          const abajo = fs.map((f, i) => `${X(f.t)},${Y(base[i])}`).reverse().join(" ");
-          areas += `<polygon points="${arriba} ${abajo}" fill="${cp.color}" opacity=".9"/>`;
-          base = top;
+        let barras = "";
+        meses.forEach((_, i) => {
+          if (opc.agrupadas) {
+            const w = ancho * 0.78 / series.length;
+            series.forEach((s, j) => { const v = Math.max(s.vals[i] || 0, 0); if (!v) return;
+              barras += `<rect x="${pad.l + i * ancho + ancho * 0.11 + j * w}" y="${Y(v)}" width="${Math.max(w - 1, 1)}" height="${Y(0) - Y(v)}" rx="${Math.min(w / 3, 2.5)}" fill="${s.color}"/>`; });
+          } else {
+            let base = 0; const w = ancho * 0.64;
+            series.forEach(s => { const v = Math.max(s.vals[i] || 0, 0); if (!v) return;
+              barras += `<rect x="${pad.l + i * ancho + (ancho - w) / 2}" y="${Y(base + v)}" width="${w}" height="${Y(base) - Y(base + v)}" fill="${s.color}"/>`; base += v; });
+          }
         });
-        const linea = fs.map(f => `${X(f.t)},${Y(f.total)}`).join(" ");
-        return `<svg viewBox="0 0 ${W} ${H}">${ejes(W, H, pad, 0, max, compacto)}${areas}
-          <polyline points="${linea}" fill="none" stroke="var(--tinta)" stroke-width="1.5"/>
-          <text x="${pad.l}" y="${H - 5}">${fechaCorta(fs[0].k)}</text>
-          <text x="${W - pad.r}" y="${H - 5}" text-anchor="end">${fechaCorta(fs[fs.length - 1].k)}</text></svg>`;
-      }
-
-      function grafRent(rs) {
-        const W = 340, H = 180, pad = { t: 10, r: 8, b: 22, l: 38 };
-        const t0 = rs[0].t, t1 = rs[rs.length - 1].t;
-        const vals = rs.flatMap(r => [r.simple, r.twr]).filter(v => v !== null).concat([0]);
-        let min = Math.min(...vals), max = Math.max(...vals);
-        const m = Math.max((max - min) * 0.15, 0.01); min -= m; max += m;
-        const X = t => pad.l + (W - pad.l - pad.r) * (t1 === t0 ? 1 : (t - t0) / (t1 - t0));
-        const Y = v => H - pad.b - (H - pad.t - pad.b) * (v - min) / (max - min);
-        const linea = (campo, color, ancho, guion) => {
-          const pts = rs.filter(r => r[campo] !== null).map(r => `${X(r.t)},${Y(r[campo])}`).join(" ");
-          return `<polyline points="${pts}" fill="none" stroke="${color}" stroke-width="${ancho}" ${guion ? 'stroke-dasharray="4 3"' : ""} stroke-linejoin="round"/>`;
-        };
-        return `<svg viewBox="0 0 ${W} ${H}">${ejes(W, H, pad, min, max, v => Math.round(v * 100) + "%")}
-          <line x1="${pad.l}" x2="${W - pad.r}" y1="${Y(0)}" y2="${Y(0)}" stroke="var(--tinta-suave)" stroke-width="1"/>
-          ${linea("twr", "var(--tinta)", 1.6, true)}${linea("simple", "var(--naranja)", 2.2)}
-          <text x="${pad.l}" y="${H - 5}">${fechaCorta(rs[0].k)}</text>
-          <text x="${W - pad.r}" y="${H - 5}" text-anchor="end">${fechaCorta(rs[rs.length - 1].k)}</text></svg>`;
+        let linea = "";
+        if (opc.linea) {
+          const pts = opc.linea.vals.map((v, i) => v == null ? null : `${pad.l + (i + 0.5) * ancho},${Y(v)}`).filter(Boolean).join(" ");
+          linea = `<polyline points="${pts}" fill="none" stroke="${opc.linea.color}" stroke-width="1.6" stroke-dasharray="4 3" stroke-linejoin="round"/>`;
+        }
+        const paso = Math.ceil(n / 7);
+        const etiquetas = meses.map((m, i) => (n - 1 - i) % paso === 0 ? `<text x="${pad.l + (i + 0.5) * ancho}" y="${H - 6}" text-anchor="middle">${MESES[+m.slice(5) - 1]}${m.endsWith("-01") || i === 0 ? " " + m.slice(2, 4) : ""}</text>` : "").join("");
+        return `<svg viewBox="0 0 ${W} ${H}">${ejes(W, H, pad, 0, max, compacto)}${barras}${linea}${etiquetas}</svg>`;
       }
 
       // ---------- Vistas ----------
@@ -303,7 +314,7 @@
           if (x.tipo === "gasto") { titulo = x.cat; sub = nomCuenta(x.cuenta); imp = "−" + eur(x.importe); }
           else if (x.tipo === "ingreso") { titulo = x.cat; sub = nomCuenta(x.cuenta); imp = "+" + eur(x.importe); cls = "pt-pos"; }
           else if (x.tipo === "traspaso") { titulo = "Traspaso"; sub = nomCuenta(x.cuenta) + " a " + nomCuenta(x.destino); imp = eur(x.importe); }
-          else { const c = { acciones: "acciones", etfs: "ETFs", materias: "materias primas" }[x.clase]; titulo = (x.tipo === "invertir" ? "Inversión en " : "Venta de ") + c; sub = nomCuenta(x.cuenta); imp = eur(x.importe); }
+          else { const c = { acciones: "acciones", etfs: "ETFs", materias: "materias primas", crypto: "crypto" }[x.clase]; titulo = (x.tipo === "invertir" ? "Inversión en " : "Venta de ") + c; sub = nomCuenta(x.cuenta); imp = eur(x.importe); }
           return `<div class="pt-fila" style="cursor:default">
             <div class="izq"><div>${esc(titulo)}${x.nota ? ` <span class="sub">${esc(x.nota)}</span>` : ""}</div><div class="sub">${esc(sub)}, ${fechaCorta(x.fecha)}</div></div>
             <div class="der ${cls}">${imp}</div>
@@ -312,6 +323,7 @@
         }).join("");
 
         return `
+          <button class="pt-importar" data-accion="importar">Importar extracto de tu banco</button>
           <div class="pt-mes">
             <button data-accion="mes" data-d="-1" aria-label="Mes anterior">‹</button>
             <h2>${nombreMes}</h2>
@@ -330,51 +342,68 @@
           <div class="bloque">
             <h2>Movimientos</h2>
             ${lista || `<p>Sin movimientos este mes. Usa el botón + para apuntar uno.</p>`}
-          </div>`;
+          </div>
+          <button class="pt-enlace" data-accion="clave-ia" style="color:var(--tinta-suave);font-weight:500;font-size:13px">${leerClaveIA() ? "Cambiar clave de la API de Claude" : "Configurar clave de la API de Claude"}</button>`;
       }
 
       function vistaEvolucion() {
-        let fs = fotosOrdenadas();
-        if (rango !== "todo") {
-          const meses = { "3m": 3, "1a": 12 }[rango];
-          const desde = new Date(); desde.setMonth(desde.getMonth() - meses);
-          const k = clave(desde);
-          const antes = fs.filter(f => f.k < k).pop();
-          fs = (antes ? [antes] : []).concat(fs.filter(f => f.k >= k));
-        }
-        const rangos = `<div class="pt-rangos">${[["3m", "3 meses"], ["1a", "1 año"], ["todo", "Todo"]].map(([id, n]) =>
+        const actual = hoyK().slice(0, 7);
+        const mesMas = (ym, n) => { const [y, m] = ym.split("-").map(Number); return clave(new Date(y, m - 1 + n, 1)).slice(0, 7); };
+        const primeros = [...d.movs.map(x => x.fecha.slice(0, 7)), ...Object.keys(d.fotos).map(k => k.slice(0, 7))].sort();
+        let desde = primeros[0] || actual;
+        if (rango !== "todo") { const lim = mesMas(actual, rango === "6m" ? -5 : -11); if (desde < lim) desde = lim; }
+        const meses = []; for (let m = desde; m <= actual; m = mesMas(m, 1)) meses.push(m);
+        const rangos = `<div class="pt-rangos">${[["6m", "6 meses"], ["1a", "1 año"], ["todo", "Todo"]].map(([id, n]) =>
           `<button class="${rango === id ? "on" : ""}" data-accion="rango" data-r="${id}">${n}</button>`).join("")}</div>`;
+        const ley = xs => `<div class="pt-leyenda" style="margin-top:10px">${xs.map(([n, c, raya]) => `<span><i style="background:${c}${raya ? ";height:2px;border-radius:0;width:12px" : ""}"></i>${n}</span>`).join("")}</div>`;
 
-        if (fs.length < 2) return `<div class="bloque"><h2>Evolución</h2>
-          <p>Las gráficas aparecerán cuando haya datos de al menos dos días distintos. Cada día que actualices saldos, valores o apuntes movimientos se guarda automáticamente una foto de tu patrimonio.</p></div>`;
+        // 1. Ingresos y gastos
+        const ing = meses.map(m => d.movs.filter(x => x.tipo === "ingreso" && x.fecha.startsWith(m)).reduce((s, x) => s + x.importe, 0));
+        const gas = meses.map(m => d.movs.filter(x => x.tipo === "gasto" && x.fecha.startsWith(m)).reduce((s, x) => s + x.importe, 0));
+        const conDatos = meses.filter((_, i) => ing[i] || gas[i]).length;
+        const ahorroMedio = conDatos ? (ing.reduce((a, b) => a + b, 0) - gas.reduce((a, b) => a + b, 0)) / conDatos : 0;
+        const g1 = conDatos ? `<div class="pt-cab"><h2>Ingresos y gastos</h2><span class="v ${clsN(ahorroMedio)}">${eurS(ahorroMedio)}</span></div>
+            <p style="margin:0;font-size:14px">Ahorro medio al mes en el periodo.</p>
+            ${grafBarras(meses, [{ color: "var(--naranja)", vals: ing }, { color: "var(--rojo)", vals: gas }], { agrupadas: true })}
+            ${ley([["Ingresos", "var(--naranja)"], ["Gastos", "var(--rojo)"]])}`
+          : `<h2>Ingresos y gastos</h2><p>Aparecerá en cuanto apuntes o importes movimientos.</p>`;
 
-        const rs = serieRent(fs), ult = rs[rs.length - 1];
-        const cambio = fs[fs.length - 1].total - fs[0].total;
-        const flujoInv = fs[fs.length - 1].aportado - fs[0].aportado;
-        const mercado = (fs[fs.length - 1].valor - fs[0].valor) - flujoInv;
-        const leyP = [{ n: "Liquidez", c: COLOR_LIQ }].concat(CLASES.map(c => ({ n: c.nombre, c: c.color })))
-          .map(p => `<span><i style="background:${p.c}"></i>${p.n}</span>`).join("");
+        // Foto de fin de cada mes (la última que haya hasta ese mes)
+        const fs = fotosOrdenadas();
+        const finMes = meses.map(m => { const x = fs.filter(f => f.k.slice(0, 7) <= m).pop(); return x || null; });
+        const hayFotos = finMes.filter(Boolean).length;
 
-        return `
-          <div style="display:flex;justify-content:flex-end;margin-bottom:12px">${rangos}</div>
-          <div class="bloque pt-graf">
-            <div class="pt-cab"><h2>Patrimonio</h2><span class="v ${clsN(cambio)}">${eurS(cambio)}</span></div>
-            <p style="margin:0;font-size:14px">De ese cambio, ${eurS(mercado)} viene del mercado y el resto de tu ahorro.</p>
-            ${grafPatrimonio(fs)}
-            <div class="pt-leyenda" style="margin-top:10px">${leyP}</div>
-          </div>
-          <div class="bloque pt-graf">
-            <div class="pt-cab"><h2>Rentabilidad</h2></div>
+        // 2. Patrimonio
+        let g2 = `<h2>Patrimonio</h2><p>Aparecerá cuando la app lleve al menos un mes guardando tu patrimonio (se guarda solo cada día que la usas).</p>`;
+        if (hayFotos) {
+          const conF = finMes.filter(Boolean), cambio = conF[conF.length - 1].total - conF[0].total;
+          const capas = [{ color: COLOR_LIQ, vals: finMes.map(f => f ? f.liq : 0) }].concat(CLASES.map(c => ({ color: c.color, vals: finMes.map(f => f ? f.inv[c.id][0] : 0) })));
+          g2 = `<div class="pt-cab"><h2>Patrimonio</h2><span class="v ${clsN(cambio)}">${eurS(cambio)}</span></div>
+            <p style="margin:0;font-size:14px">Valor a final de cada mes.</p>
+            ${grafBarras(meses, capas)}
+            ${ley([["Liquidez", COLOR_LIQ]].concat(CLASES.map(c => [c.nombre, c.color])))}`;
+        }
+
+        // 3. Inversiones
+        let g3 = `<h2>Inversiones</h2><p>Aparecerá cuando la app lleve al menos un mes guardando tus inversiones.</p>`;
+        const fsRango = fs.filter(f => f.k.slice(0, 7) >= meses[0]);
+        const previa = fs.filter(f => f.k.slice(0, 7) < meses[0]).pop();
+        const rs = serieRent((previa ? [previa] : []).concat(fsRango));
+        if (hayFotos && rs.length) {
+          const ult = rs[rs.length - 1];
+          g3 = `<div class="pt-cab"><h2>Inversiones</h2></div>
             <div class="pt-rent" style="margin-top:6px">
-              <div><span class="etiqueta">Simple (acumulada)</span><b class="${clsN(ult.simple)}">${pct(ult.simple)}</b></div>
-              <div><span class="etiqueta">TWR (en el periodo)</span><b class="${clsN(ult.twr)}">${pct(ult.twr)}</b></div>
+              <div><span class="etiqueta">Rentabilidad simple</span><b class="${clsN(ult.simple)}">${pct(ult.simple)}</b></div>
+              <div><span class="etiqueta">TWR del periodo</span><b class="${clsN(rs.length > 1 ? ult.twr : null)}">${rs.length > 1 ? pct(ult.twr) : "–"}</b></div>
             </div>
-            ${grafRent(rs)}
-            <div class="pt-leyenda" style="margin-top:10px">
-              <span><i style="background:var(--naranja)"></i>Simple</span>
-              <span><i style="background:var(--tinta)"></i>TWR</span>
-            </div>
-          </div>`;
+            ${grafBarras(meses, CLASES.map(c => ({ color: c.color, vals: finMes.map(f => f ? f.inv[c.id][0] : 0) })), { linea: { color: "var(--tinta)", vals: finMes.map(f => f ? f.aportado : null) } })}
+            ${ley(CLASES.map(c => [c.nombre, c.color]).concat([["Aportado", "var(--tinta)", true]]))}`;
+        }
+
+        return `<div style="display:flex;justify-content:flex-end;margin-bottom:12px">${rangos}</div>
+          <div class="bloque pt-graf">${g1}</div>
+          <div class="bloque pt-graf">${g2}</div>
+          <div class="bloque pt-graf">${g3}</div>`;
       }
 
       function pintar() {
@@ -507,6 +536,191 @@
         setTimeout(() => { const i = f.querySelector("#ptValor"); i.focus(); i.select(); }, 50);
       }
 
+      // ---------- Importar extractos con IA ----------
+      function hojaSimple() {
+        const f = document.createElement("div"); f.className = "panel-fondo";
+        f.innerHTML = `<div class="panel pt-form" role="dialog"><div class="pt-paso"></div></div>`;
+        raiz.appendChild(f);
+        return { f, paso: f.querySelector(".pt-paso"), cerrar: () => f.remove() };
+      }
+
+      function hojaClaveIA(despues) {
+        const h = hojaSimple();
+        h.paso.innerHTML = `<h2>Clave de la API de Claude</h2>
+          <p class="aviso">Para leer los extractos, la app se los envía a Claude a través de la API de Anthropic. Es un servicio aparte de tu plan Pro y se paga por uso (leer un extracto cuesta céntimos). Solo hay que configurarlo una vez:</p>
+          <p class="aviso">1. Entra en console.anthropic.com y crea una cuenta.<br>2. En Billing, añade algo de saldo (5 € dan para mucho). Te recomiendo poner también un límite de gasto mensual.<br>3. En API Keys, pulsa Create Key, copia la clave y pégala aquí.</p>
+          <p class="aviso">La clave se guarda solo en este iPhone y no se incluye en las copias de seguridad. Tus documentos se envían a Anthropic solo para leerlos.</p>
+          <label>Clave</label><input id="ptClaveIA" value="${esc(leerClaveIA())}" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="sk-ant-…">
+          <div class="pt-acciones"><button class="boton secundario" data-h="c">Cancelar</button><button class="boton" data-h="g">Guardar</button></div>`;
+        h.f.addEventListener("click", e => {
+          if (e.target === h.f || e.target.dataset.h === "c") h.cerrar();
+          if (e.target.dataset.h === "g") {
+            const k = h.paso.querySelector("#ptClaveIA").value.trim();
+            try { if (k) localStorage.setItem(CLAVE_IA, k); else localStorage.removeItem(CLAVE_IA); } catch (err) {}
+            h.cerrar(); pintar(); if (k && despues) despues();
+          }
+        });
+      }
+
+      const aBase64 = file => new Promise((ok, mal) => { const r = new FileReader(); r.onload = () => ok(String(r.result).split(",")[1]); r.onerror = mal; r.readAsDataURL(file); });
+      function cargarSheetJS() {
+        if (window.XLSX) return Promise.resolve();
+        return new Promise((ok, mal) => { const sc = document.createElement("script"); sc.src = "https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"; sc.onload = ok; sc.onerror = () => mal(new Error("No se ha podido cargar el lector de Excel (¿sin conexión?).")); document.head.appendChild(sc); });
+      }
+      async function contenidoArchivo(file) {
+        const nombre = file.name.toLowerCase();
+        if (file.type === "application/pdf" || nombre.endsWith(".pdf"))
+          return { type: "document", source: { type: "base64", media_type: "application/pdf", data: await aBase64(file) } };
+        if (/^image\/(jpeg|png|gif|webp)$/.test(file.type))
+          return { type: "image", source: { type: "base64", media_type: file.type, data: await aBase64(file) } };
+        if (/\.(xlsx|xls|ods)$/.test(nombre)) {
+          await cargarSheetJS();
+          const libro = XLSX.read(await file.arrayBuffer(), { type: "array", cellDates: true });
+          const texto = libro.SheetNames.map(n => "## Hoja: " + n + "\n" + XLSX.utils.sheet_to_csv(libro.Sheets[n], { dateNF: "yyyy-mm-dd" })).join("\n\n");
+          return { type: "text", text: "Contenido del archivo " + file.name + " (convertido a CSV):\n\n" + texto.slice(0, 180000) };
+        }
+        return { type: "text", text: "Contenido del archivo " + file.name + ":\n\n" + (await file.text()).slice(0, 180000) };
+      }
+
+      async function leerConIA(file, cuentaId) {
+        const c = cuenta(cuentaId), otras = d.cuentas.filter(x => x.id !== cuentaId).map(x => x.nombre);
+        const instrucciones = `Eres un asistente que extrae movimientos de extractos bancarios y de bróker para una app personal de finanzas en euros.
+El documento pertenece a la cuenta "${c.nombre}". Otras cuentas del usuario: ${otras.join(", ") || "ninguna"}. Hoy es ${hoyK()}.
+
+Devuelve SOLO un objeto JSON válido, sin texto antes ni después y sin bloques de código, con esta forma:
+{"movimientos":[{"fecha":"AAAA-MM-DD","tipo":"gasto|ingreso|invertir|desinvertir|traspaso","direccion":"salida|entrada","importe":12.34,"categoria":"...","descripcion":"texto breve","clase":"acciones|etfs|materias|crypto"}],
+ "saldo_final":1234.56,"fecha_saldo":"AAAA-MM-DD","valor_inversiones":{"acciones":0,"etfs":0,"materias":0,"crypto":0}}
+
+Reglas:
+- "importe" siempre positivo, en euros, con punto decimal. Usa la fecha de la operación.
+- gasto: pagos con tarjeta, recibos, comisiones, Bizum enviados por compras o pagos. categoria, exactamente una de: ${d.cats.gasto.join(", ")}.
+- ingreso: nóminas, becas, intereses, dividendos, devoluciones, Bizum recibidos. categoria, exactamente una de: ${d.cats.ingreso.join(", ")}.
+- invertir: compras de valores, planes de inversión, saveback y redondeos. desinvertir: ventas. Indica "clase": etfs si es un fondo cotizado (ETF, UCITS, iShares, Vanguard, Xtrackers, Amundi, índices como MSCI World o S&P 500); materias si es oro, plata u otras materias primas (incluidos ETC); crypto si es una criptomoneda (Bitcoin, Ethereum…); acciones en el resto. En invertir/desinvertir no pongas categoria.
+- traspaso: transferencias entre cuentas del propio usuario (por ejemplo, de BBVA a Trade Republic o al revés). "direccion": salida si el dinero sale de "${c.nombre}", entrada si entra. No pongas categoria.
+- Omite los campos que no apliquen (direccion, clase, categoria).
+- "saldo_final": saldo de efectivo de la cuenta al final del extracto, si aparece; si no, null. "fecha_saldo": su fecha, o null.
+- "valor_inversiones": solo si el documento muestra el valor actual de la cartera de inversión, repartido por esas cuatro clases; si no, null.
+- No inventes movimientos. Si algo no está claro, clasifícalo lo mejor posible y ponlo en "descripcion".`;
+        const bloque = await contenidoArchivo(file);
+        let r;
+        try {
+          r = await fetch("https://api.anthropic.com/v1/messages", {
+            method: "POST",
+            headers: { "content-type": "application/json", "x-api-key": leerClaveIA(), "anthropic-version": "2023-06-01", "anthropic-dangerous-direct-browser-access": "true" },
+            body: JSON.stringify({ model: MODELO_IA, max_tokens: 16000, messages: [{ role: "user", content: [bloque, { type: "text", text: instrucciones }] }] })
+          });
+        } catch (e) { throw new Error("No se ha podido conectar con Claude. Revisa tu conexión e inténtalo de nuevo."); }
+        if (r.status === 401) throw new Error("La clave de la API no es válida. Revísala en \"Configurar clave de la API de Claude\", al final de Movimientos.");
+        if (!r.ok) {
+          let msg = ""; try { msg = (await r.json()).error.message; } catch (e) {}
+          if (/credit|balance|billing/i.test(msg)) throw new Error("Tu cuenta de la API no tiene saldo. Añade saldo en console.anthropic.com, en Billing.");
+          throw new Error("Claude no ha podido leer el documento (" + r.status + (msg ? ": " + msg : "") + ").");
+        }
+        const j = await r.json();
+        const texto = (j.content || []).map(x => x.type === "text" ? x.text : "").join("");
+        const a = texto.indexOf("{"), b = texto.lastIndexOf("}");
+        try { return JSON.parse(texto.slice(a, b + 1)); }
+        catch (e) { throw new Error("La respuesta no se ha podido interpretar. Prueba otra vez o con otro formato del documento (Excel suele funcionar mejor que PDF)."); }
+      }
+
+      // ¿Ya existe este movimiento? (misma cuenta, tipo e importe, con 1 día de margen; traspasos con 4 días)
+      function esDuplicado(m) {
+        const dias = (x, y) => Math.abs(aFecha(x) - aFecha(y)) / 864e5;
+        return d.movs.some(x => {
+          if (Math.abs(x.importe - m.importe) > 0.005) return false;
+          if (m.tipo === "traspaso") return x.tipo === "traspaso" && dias(x.fecha, m.fecha) <= 4 && ((x.cuenta === m.cuenta && x.destino === m.destino) || (x.cuenta === m.destino && x.destino === m.cuenta) || x.cuenta === m.cuenta || x.destino === m.destino);
+          return x.tipo === m.tipo && x.cuenta === m.cuenta && dias(x.fecha, m.fecha) <= 1;
+        });
+      }
+
+      function hojaImportar() {
+        const h = hojaSimple();
+        let archivo = null, resultado = null, cuentaId = d.cuentas[0] && d.cuentas[0].id, filas = [];
+        h.f.addEventListener("click", e => { if (e.target === h.f) h.cerrar(); });
+
+        function paso1(error) {
+          h.paso.innerHTML = `<h2>Importar extracto</h2>
+            <p class="aviso">Sube un Excel, CSV o PDF de movimientos. Claude lo leerá, clasificará cada movimiento y te lo enseñará para revisarlo antes de guardar nada.</p>
+            <label>¿De qué cuenta es?</label><select id="ptImpCuenta">${opcionesCuentas(cuentaId)}</select>
+            <label>Documento</label>
+            <label class="pt-archivo">${archivo ? esc(archivo.name) : "Elegir archivo"}<input type="file" id="ptImpArchivo" accept=".pdf,.xlsx,.xls,.csv,.txt,image/*,application/pdf"></label>
+            ${error ? `<p class="aviso" style="color:var(--rojo)">${esc(error)}</p>` : ""}
+            <div class="pt-acciones"><button class="boton secundario" data-h="c">Cancelar</button><button class="boton" data-h="leer" ${archivo ? "" : 'disabled style="opacity:.4"'}>Leer documento</button></div>`;
+          h.paso.querySelector("#ptImpArchivo").addEventListener("change", e => { archivo = e.target.files[0] || null; cuentaId = h.paso.querySelector("#ptImpCuenta").value; paso1(); });
+          h.paso.querySelector("#ptImpCuenta").addEventListener("change", e => { cuentaId = e.target.value; });
+          h.paso.querySelector("[data-h=c]").onclick = h.cerrar;
+          h.paso.querySelector("[data-h=leer]").onclick = async () => {
+            if (!archivo) return;
+            cuentaId = h.paso.querySelector("#ptImpCuenta").value;
+            h.paso.innerHTML = `<div class="pt-cargando"><i></i>Claude está leyendo el documento.<br>Puede tardar hasta un minuto.</div>`;
+            try { resultado = await leerConIA(archivo, cuentaId); prepararFilas(); if (h.f.isConnected) paso2(); }
+            catch (err) { if (h.f.isConnected) paso1(err.message); }
+          };
+        }
+
+        function prepararFilas() {
+          const otra = (d.cuentas.find(x => x.id !== cuentaId) || {}).id;
+          filas = (resultado.movimientos || []).map(x => {
+            const tipo = ["gasto", "ingreso", "invertir", "desinvertir", "traspaso"].includes(x.tipo) ? x.tipo : "gasto";
+            const importe = Math.round(Math.abs(Number(x.importe) || 0) * 100) / 100;
+            const fecha = /^\d{4}-\d{2}-\d{2}$/.test(x.fecha || "") ? x.fecha : hoyK();
+            const m = { tipo, importe, fecha, nota: String(x.descripcion || "").slice(0, 60), cuenta: cuentaId };
+            if (tipo === "gasto" || tipo === "ingreso") m.cat = d.cats[tipo].includes(x.categoria) ? x.categoria : "Otros";
+            if (tipo === "invertir" || tipo === "desinvertir") m.clase = CLASES.some(c => c.id === x.clase) ? x.clase : "etfs";
+            if (tipo === "traspaso") { if (x.direccion === "entrada") { m.cuenta = otra; m.destino = cuentaId; } else m.destino = otra; }
+            const dup = importe > 0 && esDuplicado(m);
+            return { m, marcado: importe > 0 && !dup, dup };
+          }).filter(f => f.m.importe > 0).sort((a, b) => b.m.fecha.localeCompare(a.m.fecha));
+        }
+
+        function paso2() {
+          const c = cuenta(cuentaId), nuevos = filas.filter(f => !f.dup).length;
+          const selCat = (f, i) => `<select data-cat="${i}">${d.cats[f.m.tipo].map(k => `<option ${k === f.m.cat ? "selected" : ""}>${esc(k)}</option>`).join("")}</select>`;
+          const selClase = (f, i) => `<select data-clase="${i}">${CLASES.map(k => `<option value="${k.id}" ${k.id === f.m.clase ? "selected" : ""}>${k.nombre}</option>`).join("")}</select>`;
+          const lista = filas.map((f, i) => {
+            const m = f.m, signo = m.tipo === "gasto" || (m.tipo === "invertir") || (m.tipo === "traspaso" && m.cuenta === cuentaId) ? "−" : "+";
+            const titulo = m.tipo === "traspaso" ? "Traspaso " + (m.cuenta === cuentaId ? "a " : "desde ") + ((cuenta(m.cuenta === cuentaId ? m.destino : m.cuenta) || {}).nombre || "otra cuenta")
+              : m.tipo === "invertir" ? "Inversión" : m.tipo === "desinvertir" ? "Venta" : m.tipo === "ingreso" ? "Ingreso" : "Gasto";
+            return `<div class="pt-imp ${f.dup ? "dup" : ""}"><input type="checkbox" data-i="${i}" ${f.marcado ? "checked" : ""} aria-label="Importar">
+              <div><div class="t">${esc(m.nota || titulo)}</div><div class="sub">${fechaCorta(m.fecha)}, ${titulo.charAt(0).toLowerCase() + titulo.slice(1)}${f.dup ? ", ya registrado" : ""}</div>
+                ${m.tipo === "gasto" || m.tipo === "ingreso" ? selCat(f, i) : ""}${m.tipo === "invertir" || m.tipo === "desinvertir" ? selClase(f, i) : ""}</div>
+              <div class="imp ${signo === "+" ? "pt-pos" : ""}">${signo}${eur(m.importe)}</div></div>`;
+          }).join("");
+          const saldo = Number(resultado.saldo_final), hayValor = resultado.valor_inversiones && typeof resultado.valor_inversiones === "object";
+          h.paso.innerHTML = `<h2>Revisa antes de guardar</h2>
+            <p class="aviso">${filas.length} movimientos encontrados en ${esc(c.nombre)}${filas.length - nuevos ? `, ${filas.length - nuevos} ya estaban registrados y vienen desmarcados` : ""}. Puedes cambiar categorías o desmarcar lo que no quieras importar.</p>
+            ${isFinite(saldo) && resultado.saldo_final !== null ? `<label class="pt-check"><input type="checkbox" id="ptImpSaldo" checked><span>Poner el saldo de ${esc(c.nombre)} en <b>${eur(saldo)}</b>${resultado.fecha_saldo ? ", según el extracto a " + fechaCorta(resultado.fecha_saldo) : ""}.</span></label>` : ""}
+            ${hayValor ? `<label class="pt-check"><input type="checkbox" id="ptImpValor" checked><span>Actualizar el valor de tus inversiones: ${CLASES.filter(k => resultado.valor_inversiones[k.id] != null).map(k => k.nombre + " " + eur(Number(resultado.valor_inversiones[k.id]))).join(", ")}.</span></label>` : ""}
+            <div style="margin-top:8px">${lista || `<p class="aviso">No se han encontrado movimientos.</p>`}</div>
+            <div class="pt-acciones"><button class="boton secundario" data-h="c">Cancelar</button><button class="boton" data-h="ok">Importar</button></div>`;
+          h.paso.querySelectorAll("[data-i]").forEach(el => el.onchange = () => { filas[+el.dataset.i].marcado = el.checked; });
+          h.paso.querySelectorAll("[data-cat]").forEach(el => el.onchange = () => { filas[+el.dataset.cat].m.cat = el.value; });
+          h.paso.querySelectorAll("[data-clase]").forEach(el => el.onchange = () => { filas[+el.dataset.clase].m.clase = el.value; });
+          h.paso.querySelector("[data-h=c]").onclick = h.cerrar;
+          h.paso.querySelector("[data-h=ok]").onclick = () => {
+            let n = 0;
+            filas.filter(f => f.marcado).sort((a, b) => a.m.fecha.localeCompare(b.m.fecha)).forEach(f => {
+              const m = Object.assign({ id: nuevoId(), creado: Date.now() + n, importado: true }, f.m);
+              if (m.tipo === "desinvertir") {
+                const x = d.inv[m.clase];
+                m.coste = x.valor > 0 ? Math.round(x.aportado * Math.min(1, m.importe / x.valor) * 100) / 100 : 0;
+              }
+              aplicar(m, 1);
+              CLASES.forEach(k => { d.inv[k.id].valor = Math.max(0, d.inv[k.id].valor); d.inv[k.id].aportado = Math.max(0, d.inv[k.id].aportado); });
+              d.movs.push(m); n++;
+            });
+            const chkS = h.paso.querySelector("#ptImpSaldo"); if (chkS && chkS.checked) c.saldo = Math.round(saldo * 100) / 100;
+            const chkV = h.paso.querySelector("#ptImpValor");
+            if (chkV && chkV.checked) CLASES.forEach(k => { const v = Number(resultado.valor_inversiones[k.id]); if (isFinite(v) && resultado.valor_inversiones[k.id] !== null) d.inv[k.id].valor = Math.round(v * 100) / 100; });
+            guardar(); h.cerrar();
+            const ult = filas.filter(f => f.marcado).map(f => f.m.fecha).sort().pop(); if (ult) mesSel = ult.slice(0, 7);
+            vista = "movimientos"; pintar();
+            setTimeout(() => alert(n ? `Listo: ${n} movimientos importados.` : "No se ha importado ningún movimiento."), 50);
+          };
+        }
+        paso1();
+      }
+
       // ---------- Eventos ----------
       raiz.addEventListener("click", e => {
         const b = e.target.closest("[data-accion]"); if (!b) return;
@@ -518,6 +732,8 @@
         else if (a === "cuenta") return hojaCuenta(b.dataset.id);
         else if (a === "nueva-cuenta") return hojaCuenta(null);
         else if (a === "clase") return hojaClase(b.dataset.id);
+        else if (a === "importar") return leerClaveIA() ? hojaImportar() : hojaClaveIA(hojaImportar);
+        else if (a === "clave-ia") return hojaClaveIA();
         else if (a === "borrar-mov") {
           if (!confirm("¿Borrar este movimiento? Se deshará su efecto en los saldos.")) return;
           const m = d.movs.find(x => x.id === b.dataset.id);
