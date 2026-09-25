@@ -12,6 +12,7 @@ const HiperApp = (() => {
   const PANTALLAS = {
     habitos:      { titulo: "Hábitos",      color: "#A970FF" },
     patrimonio:   { titulo: "Finanzas",     color: "#1FD67A" },
+    inversiones:  { titulo: "Inversiones",  color: "#F5C542" },
     alimentacion: { titulo: "Alimentación", color: "#FF7A1A" },
     gimnasio:     { titulo: "Deporte",      color: "#3B9EFF" },
     ocio:         { titulo: "Ocio",         color: "#B8814F" }
@@ -53,7 +54,7 @@ const HiperApp = (() => {
     });
     const cont = document.getElementById("contenido");
     cont.innerHTML = "";
-    p.render(cont, almacen(p.id));
+    p.render(cont, almacen(p.datos || p.id));   // "datos" permite que una pantalla comparta los datos de otra
     window.scrollTo(0, 0);
     try { localStorage.setItem("hiperapp-ultima", p.id); } catch (e) {}
   }
