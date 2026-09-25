@@ -1,7 +1,8 @@
 /* PANTALLA: Inversiones
-   Comparte los datos con Finanzas: las compras y ventas se registran allí, en Movimientos.
-   Aquí se ve la evolución, el desglose por activo, la rentabilidad mes a mes y el reparto.
-   Para cambiarla, sustituye solo este archivo (necesita patrimonio.js, que se carga antes). */
+   Cada activo guarda sus compras y ventas (fecha, nº de acciones y precio) y los valores de mercado que registres.
+   Con eso se calcula el precio medio, el valor en cualquier fecha, la TIR, la TWR y la rentabilidad de cada mes.
+   Comparte los datos con Finanzas (necesita patrimonio.js, que se carga antes).
+   Para cambiarla, sustituye solo este archivo. */
 (() => {
   const css = `
   .iv-seg { display:flex; background:var(--papel); border-radius:12px; padding:4px; margin-bottom:14px; }
@@ -77,28 +78,26 @@
   .iv-acciones .boton { flex:1; margin:0; }
   .iv-peligro { background:none; border:0; color:var(--rojo); font:inherit; font-weight:600; margin-top:14px; cursor:pointer; padding:6px 0; }
   .panel { max-height:88vh; overflow-y:auto; }
+    .iv-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:12px; }
+  .iv-grid div { background:var(--papel-2); border-radius:12px; padding:11px 12px; }
+  .iv-grid b { display:block; font-size:17px; margin-top:2px; }
+  .iv-botones { display:flex; gap:8px; margin-top:14px; }
+  .iv-botones button { flex:1; border:0; border-radius:11px; padding:12px 4px; font:inherit; font-weight:700; font-size:14px; cursor:pointer; background:var(--naranja-suave); color:var(--naranja); }
+  .iv-botones button.pri { background:var(--naranja); color:#17130A; }
+  .iv-hist { display:flex; align-items:center; gap:10px; padding:10px 0; border-top:1px solid var(--linea); font-size:14px; }
+  .iv-hist .izq { flex:1; min-width:0; }
+  .iv-hist .tipo { font-weight:600; }
+  .iv-x { background:none; border:0; color:var(--tinta-suave); font-size:22px; line-height:1; padding:0 2px; cursor:pointer; }
+  .iv-exp { font-size:12px; color:var(--tinta-suave); line-height:1.45; margin-top:6px; }
+  .iv-resumen-op { background:var(--papel-2); border-radius:12px; padding:12px; margin-top:12px; font-size:14px; line-height:1.5; }
+  .iv-modo { display:flex; gap:4px; margin-top:6px; }
+  .iv-modo button { flex:1; border:0; background:var(--papel-2); color:var(--tinta-suave); font:inherit; font-size:13.5px; font-weight:600; padding:9px 6px; border-radius:9px; cursor:pointer; }
+  .iv-modo button.on { background:var(--naranja-suave); color:var(--naranja); }
+  .iv-enlace { background:none; border:0; color:var(--tinta-suave); font:inherit; font-size:13.5px; font-weight:600; padding:12px 0 0; cursor:pointer; }
   `;
   const st = document.createElement("style"); st.textContent = css; document.head.appendChild(st);
 
-  // ---------- Utilidades ----------
-  const fmtE = new Intl.NumberFormat("es-ES", { style: "currency", currency: "EUR", useGrouping: "always" });
-  const eur = n => fmtE.format(Math.round((n || 0) * 100) / 100);
-  const eur0 = n => new Intl.NumberFormat("es-ES", { style: "currency", currency: "EUR", maximumFractionDigits: 0, useGrouping: "always" }).format(n || 0);
-  const eurS = n => (n > 0 ? "+" : "") + eur(n);
-  const pct = (n, dec = 1) => (n === null || n === undefined || !isFinite(n)) ? "–" : (n > 0 ? "+" : "") + (n * 100).toLocaleString("es-ES", { minimumFractionDigits: dec, maximumFractionDigits: dec }) + " %";
-  const cls = n => n > 0 ? "iv-pos" : n < 0 ? "iv-neg" : "";
-  const esc = s => String(s == null ? "" : s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
-  const num = s => { s = String(s).trim(); if (s.includes(",")) s = s.replace(/\./g, "").replace(",", "."); return parseFloat(s); };
-  const clave = d => d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
-  const hoyK = () => clave(new Date());
-  const aFecha = k => { const [a, m, d] = k.split("-").map(Number); return new Date(a, m - 1, d); };
-  const mesMas = (ym, n) => { const [y, m] = ym.split("-").map(Number); return clave(new Date(y, m - 1 + n, 1)).slice(0, 7); };
-  const finDeMes = ym => { const [y, m] = ym.split("-").map(Number); return clave(new Date(y, m, 0)); };
-  const MESES = ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic"];
-  const nomMes = ym => MESES[+ym.slice(5) - 1] + " " + ym.slice(2, 4);
-  const aTexto = n => String(Math.round((n || 0) * 100) / 100).replace(".", ",");
-
-  let vista = "evolucion", modo = "aportado", rango = "1a", base = "valor";
+  let vista = "evolucion", modo = "posiciones", rango = "1a", base = "valor";
 
   HiperApp.registrar({
     id: "inversiones",
@@ -110,184 +109,121 @@
     render(contenedor, store) {
       const F = window.Finanzas;
       if (!F) { contenedor.innerHTML = `<div class="bloque"><p>Falta el archivo patrimonio.js actualizado.</p></div>`; return; }
+      const { CLASES, esc, eur, eurS, pct, num, hoyK, sumarDias, fechaCorta, mesMas, MESES, nuevoId } = F;
       const d = store.get({});
-      F.migrar(d);
-      const CLASES = F.CLASES;
-      const guardar = () => { F.foto(d, hoyK()); store.set(d); };
+      F.preparar(d);
+      const guardar = () => store.set(d);
       const raiz = document.createElement("div");
       contenedor.appendChild(raiz);
 
-      // ---------- Cálculos ----------
-      const fs = () => F.fotosOrdenadas(d);
-      // Última foto hasta una fecha
-      const fotoHasta = (lista, k) => { let r = null; for (const f of lista) { if (f.k <= k) r = f; else break; } return r; };
-      // Flujo neto de aportación de un movimiento (compra suma lo pagado, venta resta el coste de lo vendido)
-      const flujoAport = m => m.tipo === "invertir" ? m.importe : m.tipo === "desinvertir" ? -(m.coste || 0) : 0;
-      // Flujo de caja (para rentabilidad mensual): compra entra en la cartera, venta sale
-      const flujoCaja = m => m.tipo === "invertir" ? m.importe : m.tipo === "desinvertir" ? -m.importe : 0;
-      const movsInv = () => d.movs.filter(m => m.tipo === "invertir" || m.tipo === "desinvertir");
+      // ---------- Formato ----------
+      const cls = n => n > 0.00001 ? "iv-pos" : n < -0.00001 ? "iv-neg" : "";
+      const eur0 = n => new Intl.NumberFormat("es-ES", { style: "currency", currency: "EUR", maximumFractionDigits: 0, useGrouping: "always" }).format(n || 0);
+      const nAcc = n => (Math.round(n * 1e6) / 1e6).toLocaleString("es-ES", { maximumFractionDigits: 6 });
+      const precioTxt = p => p.toLocaleString("es-ES", { minimumFractionDigits: 2, maximumFractionDigits: p < 10 ? 4 : 2 }) + " €";
+      const aTexto = n => String(Math.round(n * 1e6) / 1e6).replace(".", ",");
+      const nomMes = ym => MESES[+ym.slice(5) - 1] + " " + ym.slice(2, 4);
+      const conPosicion = acts => acts.filter(a => F.posicion(a).n > 0);
+      // Rentabilidad total de un activo o grupo: lo que vale + lo cobrado en ventas frente a lo comprado
+      const rentTotal = acts => { let comprado = 0, vendido = 0, valor = 0; acts.forEach(a => { const p = F.posicion(a); comprado += p.comprado; vendido += p.vendido; valor += F.valor(a); }); return comprado > 0 ? (valor + vendido) / comprado - 1 : null; };
 
-      // Aportado acumulado a final de un mes, reconstruido hacia atrás desde hoy con los movimientos
-      function aportadoFinMes(ym, filtro) {
-        const acts = d.activos.filter(filtro);
-        const ids = new Set(acts.map(a => a.id));
-        const ahora = acts.reduce((s, a) => s + a.aportado, 0);
-        const despues = movsInv().filter(m => ids.has(m.activo) && m.fecha > finDeMes(ym)).reduce((s, m) => s + flujoAport(m), 0);
-        return Math.max(0, ahora - despues);
-      }
-      function mesesDesde(primero) {
-        const actual = hoyK().slice(0, 7);
-        let desde = primero || actual;
-        if (rango !== "todo") { const lim = mesMas(actual, rango === "6m" ? -5 : -11); if (desde < lim) desde = lim; }
-        const out = []; for (let m = desde; m <= actual; m = mesMas(m, 1)) out.push(m);
-        return out;
-      }
-      const primerMes = () => [...movsInv().map(m => m.fecha.slice(0, 7)), ...fs().filter(f => f.valor > 0 || f.aportado > 0).map(f => f.k.slice(0, 7))].sort()[0];
-
-      // TIR anual (XIRR) con las fotos: valor inicial, aportaciones netas entre fotos y valor final
-      function tirAnual() {
-        const lista = fs().filter(f => f.valor > 0 || f.aportado > 0);
-        const i0 = lista.findIndex(f => f.valor > 0); if (i0 < 0) return null;
-        const t0 = lista[i0].t, fin = lista[lista.length - 1];
-        if ((fin.t - t0) / 864e5 < 60) return null;
-        const flujos = [{ t: t0, v: -lista[i0].valor }];
-        for (let i = i0 + 1; i < lista.length; i++) { const x = lista[i].aportado - lista[i - 1].aportado; if (Math.abs(x) > 0.005) flujos.push({ t: lista[i].t, v: -x }); }
-        flujos.push({ t: fin.t, v: fin.valor });
-        const vpn = r => flujos.reduce((s, f) => s + f.v / Math.pow(1 + r, (f.t - t0) / 864e5 / 365), 0);
-        let lo = -0.99, hi = 10, flo = vpn(lo), fhi = vpn(hi);
-        if (flo * fhi > 0) return null;
-        for (let k = 0; k < 200; k++) { const mid = (lo + hi) / 2, fm = vpn(mid); if (flo * fm <= 0) { hi = mid; fhi = fm; } else { lo = mid; flo = fm; } }
-        return (lo + hi) / 2;
-      }
-      function twrAnual() {
-        const lista = fs().filter(f => f.valor > 0 || f.aportado > 0); if (lista.length < 2) return null;
-        const dias = (lista[lista.length - 1].t - lista[0].t) / 864e5; if (dias < 60) return null;
-        const rs = F.serieRent(lista), t = rs[rs.length - 1].twr;
-        return Math.pow(1 + t, 365 / dias) - 1;
-      }
-      // Rentabilidad de un mes (método Dietz modificado) para un conjunto de activos
-      function rentMes(ym, ids, lista) {
-        const fEnd = fotoHasta(lista, finDeMes(ym)), fPrev = fotoHasta(lista, finDeMes(mesMas(ym, -1)));
-        if (!fEnd || fEnd.k < ym + "-01") return null;   // sin valoración ese mes
-        const val = (f, id) => f && f.act[id] ? f.act[id][0] : 0;
-        let vEnd = 0, vPrev = 0; ids.forEach(id => { vEnd += val(fEnd, id); vPrev += val(fPrev, id); });
-        const flujo = movsInv().filter(m => ids.includes(m.activo) && m.fecha.startsWith(ym)).reduce((s, m) => s + flujoCaja(m), 0);
-        const den = vPrev + flujo / 2;
-        if (!fEnd || den <= 0.5 || (vEnd === 0 && vPrev === 0)) return null;
-        return (vEnd - vPrev - flujo) / den;
-      }
-      function necesitaValoracion() {
-        const hoy = new Date(), dia = hoy.getDate(), ult = d.ultimaValoracion || "";
-        if (!d.activos.some(a => a.valor > 0)) return false;
-        const ymHoy = hoyK().slice(0, 7);
-        if (dia >= 28) return ult < ymHoy + "-28";
-        if (dia <= 5) return ult < mesMas(ymHoy, -1) + "-28";
-        return false;
-      }
-
-      // ---------- Gráfico de líneas mensual: valor (área) y aportado (discontinua) ----------
+      // ---------- Gráfico: valor de mercado (área) y aportado (discontinua) a final de cada mes ----------
       function grafEvolucion(meses, valor, aport) {
         const W = 340, H = 200, pad = { t: 10, r: 8, b: 22, l: 40 };
-        const max = Math.max(1, ...valor.filter(v => v != null), ...aport) * 1.1;
-        const n = meses.length, X = i => pad.l + (n === 1 ? (W - pad.l - pad.r) / 2 : (W - pad.l - pad.r) * i / (n - 1));
+        const max = Math.max(1, ...valor, ...aport) * 1.1, n = meses.length;
+        const X = i => pad.l + (n === 1 ? (W - pad.l - pad.r) / 2 : (W - pad.l - pad.r) * i / (n - 1));
         const Y = v => H - pad.b - (H - pad.t - pad.b) * v / max;
-        let ej = ""; for (let i = 0; i <= 3; i++) { const v = max * i / 3; ej += `<line x1="${pad.l}" x2="${W - pad.r}" y1="${Y(v)}" y2="${Y(v)}" stroke="var(--linea)"/><text x="${pad.l - 6}" y="${Y(v) + 3}" text-anchor="end">${v >= 1000 ? (v / 1000).toLocaleString("es-ES", { maximumFractionDigits: 1 }) + "k" : Math.round(v)}</text>`; }
-        const pts = valor.map((v, i) => v == null ? null : [X(i), Y(v)]).filter(Boolean);
-        const area = pts.length > 1 ? `<polygon points="${pts.map(p => p.join(",")).join(" ")} ${pts[pts.length - 1][0]},${Y(0)} ${pts[0][0]},${Y(0)}" fill="url(#ivDegradado)"/>` : "";
-        const lineaV = `<polyline points="${pts.map(p => p.join(",")).join(" ")}" fill="none" stroke="var(--naranja)" stroke-width="2.4" stroke-linejoin="round"/>` + pts.map(p => `<circle cx="${p[0]}" cy="${p[1]}" r="2.6" fill="var(--naranja)"/>`).join("");
-        const lineaA = `<polyline points="${aport.map((v, i) => `${X(i)},${Y(v)}`).join(" ")}" fill="none" stroke="var(--tinta)" stroke-width="1.6" stroke-dasharray="4 3" stroke-linejoin="round"/>`;
+        let g = ""; for (let i = 0; i <= 3; i++) { const v = max * i / 3; g += `<line x1="${pad.l}" x2="${W - pad.r}" y1="${Y(v)}" y2="${Y(v)}" stroke="var(--linea)"/><text x="${pad.l - 6}" y="${Y(v) + 3}" text-anchor="end">${v >= 1000 ? (v / 1000).toLocaleString("es-ES", { maximumFractionDigits: 1 }) + "k" : Math.round(v)}</text>`; }
+        const pts = valor.map((v, i) => [X(i), Y(v)]);
+        if (n > 1) g += `<polygon points="${pts.map(p => p.join(",")).join(" ")} ${X(n - 1)},${Y(0)} ${X(0)},${Y(0)}" fill="url(#ivDeg)"/>`;
+        g += `<polyline points="${aport.map((v, i) => `${X(i)},${Y(v)}`).join(" ")}" fill="none" stroke="var(--tinta)" stroke-width="1.6" stroke-dasharray="4 3" stroke-linejoin="round"/>`;
+        g += `<polyline points="${pts.map(p => p.join(",")).join(" ")}" fill="none" stroke="var(--naranja)" stroke-width="2.4" stroke-linejoin="round"/>` + pts.map(p => `<circle cx="${p[0]}" cy="${p[1]}" r="2.6" fill="var(--naranja)"/>`).join("");
         const paso = Math.ceil(n / 7);
-        const etq = meses.map((m, i) => (n - 1 - i) % paso === 0 ? `<text x="${X(i)}" y="${H - 6}" text-anchor="middle">${MESES[+m.slice(5) - 1]}${i === 0 || m.endsWith("-01") ? " " + m.slice(2, 4) : ""}</text>` : "").join("");
-        return `<svg viewBox="0 0 ${W} ${H}"><defs><linearGradient id="ivDegradado" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="var(--naranja)" stop-opacity=".32"/><stop offset="1" stop-color="var(--naranja)" stop-opacity="0"/></linearGradient></defs>${ej}${area}${lineaA}${lineaV}${etq}</svg>`;
+        g += meses.map((m, i) => (n - 1 - i) % paso === 0 ? `<text x="${X(i)}" y="${H - 6}" text-anchor="middle">${MESES[+m.slice(5) - 1]}${i === 0 || m.endsWith("-01") ? " " + m.slice(2, 4) : ""}</text>` : "").join("");
+        return `<svg viewBox="0 0 ${W} ${H}"><defs><linearGradient id="ivDeg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="var(--naranja)" stop-opacity=".32"/><stop offset="1" stop-color="var(--naranja)" stop-opacity="0"/></linearGradient></defs>${g}</svg>`;
       }
 
       // ---------- Vista 1: evolución ----------
       function vistaEvolucion() {
-        const V = F.valorInv(d), A = F.aportadoInv(d), G = V - A;
-        const tir = tirAnual(), twr = twrAnual();
-        const meses = mesesDesde(primerMes());
-        const lista = fs();
-        const valor = meses.map(m => { const f = fotoHasta(lista, finDeMes(m)); return f && (f.valor > 0 || f.aportado > 0) ? f.valor : null; });
-        const aport = meses.map(m => aportadoFinMes(m, () => true));
+        if (!d.activos.length) return `<div class="bloque"><h2>Empieza aquí</h2><p>Aún no tienes inversiones. Ve a Desglose y pulsa "Añadir activo" para dar de alta cada acción, ETF, materia prima o crypto con sus compras.</p>
+          <button class="boton" data-accion="vista" data-v="desglose">Ir a Desglose</button></div>`;
+        const t = F.totales(d.activos), ben = t.valor - t.coste, tir = F.tir(d.activos), twr = F.twr(d.activos);
+        const primera = d.activos.flatMap(a => a.ops.map(o => o.fecha)).sort()[0];
+        const meses = F.meses(primera, rango), cortes = meses.map(F.corte);
+        const valor = cortes.map(c => F.totales(d.activos, c).valor), aport = cortes.map(c => F.totales(d.activos, c).coste);
         const rangos = `<div class="iv-mini-seg">${[["6m", "6 meses"], ["1a", "1 año"], ["todo", "Todo"]].map(([k, n]) => `<button class="${rango === k ? "on" : ""}" data-accion="rango" data-r="${k}">${n}</button>`).join("")}</div>`;
-        if (!d.activos.length) return `<div class="bloque"><h2>Empieza aquí</h2><p>Aún no tienes inversiones. Da de alta lo que ya tienes con "Añadir activo" en Desglose, o registra una compra en Finanzas → Movimientos con el tipo Invertir.</p></div>`;
         return `
-          ${necesitaValoracion() ? `<div class="iv-aviso"><span style="flex:1">Toca actualizar el valor de tus inversiones de fin de mes.</span><button data-accion="valores">Actualizar</button></div>` : ""}
           <div class="iv-total">
             <div class="etiqueta">Valor de mercado</div>
-            <div class="cifra">${eur(V)}</div>
-            <div class="sub">Aportado ${eur(A)}, <span class="${cls(G)}">${eurS(G)} (${A > 0 ? pct(V / A - 1) : "–"})</span></div>
+            <div class="cifra">${eur(t.valor)}</div>
+            <div class="sub">Aportado ${eur(t.coste)}, <span class="${cls(ben)}">${eurS(ben)}${t.coste > 0 ? " (" + pct(t.valor / t.coste - 1) + ")" : ""}</span></div>
+            ${Math.abs(t.realizado) > 0.004 ? `<div class="sub">Beneficio ya realizado con ventas: <span class="${cls(t.realizado)}">${eurS(t.realizado)}</span></div>` : ""}
           </div>
           <div class="iv-tarjetas">
-            <div><span class="etiqueta">TIR anual</span><b class="${cls(tir)}">${pct(tir)}</b></div>
-            <div><span class="etiqueta">TWR anualizada</span><b class="${cls(twr)}">${pct(twr)}</b></div>
+            <div><span class="etiqueta">TIR anual</span><b class="${cls(tir)}">${pct(tir)}</b><div class="iv-exp">Tu rentabilidad al año, teniendo en cuenta cuándo compraste y vendiste.</div></div>
+            <div><span class="etiqueta">TWR anualizada</span><b class="${cls(twr)}">${pct(twr)}</b><div class="iv-exp">Lo que han rendido tus activos al año, sin el efecto de cuándo metes dinero.</div></div>
           </div>
+          ${tir === null ? `<p class="iv-nota" style="margin:-4px 0 12px">Las rentabilidades anuales aparecen cuando tu primera compra tiene al menos 3 meses, para no dar cifras exageradas.</p>` : ""}
           <div class="bloque iv-graf">
             <h2>Aportado y valor</h2><div style="margin-top:10px">${rangos}</div>
-            ${valor.some(v => v != null) || aport.some(v => v > 0) ? grafEvolucion(meses, valor, aport) : `<p class="iv-nota">El gráfico aparecerá con tus primeras aportaciones.</p>`}
-            <div class="iv-leyenda"><span><i style="background:var(--naranja)"></i>Valor de mercado a fin de mes</span><span><i style="background:var(--tinta);height:2px;width:12px;border-radius:0"></i>Aportado acumulado</span></div>
+            ${grafEvolucion(meses, valor, aport)}
+            <div class="iv-leyenda"><span><i style="background:var(--naranja)"></i>Valor de mercado a fin de mes</span><span><i style="background:var(--tinta);height:2px;width:12px;border-radius:0"></i>Aportado</span></div>
           </div>
-          <button class="iv-boton" data-accion="valores">Actualizar valores de fin de mes</button>
-          <p class="iv-nota" style="margin-top:0">La <b>TIR</b> es el interés anual que te ha dado tu dinero teniendo en cuenta cuándo aportaste cada euro. La <b>TWR anualizada</b> mide solo cómo han ido tus inversiones, sin el efecto de cuándo aportas, y es la que se compara con un índice o un fondo. Las dos necesitan al menos dos meses de datos.</p>`;
+          <button class="iv-boton" data-accion="valores">Registrar valores de mercado</button>`;
       }
 
       // ---------- Vista 2: desglose ----------
       function vistaDesglose() {
-        const lista = fs();
-        const toggle = `<div class="iv-mini-seg"><button class="${modo === "aportado" ? "on" : ""}" data-accion="modo" data-m="aportado">Aportaciones</button><button class="${modo === "rent" ? "on" : ""}" data-accion="modo" data-m="rent">Rentabilidad</button></div>`;
-        const cab = `<div class="iv-barra-sup">${toggle}</div>`;
+        const toggle = `<div class="iv-barra-sup"><div class="iv-mini-seg"><button class="${modo === "posiciones" ? "on" : ""}" data-accion="modo" data-m="posiciones">Posiciones</button><button class="${modo === "rent" ? "on" : ""}" data-accion="modo" data-m="rent">Rentabilidad</button></div></div>`;
+        const alta = `<button class="iv-boton sec" data-accion="nuevo-activo">Añadir activo</button>`;
         const clasesUsadas = CLASES.filter(c => d.activos.some(a => a.clase === c.id));
-        const alta = `<button class="iv-boton sec" data-accion="nuevo-activo">Añadir activo que ya tenías</button>`;
-        if (!clasesUsadas.length) return cab + alta + `<div class="bloque"><p style="margin:0">Aún no hay activos. Añade los que ya tienes, o registra una compra en Finanzas → Movimientos.</p></div>`;
-        const meses = mesesDesde(primerMes()).slice().reverse();
+        if (!clasesUsadas.length) return toggle + alta + `<div class="bloque"><p style="margin:0">Da de alta cada inversión con su primera compra: fecha, número de acciones y precio. Después podrás añadir más compras, ventas y valores de mercado.</p></div>`;
+        const primera = d.activos.flatMap(a => a.ops.map(o => o.fecha)).sort()[0];
+        const meses = F.meses(primera, "todo").slice().reverse().slice(0, 24);
 
-        if (modo === "aportado") {
+        if (modo === "posiciones") {
+          const t = F.totales(d.activos);
           const bloques = clasesUsadas.map(c => {
-            const acts = d.activos.filter(a => a.clase === c.id).sort((a, b) => b.valor - a.valor || b.aportado - a.aportado);
-            const t = F.clase(d, c.id), g = t.valor - t.aportado;
-            const filas = acts.map(a => { const ga = a.valor - a.aportado;
-              return `<button class="iv-fila" data-accion="activo" data-id="${a.id}"><div class="izq"><div>${esc(a.nombre)}</div><div class="iv-sub">Aportado ${eur(a.aportado)}</div></div>
-                <div class="der">${eur(a.valor)}<div class="iv-sub ${cls(ga)}">${a.aportado > 0 ? pct(a.valor / a.aportado - 1) : "–"}</div></div></button>`; }).join("");
-            // Mes a mes: aportado en el mes y acumulado (categoría y cada activo)
-            const idsCat = new Set(acts.map(a => a.id));
-            const cols = acts.length > 1 ? acts : [];
+            const acts = F.delaClase(d, c.id).sort((a, b) => F.valor(b) - F.valor(a));
+            const tc = F.totales(acts), g = tc.valor - tc.coste;
+            const filas = acts.map(a => {
+              const p = F.posicion(a), v = F.valor(a), ga = v - p.coste;
+              return `<button class="iv-fila" data-accion="activo" data-id="${a.id}"><div class="izq"><div>${esc(a.nombre)}</div>
+                <div class="iv-sub">${p.n > 0 ? nAcc(p.n) + " a " + precioTxt(p.medio) + " de media" : "Vendido todo"}</div></div>
+                <div class="der">${eur(v)}<div class="iv-sub ${cls(p.n > 0 ? ga : rentTotal([a]))}">${p.n > 0 ? pct(p.coste > 0 ? v / p.coste - 1 : null) : pct(rentTotal([a])) + " total"}</div></div></button>`;
+            }).join("");
             const filasMes = meses.map(m => {
-              const acum = aportadoFinMes(m, a => idsCat.has(a.id)), prev = aportadoFinMes(mesMas(m, -1), a => idsCat.has(a.id));
-              const delMes = acum - prev;
-              return `<tr><td>${nomMes(m)}</td><td class="${delMes ? "" : "vacio"}">${delMes ? (delMes > 0 ? "+" : "") + eur0(delMes) : "–"}</td><td>${eur0(acum)}</td>${cols.map(a => { const x = aportadoFinMes(m, y => y.id === a.id) - aportadoFinMes(mesMas(m, -1), y => y.id === a.id); return `<td class="${x ? "" : "vacio"}">${x ? (x > 0 ? "+" : "") + eur0(x) : "–"}</td>`; }).join("")}</tr>`;
+              const acum = F.totales(acts, F.corte(m)).coste, prev = F.totales(acts, F.corte(mesMas(m, -1))).coste, x = acum - prev;
+              return `<tr><td>${nomMes(m)}</td><td class="${Math.abs(x) > 0.5 ? "" : "vacio"}">${Math.abs(x) > 0.5 ? (x > 0 ? "+" : "") + eur0(x) : "–"}</td><td>${eur0(acum)}</td><td>${eur0(F.totales(acts, F.corte(m)).valor)}</td></tr>`;
             }).join("");
             return `<div class="bloque">
-              <div class="iv-cab"><h2><i style="background:${c.color}"></i>${c.nombre}</h2><span class="v">${eur(t.valor)}</span></div>
-              <div class="iv-sub">Aportado ${eur(t.aportado)}, <span class="${cls(g)}">${eurS(g)}${t.aportado > 0 ? " (" + pct(t.valor / t.aportado - 1) + ")" : ""}</span></div>
+              <div class="iv-cab"><h2><i style="background:${c.color}"></i>${c.nombre}</h2><span class="v">${eur(tc.valor)}</span></div>
+              <div class="iv-sub">Aportado ${eur(tc.coste)}, <span class="${cls(g)}">${eurS(g)}${tc.coste > 0 ? " (" + pct(tc.valor / tc.coste - 1) + ")" : ""}</span></div>
               ${filas}
-              <details class="iv-mesmes"><summary>Aportaciones mes a mes</summary>
-                <div class="iv-tabla-caja"><table class="iv-tabla"><tr><th>Mes</th><th>En el mes</th><th>Acumulado</th>${cols.map(a => `<th>${esc(a.nombre.length > 14 ? a.nombre.slice(0, 13) + "…" : a.nombre)}</th>`).join("")}</tr>${filasMes}</table></div>
-              </details>
-            </div>`;
+              <details class="iv-mesmes"><summary>Mes a mes</summary>
+                <div class="iv-tabla-caja"><table class="iv-tabla"><tr><th>Mes</th><th>Aportado en el mes</th><th>Aportado acumulado</th><th>Valor</th></tr>${filasMes}</table></div>
+              </details></div>`;
           }).join("");
-          const V = F.valorInv(d), A = F.aportadoInv(d);
-          return cab + `<div class="bloque"><div class="iv-cab"><h2>Total invertido</h2><span class="v">${eur(A)}</span></div>
-            <div class="iv-sub">Vale ${eur(V)}, <span class="${cls(V - A)}">${eurS(V - A)}${A > 0 ? " (" + pct(V / A - 1) + ")" : ""}</span></div></div>` + bloques + alta;
+          return toggle + `<div class="bloque"><div class="iv-cab"><h2>Total</h2><span class="v">${eur(t.valor)}</span></div>
+            <div class="iv-sub">Aportado ${eur(t.coste)}, <span class="${cls(t.valor - t.coste)}">${eurS(t.valor - t.coste)}${t.coste > 0 ? " (" + pct(t.valor / t.coste - 1) + ")" : ""}</span></div></div>` + bloques + alta;
         }
 
-        // Rentabilidad mes a mes
-        const mesesR = meses.slice(0, 12);   // del más reciente al más antiguo
+        // Rentabilidad de cada mes por activo, categoría y total
+        const mesesR = meses.slice(0, 12);
         const celda = r => `<td class="${r === null ? "vacio" : cls(r)}">${r === null ? "–" : pct(r)}</td>`;
-        const total = (ids) => { const acts = d.activos.filter(a => ids.includes(a.id)); const v = acts.reduce((s, a) => s + a.valor, 0), ap = acts.reduce((s, a) => s + a.aportado, 0); return ap > 0 ? v / ap - 1 : null; };
         let filas = "";
         clasesUsadas.forEach(c => {
-          const ids = d.activos.filter(a => a.clase === c.id).map(a => a.id);
-          filas += `<tr class="cat"><td><span style="color:${c.color}">●</span> ${c.nombre}</td>${celda(total(ids))}${mesesR.map(m => celda(rentMes(m, ids, lista))).join("")}</tr>`;
-          d.activos.filter(a => a.clase === c.id).forEach(a => { filas += `<tr class="act"><td>${esc(a.nombre)}</td>${celda(total([a.id]))}${mesesR.map(m => celda(rentMes(m, [a.id], lista))).join("")}</tr>`; });
+          const acts = F.delaClase(d, c.id);
+          filas += `<tr class="cat"><td><span style="color:${c.color}">●</span> ${c.nombre}</td>${celda(rentTotal(acts))}${mesesR.map(m => celda(F.rentMes(acts, m))).join("")}</tr>`;
+          acts.forEach(a => { filas += `<tr class="act"><td>${esc(a.nombre)}</td>${celda(rentTotal([a]))}${mesesR.map(m => celda(F.rentMes([a], m))).join("")}</tr>`; });
         });
-        const todos = d.activos.map(a => a.id);
-        filas += `<tr class="tot"><td>Total cartera</td>${celda(total(todos))}${mesesR.map(m => celda(rentMes(m, todos, lista))).join("")}</tr>`;
-        return cab + `<div class="bloque"><h2>Rentabilidad mes a mes</h2>
+        filas += `<tr class="tot"><td>Total cartera</td>${celda(rentTotal(d.activos))}${mesesR.map(m => celda(F.rentMes(d.activos, m))).join("")}</tr>`;
+        return toggle + `<div class="bloque"><h2>Rentabilidad</h2>
           <div class="iv-tabla-caja"><table class="iv-tabla"><tr><th></th><th>Total</th>${mesesR.map(m => `<th>${nomMes(m)}</th>`).join("")}</tr>${filas}</table></div>
-          <p class="iv-nota">Cada mes compara el valor a final de mes con el del mes anterior, descontando lo que compraste o vendiste. Necesita que actualices los valores cada fin de mes. "Total" es la rentabilidad sobre lo aportado desde el principio. Desliza la tabla para ver más meses.</p></div>`;
+          <p class="iv-nota">"Total" compara lo que vale hoy más lo que has cobrado vendiendo con todo lo que has comprado. Cada mes compara el valor al final con el del final del mes anterior, descontando las compras y ventas. Para que sea exacto, registra valores de mercado a final de mes. Desliza la tabla para ver más meses.</p></div>`;
       }
 
-      // ---------- Vista 3: reparto (donut con motivos) ----------
+      // ---------- Vista 3: reparto ----------
       const MOTIVOS = {
         // Velas japonesas
         acciones: c => `<pattern id="ivP-acciones" width="18" height="18" patternUnits="userSpaceOnUse"><rect width="18" height="18" fill="${c}"/>
@@ -309,22 +245,22 @@
         return `M${x1} ${y1}A${r2} ${r2} 0 ${g} 1 ${x2} ${y2}L${x3} ${y3}A${r1} ${r1} 0 ${g} 0 ${x4} ${y4}Z`;
       }
       function vistaReparto() {
-        const campo = base === "valor" ? "valor" : "aportado";
-        const partes = CLASES.map(c => ({ c, v: d.activos.filter(a => a.clase === c.id).reduce((s, a) => s + a[campo], 0) })).filter(p => p.v > 0);
+        const valorDe = a => base === "valor" ? F.valor(a) : F.posicion(a).coste;
+        const partes = CLASES.map(c => ({ c, v: F.delaClase(d, c.id).reduce((s, a) => s + valorDe(a), 0) })).filter(p => p.v > 0.004);
         const T = partes.reduce((s, p) => s + p.v, 0);
         const toggle = `<div class="iv-barra-sup"><div class="iv-mini-seg"><button class="${base === "valor" ? "on" : ""}" data-accion="base" data-b="valor">Valor de mercado</button><button class="${base === "aportado" ? "on" : ""}" data-accion="base" data-b="aportado">Aportado</button></div></div>`;
-        if (!T) return toggle + `<div class="bloque"><p style="margin:0">El gráfico aparecerá cuando tengas inversiones con valor.</p></div>`;
-        let a = 0, segs = "";
-        partes.forEach(p => { const ang = p.v / T * Math.PI * 2; segs += `<path d="${arco(150, 150, 76, 132, a, a + ang)}" fill="url(#ivP-${p.c.id})" stroke="var(--fondo)" stroke-width="${partes.length > 1 ? 3 : 0}" stroke-linejoin="round"/>`; a += ang; });
+        if (!T) return toggle + `<div class="bloque"><p style="margin:0">El gráfico aparecerá cuando tengas inversiones.</p></div>`;
+        let ang = 0, segs = "";
+        partes.forEach(p => { const x = p.v / T * Math.PI * 2; segs += `<path d="${arco(150, 150, 76, 132, ang, ang + x)}" fill="url(#ivP-${p.c.id})" stroke="var(--fondo)" stroke-width="${partes.length > 1 ? 3 : 0}" stroke-linejoin="round"/>`; ang += x; });
         const defs = `<defs>${CLASES.map(c => MOTIVOS[c.id](c.color)).join("")}</defs>`;
         const donut = `<svg class="iv-donut" viewBox="0 0 300 300" role="img" aria-label="Reparto de tus inversiones">${defs}${segs}
           <circle cx="150" cy="150" r="72" fill="var(--papel)"/>
           <text x="150" y="150" text-anchor="middle" class="c1">${eur0(T)}</text><text x="150" y="170" text-anchor="middle" class="c2">${base === "valor" ? "valor de mercado" : "aportado"}</text></svg>`;
         const leyenda = partes.sort((x, y) => y.v - x.v).map(p => {
-          const acts = d.activos.filter(a => a.clase === p.c.id && a[campo] > 0).sort((x, y) => y[campo] - x[campo]);
+          const acts = F.delaClase(d, p.c.id).filter(a => valorDe(a) > 0.004).sort((x, y) => valorDe(y) - valorDe(x));
           return `<div class="fila"><svg viewBox="0 0 34 34"><defs>${MOTIVOS[p.c.id](p.c.color).replace(`id="ivP-${p.c.id}"`, `id="ivL-${p.c.id}"`)}</defs><rect width="34" height="34" fill="url(#ivL-${p.c.id})"/></svg>
             <div><div style="font-weight:600">${p.c.nombre}</div><div class="iv-sub">${eur(p.v)}</div></div><b>${(p.v / T * 100).toLocaleString("es-ES", { maximumFractionDigits: 1 })} %</b>
-            ${acts.length > 1 || (acts[0] && !acts[0].id.startsWith("sd-")) ? `<div class="acts">${acts.map(x => `${esc(x.nombre)} ${(x[campo] / T * 100).toLocaleString("es-ES", { maximumFractionDigits: 1 })} %`).join("<br>")}</div>` : ""}</div>`;
+            ${acts.length ? `<div class="acts">${acts.map(x => `${esc(x.nombre)} ${(valorDe(x) / T * 100).toLocaleString("es-ES", { maximumFractionDigits: 1 })} %`).join("<br>")}</div>` : ""}</div>`;
         }).join("");
         return toggle + `<div class="bloque">${donut}<div class="iv-reparto">${leyenda}</div></div>`;
       }
@@ -336,63 +272,181 @@
       }
 
       // ---------- Hojas ----------
-      function hoja(html, alGuardar, extra) {
+      function panel(html) {
         const f = document.createElement("div"); f.className = "panel-fondo";
-        f.innerHTML = `<div class="panel iv-form" role="dialog">${html}<div class="iv-acciones"><button class="boton secundario" data-h="c">Cancelar</button><button class="boton" data-h="g">Guardar</button></div>${extra || ""}</div>`;
-        raiz.appendChild(f);
-        f.addEventListener("click", e => {
-          if (e.target === f || e.target.dataset.h === "c") f.remove();
-          if (e.target.dataset.h === "g" && alGuardar(f) !== false) { f.remove(); pintar(); }
-        });
-        return f;
+        f.innerHTML = `<div class="panel iv-form" role="dialog"></div>`;
+        contenedor.appendChild(f);   // fuera de "raiz", para que repintar la pantalla no cierre la ficha abierta
+        const p = f.querySelector(".panel"); p.innerHTML = html;
+        f.addEventListener("click", e => { if (e.target === f) f.remove(); });
+        return { f, p, cerrar: () => f.remove() };
       }
-      const leer = (el, vacioCero) => { if (vacioCero && !el.value.trim()) return 0; const v = num(el.value); if (!isFinite(v) || v < 0) { el.style.borderColor = "var(--rojo)"; el.focus(); return null; } return Math.round(v * 100) / 100; };
-
-      // Actualizar el valor de todos los activos (rutina de fin de mes)
-      function hojaValores() {
-        const hoy = new Date(), fechaDef = hoy.getDate() <= 5 ? finDeMes(mesMas(hoyK().slice(0, 7), -1)) : hoyK();
-        const acts = d.activos.filter(a => a.valor > 0 || a.aportado > 0);
-        if (!acts.length) { alert("Aún no tienes activos con valor."); return; }
-        const grupos = CLASES.map(c => { const xs = acts.filter(a => a.clase === c.id); return xs.length ? `<div class="iv-grupo">${c.nombre}</div>` + xs.map(a => `<div class="iv-val"><div class="n">${esc(a.nombre)}<div class="iv-sub">Antes ${eur(a.valor)}</div></div><input inputmode="decimal" data-id="${a.id}" value="${aTexto(a.valor)}"></div>`).join("") : ""; }).join("");
-        const f = hoja(`<h2>Valores de fin de mes</h2><p class="iv-nota" style="margin-top:4px">Pon lo que vale hoy cada inversión (lo que te marca Trade Republic en cada posición).</p>
-          <label>Fecha de la valoración</label><input type="date" id="ivFecha" value="${fechaDef}" max="${hoyK()}">${grupos}`, f => {
-          const nuevos = {};
-          for (const inp of f.querySelectorAll("[data-id]")) { const v = leer(inp); if (v === null) return false; nuevos[inp.dataset.id] = v; }
-          const fecha = f.querySelector("#ivFecha").value || hoyK();
-          Object.entries(nuevos).forEach(([id, v]) => F.activo(d, id).valor = v);
-          F.foto(d, fecha); if (fecha !== hoyK()) F.foto(d, hoyK());
-          d.ultimaValoracion = fecha > (d.ultimaValoracion || "") ? fecha : d.ultimaValoracion;
-          store.set(d);
-        });
-        f.querySelectorAll("[data-id]").forEach(i => i.addEventListener("focus", () => i.select()));
+      const rojo = el => { el.style.borderColor = "var(--rojo)"; el.focus(); };
+      // Comprueba que en ningún momento se venden más acciones de las que había
+      function lineaValida(a) {
+        let n = 0;
+        for (const o of F.opsOrdenadas(a)) { n += o.tipo === "compra" ? o.n : -o.n; if (n < -1e-7) return o; }
+        return null;
       }
 
-      // Crear o editar un activo
+      // Compra o venta de un activo. Si el activo es nuevo, se crea con esta primera compra.
+      function hojaOp(a, tipo, alTerminar) {
+        const nuevo = !a;
+        const cuentaDef = nuevo ? "" : ((d.cuentas.find(c => c.id === "tr") || d.cuentas[0] || {}).id || "");
+        let enTotal = false;
+        const h = panel(`<h2>${nuevo ? "Añadir activo" : (tipo === "compra" ? "Compra de " : "Venta de ") + esc(a.nombre)}</h2>
+          ${nuevo ? `<div class="dos"><div><label>Nombre</label><input id="ivNom" placeholder="MSCI World, Apple, Bitcoin…" maxlength="40"></div>
+            <div><label>Categoría</label><select id="ivClase">${CLASES.map(c => `<option value="${c.id}">${c.nombre}</option>`).join("")}</select></div></div>
+            <p class="iv-nota" style="margin-top:10px">Pon tu primera compra. Si tienes varias, añade el resto después desde el activo.</p>` : ""}
+          <div class="dos"><div><label>Fecha</label><input type="date" id="ivF" value="${hoyK()}" max="${hoyK()}"></div>
+            <div><label>Nº de acciones</label><input id="ivN" inputmode="decimal" placeholder="0" autocomplete="off"></div></div>
+          <div class="iv-modo"><button data-modo="precio" class="on">Precio por acción</button><button data-modo="total">Importe total</button></div>
+          <input class="iv-grande" id="ivP" inputmode="decimal" placeholder="0,00" style="margin-top:8px" autocomplete="off">
+          <label>${tipo === "compra" ? "Dinero sale de" : "Dinero entra en"}</label><select id="ivC">${F.opcionesCuentas(d, cuentaDef, true)}</select>
+          <div class="iv-resumen-op" id="ivRes"></div>
+          <div class="iv-acciones"><button class="boton secundario" data-h="c">Cancelar</button><button class="boton" data-h="g">Guardar</button></div>`);
+        const $ = s => h.p.querySelector(s);
+        function refrescar(prefill) {
+          const fecha = $("#ivF").value || hoyK(), n = num($("#ivN").value), x = num($("#ivP").value);
+          const precio = enTotal ? (n > 0 ? x / n : NaN) : x, total = enTotal ? x : n * x;
+          let txt = "";
+          if (!nuevo) {
+            const p = F.posicion(a, fecha), pr = F.precio(a, fecha);
+            txt += `El ${fechaCorta(fecha)} tenías ${nAcc(p.n)} acciones${p.n > 0 ? " a " + precioTxt(p.medio) + " de media" : ""}.`;
+            if (pr) txt += `<br>Último precio registrado hasta esa fecha: ${precioTxt(pr.precio)} (${fechaCorta(pr.fecha)}).`;
+            if (tipo === "venta" && prefill && pr && !enTotal) $("#ivP").value = aTexto(Math.round(pr.precio * 10000) / 10000);
+            if (tipo === "venta" && p.n > 0) txt += ` <button class="iv-enlace" data-h="todas" style="padding:0;color:var(--naranja)">Vender todas</button>`;
+          }
+          if (n > 0 && isFinite(precio) && precio > 0) txt += `${txt ? "<br><br>" : ""}${enTotal ? "Precio por acción: <b>" + precioTxt(precio) + "</b>" : "Importe total: <b>" + eur(total) + "</b>"}`;
+          $("#ivRes").innerHTML = txt || "Escribe el número de acciones y el precio.";
+          $("#ivRes").style.display = txt ? "" : "";
+        }
+        h.p.addEventListener("input", e => { if (["ivN", "ivP"].includes(e.target.id)) refrescar(false); });
+        $("#ivF").addEventListener("change", () => refrescar(true));
+        h.p.addEventListener("click", e => {
+          const t = e.target;
+          if (t.dataset.modo) { enTotal = t.dataset.modo === "total"; h.p.querySelectorAll("[data-modo]").forEach(b => b.classList.toggle("on", b === t)); $("#ivP").placeholder = enTotal ? "Importe total" : "0,00"; refrescar(false); }
+          if (t.dataset.h === "todas") { $("#ivN").value = aTexto(F.posicion(a, $("#ivF").value || hoyK()).n); refrescar(false); }
+          if (t.dataset.h === "c") h.cerrar();
+          if (t.dataset.h === "g") {
+            const fecha = $("#ivF").value || hoyK(), n = num($("#ivN").value), x = num($("#ivP").value);
+            let nombre, clase;
+            if (nuevo) { nombre = $("#ivNom").value.trim(); clase = $("#ivClase").value; if (!nombre) return rojo($("#ivNom")); if (F.buscarActivo(d, nombre)) { alert("Ya tienes un activo con ese nombre. Añade la compra desde él."); return; } }
+            if (!(n > 0)) return rojo($("#ivN"));
+            if (!(x > 0)) return rojo($("#ivP"));
+            const precio = enTotal ? x / n : x;
+            const op = { id: nuevoId(), creado: Date.now(), fecha, tipo, n: Math.round(n * 1e6) / 1e6, precio: Math.round(precio * 1e6) / 1e6, cuenta: $("#ivC").value || null };
+            const act = nuevo ? { id: nuevoId(), nombre, clase, ops: [], valores: [] } : a;
+            act.ops.push(op);
+            const mal = lineaValida(act);
+            if (mal) { act.ops.pop(); alert("Con esta venta, el " + fechaCorta(mal.fecha) + " venderías más acciones de las que tenías en ese momento. Revisa la fecha o el número de acciones."); return; }
+            if (nuevo) d.activos.push(act);
+            F.aplicarEfecto(d, F.efectoOp(op), 1);
+            guardar(); h.cerrar(); pintar(); if (alTerminar) alTerminar(act);
+          }
+        });
+        refrescar(true);
+        setTimeout(() => (nuevo ? $("#ivNom") : $("#ivN")).focus(), 50);
+      }
+
+      // Registrar valores de mercado en una fecha (de uno o de todos los activos)
+      function hojaValores(soloActivo, alTerminar) {
+        let enTotal = false;
+        const h = panel(`<h2>Valor de mercado</h2>
+          <p class="iv-nota" style="margin-top:4px">Se guarda con su fecha. Para cualquier cálculo en una fecha, la app usa el último valor registrado hasta ese día.</p>
+          <label>Fecha</label><input type="date" id="ivVF" value="${hoyK()}" max="${hoyK()}">
+          <div class="iv-modo"><button data-modo="precio" class="on">Precio por acción</button><button data-modo="total">Valor total de la posición</button></div>
+          <div id="ivLista"></div>
+          <div class="iv-acciones"><button class="boton secundario" data-h="c">Cancelar</button><button class="boton" data-h="g">Guardar</button></div>`);
+        const $ = s => h.p.querySelector(s);
+        const lista = () => (soloActivo ? [soloActivo] : d.activos);
+        function pintarLista() {
+          const fecha = $("#ivVF").value || hoyK();
+          const acts = lista().filter(a => F.posicion(a, fecha).n > 0);
+          if (!acts.length) { $("#ivLista").innerHTML = `<p class="iv-nota">${soloActivo ? "Ese día no tenías acciones de " + esc(soloActivo.nombre) + ", así que no tiene valor que registrar." : "Ese día no tenías ninguna inversión."}</p>`; return; }
+          $("#ivLista").innerHTML = CLASES.map(c => { const xs = acts.filter(a => a.clase === c.id); if (!xs.length) return "";
+            return (soloActivo ? "" : `<div class="iv-grupo">${c.nombre}</div>`) + xs.map(a => {
+              const p = F.posicion(a, fecha), pr = F.precio(a, fecha), ref = pr ? (enTotal ? p.n * pr.precio : pr.precio) : null;
+              return `<div class="iv-val"><div class="n">${esc(a.nombre)}<div class="iv-sub">${nAcc(p.n)} acciones${pr ? ", último " + (enTotal ? eur(ref) : precioTxt(ref)) + " (" + fechaCorta(pr.fecha) + ")" : ""}</div></div>
+                <input inputmode="decimal" data-id="${a.id}" placeholder="${ref ? aTexto(Math.round(ref * 100) / 100) : "0,00"}"></div>`; }).join(""); }).join("")
+            + `<p class="iv-nota">Deja vacío lo que no quieras actualizar.</p>`;
+        }
+        $("#ivVF").addEventListener("change", pintarLista);
+        h.p.addEventListener("click", e => {
+          const t = e.target;
+          if (t.dataset.modo) { enTotal = t.dataset.modo === "total"; h.p.querySelectorAll("[data-modo]").forEach(b => b.classList.toggle("on", b === t)); pintarLista(); }
+          if (t.dataset.h === "c") h.cerrar();
+          if (t.dataset.h === "g") {
+            const fecha = $("#ivVF").value || hoyK(); let n = 0;
+            for (const inp of h.p.querySelectorAll("[data-id]")) {
+              if (!inp.value.trim()) continue;
+              const v = num(inp.value); if (!(v > 0)) return rojo(inp);
+              const a = F.activo(d, inp.dataset.id), acc = F.posicion(a, fecha).n;
+              const precio = enTotal ? v / acc : v;
+              a.valores = a.valores.filter(x => x.fecha !== fecha);
+              a.valores.push({ fecha, precio: Math.round(precio * 1e6) / 1e6 }); n++;
+            }
+            if (!n) { alert("No has escrito ningún valor."); return; }
+            guardar(); h.cerrar(); pintar(); if (alTerminar) alTerminar();
+          }
+        });
+        pintarLista();
+      }
+
+      // Ficha de un activo: situación, botones y todo su historial
       function hojaActivo(id) {
-        const a = id ? F.activo(d, id) : null;
-        const nMovs = a ? d.movs.filter(m => m.activo === a.id).length : 0;
-        const f = hoja(`<h2>${a ? esc(a.nombre) : "Añadir activo"}</h2>
-          ${a ? "" : `<p class="iv-nota" style="margin-top:4px">Para dar de alta algo que ya tenías antes de usar la app. Las compras nuevas regístralas en Finanzas → Movimientos.</p>`}
-          <label>Nombre</label><input id="ivNom" value="${a ? esc(a.nombre) : ""}" placeholder="iShares Core MSCI World, Bitcoin…" maxlength="40">
-          <label>Categoría</label><select id="ivClase">${CLASES.map(c => `<option value="${c.id}" ${a && a.clase === c.id ? "selected" : ""}>${c.nombre}</option>`).join("")}</select>
-          <div class="dos"><div><label>Valor actual</label><input class="iv-grande" id="ivValor" inputmode="decimal" value="${a ? aTexto(a.valor) : ""}" placeholder="0"></div>
-            <div><label>Total aportado</label><input class="iv-grande" id="ivAport" inputmode="decimal" value="${a ? aTexto(a.aportado) : ""}" placeholder="0"></div></div>
-          ${a ? `<p class="iv-nota">El total aportado se ajusta solo con las compras y ventas de Movimientos${nMovs ? ` (este activo tiene ${nMovs})` : ""}. Cámbialo a mano solo para corregir o para repartir un activo "sin desglosar" entre tus activos reales.</p>` : ""}`,
-          f => {
-            const nombre = f.querySelector("#ivNom").value.trim(); if (!nombre) { f.querySelector("#ivNom").style.borderColor = "var(--rojo)"; return false; }
-            const v = leer(f.querySelector("#ivValor"), true), ap = leer(f.querySelector("#ivAport"), true); if (v === null || ap === null) return false;
-            const otro = F.buscarActivo(d, nombre); if (otro && otro !== a) { alert("Ya tienes un activo con ese nombre."); return false; }
-            const x = a || F.nuevoActivo(d, nombre, f.querySelector("#ivClase").value);
-            x.nombre = nombre; x.clase = f.querySelector("#ivClase").value; x.valor = v; x.aportado = ap;
-            d.movs.filter(m => m.activo === x.id).forEach(m => m.clase = x.clase);
-            guardar();
-          }, a ? `<button class="iv-peligro" data-h="borrar">Borrar activo</button>` : "");
-        f.addEventListener("click", e => {
-          if (e.target.dataset.h !== "borrar") return;
-          if (nMovs) { alert("Este activo tiene " + nMovs + " movimientos en Finanzas. Bórralos allí primero, o ponlo a cero si ya no lo tienes."); return; }
-          if (!confirm("¿Borrar " + a.nombre + "?")) return;
-          d.activos = d.activos.filter(x => x !== a); guardar(); f.remove(); pintar();
+        const a = F.activo(d, id); if (!a) return;
+        const h = panel("");
+        function pintarFicha() {
+          const p = F.posicion(a), v = F.valor(a), pr = F.precio(a), g = v - p.coste, c = CLASES.find(x => x.id === a.clase);
+          const hist = a.ops.map(o => ({ fecha: o.fecha, orden: 1, html: `<div class="iv-hist"><div class="izq"><div class="tipo">${o.tipo === "compra" ? "Compra" : "Venta"} de ${nAcc(o.n)} a ${precioTxt(o.precio)}</div>
+              <div class="iv-sub">${fechaCorta(o.fecha)} ${o.fecha.slice(0, 4)}, ${eur(o.n * o.precio)}${o.cuenta ? "" : ", sin mover saldo"}</div></div><button class="iv-x" data-borrar-op="${o.id}" aria-label="Borrar">×</button></div>` }))
+            .concat(a.valores.map(x => ({ fecha: x.fecha, orden: 0, html: `<div class="iv-hist"><div class="izq"><div class="tipo">Valor de mercado: ${precioTxt(x.precio)} por acción</div>
+              <div class="iv-sub">${fechaCorta(x.fecha)} ${x.fecha.slice(0, 4)}${F.posicion(a, x.fecha).n > 0 ? ", la posición valía " + eur(F.posicion(a, x.fecha).n * x.precio) : ""}</div></div><button class="iv-x" data-borrar-val="${x.fecha}" aria-label="Borrar">×</button></div>` })))
+            .sort((x, y) => y.fecha.localeCompare(x.fecha) || x.orden - y.orden).map(x => x.html).join("");
+          h.p.innerHTML = `<h2>${esc(a.nombre)}</h2><div class="iv-sub">${c.nombre}</div>
+            <div class="iv-grid">
+              <div><span class="etiqueta">Acciones</span><b>${nAcc(p.n)}</b></div>
+              <div><span class="etiqueta">Precio medio</span><b>${p.n > 0 ? precioTxt(p.medio) : "–"}</b></div>
+              <div><span class="etiqueta">Último precio</span><b>${pr ? precioTxt(pr.precio) : "–"}</b><span class="iv-sub">${pr ? fechaCorta(pr.fecha) : ""}</span></div>
+              <div><span class="etiqueta">Valor</span><b>${eur(v)}</b></div>
+              <div><span class="etiqueta">Aportado</span><b>${eur(p.coste)}</b></div>
+              <div><span class="etiqueta">Beneficio</span><b class="${cls(g)}">${eurS(g)}</b><span class="iv-sub">${p.coste > 0 ? pct(v / p.coste - 1) : ""}</span></div>
+              ${Math.abs(p.realizado) > 0.004 ? `<div><span class="etiqueta">Realizado con ventas</span><b class="${cls(p.realizado)}">${eurS(p.realizado)}</b></div>` : ""}
+              <div><span class="etiqueta">TIR anual</span><b class="${cls(F.tir([a]))}">${pct(F.tir([a]))}</b></div>
+            </div>
+            <div class="iv-botones"><button class="pri" data-h="compra">Compra</button><button data-h="venta" ${p.n > 0 ? "" : "disabled style=\"opacity:.4\""}>Venta</button><button data-h="valor" ${p.n > 0 ? "" : "disabled style=\"opacity:.4\""}>Valor</button></div>
+            <div class="iv-grupo">Historial</div>${hist || `<p class="iv-nota">Sin operaciones.</p>`}
+            <div class="iv-acciones"><button class="boton secundario" data-h="editar">Editar nombre</button><button class="boton" data-h="cerrar">Cerrar</button></div>
+            <button class="iv-peligro" data-h="borrar">Borrar activo</button>`;
+        }
+        h.p.addEventListener("click", e => {
+          const t = e.target.closest("button"); if (!t) return;
+          const k = t.dataset.h;
+          if (k === "cerrar") return h.cerrar();
+          if (k === "compra" || k === "venta") return hojaOp(a, k, () => { if (h.f.isConnected) pintarFicha(); });
+          if (k === "valor") return hojaValores(a, () => { if (h.f.isConnected) pintarFicha(); });
+          if (k === "editar") {
+            const n = (prompt("Nombre del activo", a.nombre) || "").trim(); if (!n) return;
+            const otro = F.buscarActivo(d, n); if (otro && otro !== a) { alert("Ya tienes un activo con ese nombre."); return; }
+            a.nombre = n; guardar(); pintarFicha(); pintar(); return;
+          }
+          if (k === "borrar") {
+            if (!confirm("¿Borrar " + a.nombre + " con todo su historial? Se deshará el efecto de sus compras y ventas en los saldos de tus cuentas.")) return;
+            a.ops.forEach(o => F.aplicarEfecto(d, F.efectoOp(o), -1));
+            d.activos = d.activos.filter(x => x !== a); guardar(); h.cerrar(); pintar(); return;
+          }
+          if (t.dataset.borrarOp) {
+            const o = a.ops.find(x => x.id === t.dataset.borrarOp);
+            if (!confirm("¿Borrar esta " + o.tipo + "? Se deshará su efecto en el saldo.")) return;
+            a.ops = a.ops.filter(x => x !== o);
+            if (lineaValida(a)) { a.ops.push(o); alert("No se puede borrar: sin esta compra, alguna venta posterior sería de más acciones de las que tenías. Borra antes esa venta."); return; }
+            F.aplicarEfecto(d, F.efectoOp(o), -1);
+            if (!a.ops.length) { d.activos = d.activos.filter(x => x !== a); guardar(); h.cerrar(); pintar(); return; }
+            guardar(); pintarFicha(); pintar();
+          }
+          if (t.dataset.borrarVal) { a.valores = a.valores.filter(x => x.fecha !== t.dataset.borrarVal); guardar(); pintarFicha(); pintar(); }
         });
+        pintarFicha();
       }
 
       // ---------- Eventos ----------
@@ -403,9 +457,9 @@
         else if (a === "rango") rango = b.dataset.r;
         else if (a === "modo") modo = b.dataset.m;
         else if (a === "base") base = b.dataset.b;
-        else if (a === "valores") return hojaValores();
+        else if (a === "valores") return hojaValores(null);
         else if (a === "activo") return hojaActivo(b.dataset.id);
-        else if (a === "nuevo-activo") return hojaActivo(null);
+        else if (a === "nuevo-activo") return hojaOp(null, "compra", act => hojaActivo(act.id));
         pintar();
       });
 
