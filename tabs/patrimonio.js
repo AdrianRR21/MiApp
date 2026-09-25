@@ -84,11 +84,11 @@
   const nuevoId = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
 
   const CLASES = [
-    { id: "acciones", nombre: "Acciones", color: "#F2884B" },
-    { id: "etfs", nombre: "ETFs", color: "#F7B892" },
-    { id: "materias", nombre: "Materias primas", color: "#B5612F" }
+    { id: "acciones", nombre: "Acciones", color: "#1FD67A" },
+    { id: "etfs", nombre: "ETFs", color: "#A3F0C8" },
+    { id: "materias", nombre: "Materias primas", color: "#0F8A4F" }
   ];
-  const COLOR_LIQ = "#565B60";
+  const COLOR_LIQ = "#5A5A61";
   const TIPOS = [
     { id: "gasto", nombre: "Gasto" }, { id: "ingreso", nombre: "Ingreso" },
     { id: "invertir", nombre: "Invertir" }, { id: "desinvertir", nombre: "Vender" },
@@ -100,8 +100,8 @@
 
   HiperApp.registrar({
     id: "patrimonio",
-    titulo: "Patrimonio",
-    nombreCorto: "Patrimonio",
+    titulo: "Finanzas",
+    nombreCorto: "Finanzas",
     color: "#F2884B",
     icono: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 6-6"/></svg>',
 
