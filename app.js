@@ -15,7 +15,8 @@ const HiperApp = (() => {
     inversiones:  { titulo: "Inversiones",  color: "#FFD60A" },
     alimentacion: { titulo: "Alimentación", color: "#FF9F0A" },
     gimnasio:     { titulo: "Deporte",      color: "#0A84FF" },
-    ocio:         { titulo: "Ocio",         color: "#C49A6C" }
+    ocio:         { titulo: "Ocio",         color: "#C49A6C" },
+    viajes:       { titulo: "Viajes",       color: "#40C8E0" }
   };
   const suave = (hex, a) => { const n = parseInt(hex.slice(1), 16); return `rgba(${n >> 16}, ${(n >> 8) & 255}, ${n & 255}, ${a})`; };
   const pestanas = [];
