@@ -1,18 +1,20 @@
 /* ============ ESTÉTICA GENERAL ============
    Colores y tipografía de toda la app. Cambiando estos valores
-   cambia el aspecto de todas las pestañas a la vez. */
+   cambia el aspecto de todas las pantallas a la vez.
+   El color de acento (--naranja) lo pone cada pantalla: ver PANTALLAS en app.js. */
 :root {
-  --fondo: #0A0A0B;        /* casi negro, mate */
-  --papel: #141416;        /* tarjetas */
-  --papel-2: #1E1E21;      /* elementos sobre tarjetas */
-  --tinta: #F6F4F0;        /* texto principal */
-  --tinta-suave: #A2A2A8;  /* texto secundario */
-  --linea: #25252A;
-  --rojo: #FF4D5E;         /* negativos y avisos */
-  --naranja: #FF7A1A;      /* color de acento: lo cambia cada pantalla (ver PANTALLAS en app.js) */
-  --naranja-suave: rgba(255, 122, 26, 0.16);
-  --titulos: "Instrument Serif", "Iowan Old Style", Georgia, serif;
-  --texto: "Manrope", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --fondo: #000000;        /* negro puro */
+  --papel: #0C0C0E;        /* tarjetas */
+  --papel-2: #17171A;      /* elementos sobre tarjetas */
+  --tinta: #FFFFFF;        /* texto principal */
+  --tinta-suave: #8A8A90;  /* texto secundario */
+  --linea: #1F1F23;        /* bordes finos */
+  --rojo: #FF453A;         /* negativos y avisos */
+  --naranja: #FF8A00;
+  --naranja-suave: rgba(255, 138, 0, 0.12);
+  --titulos: "Geist", -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", sans-serif;
+  --texto: "Geist", -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", sans-serif;
+  --radio: 14px;
   --barra-alto: 0px;
   color-scheme: dark;
 }
@@ -21,7 +23,8 @@
 html, body { margin: 0; height: 100%; background: var(--fondo); }
 body {
   font-family: var(--texto);
-  font-size: 16px;
+  font-size: 15.5px;
+  letter-spacing: -0.005em;
   color: var(--tinta);
   -webkit-font-smoothing: antialiased;
   -webkit-tap-highlight-color: transparent;
@@ -32,44 +35,53 @@ body {
 /* Cabecera */
 .top {
   position: sticky; top: 0; z-index: 5;
-  display: flex; align-items: center; gap: 12px;
-  padding: calc(env(safe-area-inset-top, 0px) + 18px) 22px 14px;
-  background: linear-gradient(var(--fondo) 78%, rgba(10, 10, 11, 0));
+  display: flex; align-items: center; gap: 14px;
+  padding: calc(env(safe-area-inset-top, 0px) + 16px) 20px 14px;
+  background: rgba(0, 0, 0, 0.82);
+  -webkit-backdrop-filter: blur(20px); backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--linea);
 }
 .top h1 {
   margin: 0; flex: 1; min-width: 0;
   font-family: var(--titulos);
-  font-weight: 400;
-  font-size: 42px; line-height: 1; letter-spacing: -0.01em;
-  color: var(--naranja);
+  font-weight: 600;
+  font-size: 26px; line-height: 1.1; letter-spacing: -0.035em;
+  color: var(--tinta);
+  display: flex; align-items: center; gap: 10px;
+}
+.top h1::before {   /* punto del color de la pantalla */
+  content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--naranja);
+  box-shadow: 0 0 12px var(--naranja); flex: none;
 }
 .ajustes-btn {
   background: none; border: 0; color: var(--tinta-suave);
   padding: 8px; margin-right: -8px; cursor: pointer;
 }
+.ajustes-btn svg { width: 20px; height: 20px; }
 .menu-btn {
-  flex: none; width: 42px; height: 42px; margin-left: -6px;
+  flex: none; width: 38px; height: 38px; margin-left: -4px;
   display: grid; place-items: center;
-  background: var(--papel); border: 0; border-radius: 12px;
+  background: none; border: 1px solid var(--linea); border-radius: 10px;
   color: var(--tinta); cursor: pointer;
 }
+.menu-btn svg { width: 20px; height: 20px; }
 
 main {
-  padding: 12px 22px calc(var(--barra-alto) + env(safe-area-inset-bottom, 0px) + 28px);
+  padding: 18px 20px calc(var(--barra-alto) + env(safe-area-inset-bottom, 0px) + 28px);
   max-width: 640px; margin: 0 auto;
 }
 
 /* Menú lateral */
 .menu-fondo {
-  position: fixed; inset: 0; z-index: 20; background: rgba(0, 0, 0, 0.6);
+  position: fixed; inset: 0; z-index: 20; background: rgba(0, 0, 0, 0.7);
   opacity: 0; pointer-events: none; transition: opacity .25s;
 }
 .menu {
   position: fixed; top: 0; bottom: 0; left: 0; z-index: 21;
-  width: min(80vw, 300px);
+  width: min(78vw, 290px);
   display: flex; flex-direction: column;
-  padding: calc(env(safe-area-inset-top, 0px) + 22px) 14px calc(env(safe-area-inset-bottom, 0px) + 18px);
-  background: #101012;
+  padding: calc(env(safe-area-inset-top, 0px) + 26px) 12px calc(env(safe-area-inset-bottom, 0px) + 18px);
+  background: #070708;
   border-right: 1px solid var(--linea);
   transform: translateX(-102%); transition: transform .28s cubic-bezier(.2, .8, .2, 1);
 }
@@ -77,77 +89,124 @@ main {
 .menu-abierto .menu-fondo { opacity: 1; pointer-events: auto; }
 .menu-abierto { overflow: hidden; }
 .menu-marca {
-  font-family: var(--titulos); font-size: 34px; color: var(--tinta);
-  padding: 0 10px 22px;
+  font-family: var(--titulos); font-weight: 600; font-size: 13px; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--tinta-suave); padding: 0 12px 18px;
 }
-#menuLista { display: flex; flex-direction: column; gap: 4px; }
+#menuLista { display: flex; flex-direction: column; gap: 2px; }
 #menuLista button {
-  display: flex; align-items: center; gap: 14px;
-  width: 100%; padding: 14px 12px; border: 0; border-radius: 14px;
-  background: none; color: var(--tinta); font: inherit; font-size: 17px; font-weight: 600;
-  text-align: left; cursor: pointer;
+  display: flex; align-items: center; gap: 14px; position: relative;
+  width: 100%; padding: 12px 12px; border: 0; border-radius: 10px;
+  background: none; color: var(--tinta-suave); font: inherit; font-size: 16px; font-weight: 500;
+  letter-spacing: -0.01em; text-align: left; cursor: pointer;
 }
-#menuLista button svg { width: 24px; height: 24px; color: var(--c); flex: none; }
-#menuLista button[aria-current="page"] { background: var(--c-suave); color: var(--c); }
+#menuLista button svg { width: 20px; height: 20px; flex: none; stroke-width: 1.8; }
+#menuLista button::after {
+  content: ""; margin-left: auto; width: 6px; height: 6px; border-radius: 50%; background: var(--c); opacity: .9;
+}
+#menuLista button[aria-current="page"] { background: #121215; color: var(--tinta); }
+#menuLista button[aria-current="page"] svg { color: var(--c); }
 .menu-copias {
   margin-top: auto; background: none; border: 0; color: var(--tinta-suave);
-  font: inherit; font-size: 14px; font-weight: 600; text-align: left; padding: 12px; cursor: pointer;
+  font: inherit; font-size: 13.5px; font-weight: 500; text-align: left; padding: 12px; cursor: pointer;
 }
 
-/* Piezas comunes que usarán todas las pestañas */
+/* Piezas comunes que usan todas las pantallas */
 .bloque {
   background: var(--papel);
-  border-radius: 18px;
-  padding: 20px;
+  border: 1px solid var(--linea);
+  border-radius: var(--radio);
+  padding: 18px;
   margin-bottom: 12px;
 }
 .bloque h2 {
   margin: 0 0 6px;
-  font-family: var(--titulos); font-weight: 400;
-  font-size: 26px; line-height: 1.15;
+  font-family: var(--titulos); font-weight: 600;
+  font-size: 16px; line-height: 1.25; letter-spacing: -0.02em;
 }
-.bloque p { margin: 0 0 10px; line-height: 1.55; color: var(--tinta-suave); }
-.cifra { font-size: 34px; font-weight: 700; letter-spacing: -0.02em; }
-.etiqueta { font-size: 13px; color: var(--tinta-suave); }
-.vacio { text-align: center; padding: 44px 22px; }
+.bloque p { margin: 0 0 10px; line-height: 1.55; color: var(--tinta-suave); font-size: 14.5px; }
+.cifra { font-size: 32px; font-weight: 600; letter-spacing: -0.04em; }
+.etiqueta { font-size: 12.5px; color: var(--tinta-suave); letter-spacing: 0; }
+.vacio { text-align: center; padding: 40px 22px; }
 .vacio h2 { color: var(--tinta); }
 .vacio p { max-width: 30ch; margin: 8px auto 0; }
 
 .boton {
-  display: inline-block; border: 0; border-radius: 12px;
-  padding: 12px 18px; font: inherit; font-weight: 700; font-size: 15px;
-  background: var(--naranja); color: #1A1411; cursor: pointer;
+  display: inline-block; border: 0; border-radius: 10px;
+  padding: 12px 16px; font: inherit; font-weight: 600; font-size: 15px; letter-spacing: -0.01em;
+  background: var(--naranja); color: #000; cursor: pointer;
 }
-.boton.secundario { background: var(--naranja-suave); color: var(--naranja); }
+.boton.secundario { background: transparent; color: var(--tinta); box-shadow: inset 0 0 0 1px var(--linea); }
 .boton + .boton { margin-left: 8px; }
-button:focus-visible { outline: 2px solid var(--naranja); outline-offset: 3px; }
+button:focus-visible { outline: 2px solid var(--naranja); outline-offset: 2px; }
 
 input, select, textarea {
-  font: inherit; color: var(--tinta);
-  background: var(--papel-2); border: 1px solid transparent; border-radius: 10px;
+  font: inherit; font-size: 16px; color: var(--tinta);
+  background: var(--papel-2); border: 1px solid var(--linea); border-radius: 10px;
   padding: 11px 12px; width: 100%;
 }
 input:focus, select:focus, textarea:focus { outline: none; border-color: var(--naranja); }
+input::placeholder { color: #55555B; }
 
-/* Panel de ajustes */
+/* Panel inferior (formularios y ajustes) */
 .panel-fondo {
-  position: fixed; inset: 0; z-index: 10; background: rgba(0, 0, 0, 0.55);
+  position: fixed; inset: 0; z-index: 10; background: rgba(0, 0, 0, 0.72);
   display: flex; align-items: flex-end;
 }
 .panel {
   width: 100%; max-width: 640px; margin: 0 auto;
-  background: var(--papel); border-radius: 22px 22px 0 0;
-  padding: 26px 22px calc(env(safe-area-inset-bottom, 0px) + 24px);
+  background: #0B0B0D; border-top: 1px solid var(--linea); border-radius: 18px 18px 0 0;
+  padding: 24px 20px calc(env(safe-area-inset-bottom, 0px) + 22px);
 }
 .panel h2 {
-  margin: 0 0 6px; font-family: var(--titulos); font-weight: 400; font-size: 30px; color: var(--naranja);
+  margin: 0 0 6px; font-family: var(--titulos); font-weight: 600; font-size: 21px; letter-spacing: -0.03em; color: var(--tinta);
 }
-.aviso { font-size: 14px; line-height: 1.55; color: var(--tinta-suave); margin-top: 10px; }
+.aviso { font-size: 13.5px; line-height: 1.55; color: var(--tinta-suave); margin-top: 10px; }
 
-@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
-
-/* Rojo más vivo para negativos y avisos en todas las pantallas */
-body .pt-neg, body .pt-fila .sub.pt-neg, body .pt-peligro, body .gy-peligro, body .oc-peligro { color: var(--rojo); }
+/* ============ AJUSTES SOBRE LAS PANTALLAS ============
+   Unifica títulos, esquinas y controles de todas las pantallas con esta estética. */
+body .pt-mes h2, body .al-dia h2, body .gy-nav h2 { font-family: var(--titulos); font-weight: 600; font-size: 19px; letter-spacing: -0.03em; }
+body .hb-cat { font-family: var(--titulos); font-weight: 600; font-size: 16px; letter-spacing: -0.02em; }
+body .pt-total .cifra, body .iv-total .cifra { font-size: 38px; font-weight: 600; letter-spacing: -0.045em; }
+/* Selectores de vista: más sobrios */
+body .hb-seg, body .pt-seg, body .al-seg, body .gy-seg, body .oc-seg, body .iv-seg {
+  background: none; border: 1px solid var(--linea); border-radius: 11px; padding: 3px;
+}
+body .hb-seg button, body .pt-seg button, body .al-seg button, body .gy-seg button, body .oc-seg button, body .iv-seg button {
+  font-weight: 500; font-size: 13.5px; border-radius: 8px; letter-spacing: -0.01em;
+}
+body .hb-seg button.on, body .pt-seg button.on, body .al-seg button.on, body .gy-seg button.on, body .oc-seg button.on, body .iv-seg button.on {
+  background: #1A1A1E; color: var(--tinta);
+}
+/* Flechas de navegación y botones auxiliares */
+body .pt-mes button, body .al-dia button, body .gy-nav button {
+  background: none; border: 1px solid var(--linea); width: 36px; height: 36px; border-radius: 10px; font-size: 18px;
+}
+/* Botones grandes de añadir: contorno en vez de relleno */
+body .al-anadir, body .oc-anadir {
+  background: none; color: var(--naranja); box-shadow: inset 0 0 0 1px var(--naranja); font-weight: 600; font-size: 15px; border-radius: 12px;
+}
+body .pt-fab {
+  width: 52px; height: 52px; font-size: 26px; font-weight: 400; color: #000;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.06);
+}
+body .iv-boton, body .hb-mas, body .al-busca button, body .oc-busca button { color: #000; }
+/* Rojo unificado para negativos y avisos */
+body .pt-neg, body .pt-fila .sub.pt-neg, body .pt-peligro, body .gy-peligro, body .oc-peligro, body .iv-peligro { color: var(--rojo); }
 body .al-barra div.pasado { background: var(--rojo); }
-body .gy-res.D { background: rgba(255, 77, 94, 0.16); color: var(--rojo); }
-@media (prefers-reduced-motion: reduce) { .menu, .menu-fondo { transition: none; } }
+body .gy-res.D { background: rgba(255, 69, 58, 0.14); color: var(--rojo); }
+/* Esquinas algo menos redondeadas en todas las piezas */
+body .hb-dia, body .gy-stats div, body .al-stats div, body .iv-tarjetas div, body .pt-rent div, body .pt-cuadro div, body .al-peso { border-radius: 12px; }
+body .al-peso, body .al-stats div, body .gy-stats div, body .iv-tarjetas div { border: 1px solid var(--linea); }
+body .hb-dia { background: none; border: 1px solid var(--linea); }
+
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; }
+  .menu, .menu-fondo { transition: none; }
+}
+
+/* Selectores pequeños (periodos, órdenes, filtros): contorno fino */
+body .pt-rangos, body .iv-mini-seg, body .hb-mini-seg, body .al-rangos, body .gy-rangos { display:flex; gap:0; border:1px solid var(--linea); border-radius:9px; padding:2px; width:max-content; }
+body .pt-rangos button, body .iv-mini-seg button, body .hb-mini-seg button, body .al-rangos button {
+  background:none; color:var(--tinta-suave); font-weight:500; font-size:12.5px; border-radius:7px; padding:6px 10px;
+}
+body .pt-rangos button.on, body .iv-mini-seg button.on, body .hb-mini-seg button.on, body .al-rangos button.on { background:#1A1A1E; color:var(--tinta); }

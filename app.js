@@ -1,6 +1,6 @@
 /*
   NÚCLEO DE LA APP
-  - Guarda los datos en el propio iPhone (cada pestaña en su propio "cajón").
+  - Guarda los datos en el propio iPhone, en IndexedDB (admite cientos de MB), cada pantalla en su "cajón".
   - Monta el menú lateral y cambia entre pantallas.
   - Exporta e importa copias de seguridad.
   Normalmente no hará falta tocar este archivo al trabajar en una pestaña.
@@ -10,24 +10,46 @@ const HiperApp = (() => {
 
   // NOMBRE Y COLOR DE CADA PANTALLA (se cambian aquí, para todas a la vez)
   const PANTALLAS = {
-    habitos:      { titulo: "Hábitos",      color: "#A970FF" },
-    patrimonio:   { titulo: "Finanzas",     color: "#1FD67A" },
-    inversiones:  { titulo: "Inversiones",  color: "#F5C542" },
-    alimentacion: { titulo: "Alimentación", color: "#FF7A1A" },
-    gimnasio:     { titulo: "Deporte",      color: "#3B9EFF" },
-    ocio:         { titulo: "Ocio",         color: "#B8814F" }
+    habitos:      { titulo: "Hábitos",      color: "#BF5AF2" },
+    patrimonio:   { titulo: "Finanzas",     color: "#30D158" },
+    inversiones:  { titulo: "Inversiones",  color: "#FFD60A" },
+    alimentacion: { titulo: "Alimentación", color: "#FF9F0A" },
+    gimnasio:     { titulo: "Deporte",      color: "#0A84FF" },
+    ocio:         { titulo: "Ocio",         color: "#C49A6C" }
   };
   const suave = (hex, a) => { const n = parseInt(hex.slice(1), 16); return `rgba(${n >> 16}, ${(n >> 8) & 255}, ${n & 255}, ${a})`; };
   const pestanas = [];
   let datos = {};
 
-  function cargar() {
-    try { datos = JSON.parse(localStorage.getItem(CLAVE)) || {}; }
-    catch (e) { datos = {}; }
+  // ---------- Guardado en IndexedDB (con localStorage como respaldo si no estuviera disponible) ----------
+  let bd = null, cola = Promise.resolve(), avisado = false;
+  const abrirBD = () => new Promise((ok, mal) => {
+    const r = indexedDB.open("hiperapp", 1);
+    r.onupgradeneeded = () => r.result.createObjectStore("datos");
+    r.onsuccess = () => ok(r.result); r.onerror = () => mal(r.error);
+  });
+  const leerBD = () => new Promise((ok, mal) => { const r = bd.transaction("datos").objectStore("datos").get("todo"); r.onsuccess = () => ok(r.result); r.onerror = () => mal(r.error); });
+  const escribirBD = texto => new Promise((ok, mal) => { const t = bd.transaction("datos", "readwrite"); t.objectStore("datos").put(texto, "todo"); t.oncomplete = ok; t.onerror = () => mal(t.error); t.onabort = () => mal(t.error); });
+
+  async function cargar() {
+    try {
+      bd = await abrirBD();
+      const texto = await leerBD();
+      if (texto) { datos = JSON.parse(texto); return; }
+      // Primera vez con IndexedDB: se traen los datos que había en localStorage
+      const viejo = localStorage.getItem(CLAVE);
+      datos = viejo ? JSON.parse(viejo) : {};
+      if (viejo) { await escribirBD(viejo); if (await leerBD() === viejo) localStorage.removeItem(CLAVE); }
+    } catch (e) {
+      bd = null;
+      try { datos = JSON.parse(localStorage.getItem(CLAVE)) || {}; } catch (e2) { datos = {}; }
+    }
   }
   function guardar() {
-    try { localStorage.setItem(CLAVE, JSON.stringify(datos)); }
-    catch (e) { alert("No se han podido guardar los datos. Haz una copia de seguridad desde Ajustes."); }
+    const texto = JSON.stringify(datos);
+    const fallo = () => { if (!avisado) { avisado = true; alert("No se han podido guardar los datos. Haz una copia de seguridad desde el menú."); } };
+    if (!bd) { try { localStorage.setItem(CLAVE, texto); } catch (e) { fallo(); } return; }
+    cola = cola.then(() => escribirBD(texto)).catch(() => { try { localStorage.setItem(CLAVE, texto); } catch (e) { fallo(); } });
   }
 
   // Cada pestaña recibe un almacén propio: store.get() y store.set(valor)
@@ -135,8 +157,8 @@ const HiperApp = (() => {
   }
   function cerrarAjustes() { const a = document.getElementById("ajustes"); if (a) a.remove(); }
 
-  function iniciar() {
-    cargar();
+  async function iniciar() {
+    await cargar();
     montarMenu();
     document.getElementById("btnAjustes").onclick = abrirAjustes;
     window.addEventListener("hashchange", () => mostrar(location.hash.slice(1)));
