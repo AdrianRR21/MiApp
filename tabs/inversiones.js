@@ -93,6 +93,12 @@
   .iv-modo { display:flex; gap:4px; margin-top:6px; }
   .iv-modo button { flex:1; border:0; background:var(--papel-2); color:var(--tinta-suave); font:inherit; font-size:13.5px; font-weight:600; padding:9px 6px; border-radius:9px; cursor:pointer; }
   .iv-modo button.on { background:var(--naranja-suave); color:var(--naranja); }
+  .iv-interruptor { display:inline-flex; align-items:center; gap:8px; border:0; background:none; color:var(--tinta-suave); font:inherit; font-size:13px; font-weight:500; cursor:pointer; padding:4px 0; white-space:nowrap; }
+  .iv-interruptor i { position:relative; width:34px; height:20px; border-radius:10px; background:var(--papel-2); box-shadow:inset 0 0 0 1px var(--linea); transition:background .2s; }
+  .iv-interruptor i::after { content:""; position:absolute; top:3px; left:3px; width:14px; height:14px; border-radius:50%; background:var(--tinta-suave); transition:transform .2s, background .2s; }
+  .iv-interruptor.on { color:var(--tinta); }
+  .iv-interruptor.on i { background:var(--naranja); box-shadow:none; }
+  .iv-interruptor.on i::after { transform:translateX(14px); background:#000; }
   .iv-enlace { background:none; border:0; color:var(--tinta-suave); font:inherit; font-size:13.5px; font-weight:600; padding:12px 0 0; cursor:pointer; }
   `;
   const st = document.createElement("style"); st.textContent = css; document.head.appendChild(st);
@@ -174,17 +180,20 @@
 
       // ---------- Vista 2: desglose ----------
       function vistaDesglose() {
-        const toggle = `<div class="iv-barra-sup"><div class="iv-mini-seg"><button class="${modo === "posiciones" ? "on" : ""}" data-accion="modo" data-m="posiciones">Posiciones</button><button class="${modo === "rent" ? "on" : ""}" data-accion="modo" data-m="rent">Rentabilidad</button></div></div>`;
+        const ocultar = !!d.ocultarCerradas, hayCerradas = d.activos.some(a => F.posicion(a).n <= 0);
+        const toggle = `<div class="iv-barra-sup"><div class="iv-mini-seg"><button class="${modo === "posiciones" ? "on" : ""}" data-accion="modo" data-m="posiciones">Posiciones</button><button class="${modo === "rent" ? "on" : ""}" data-accion="modo" data-m="rent">Rentabilidad</button></div>
+          ${hayCerradas ? `<button class="iv-interruptor ${ocultar ? "on" : ""}" data-accion="ocultar" role="switch" aria-checked="${ocultar}"><i></i>Ocultar vendidos</button>` : ""}</div>`;
+        const visibles = acts => ocultar ? acts.filter(a => F.posicion(a).n > 0) : acts;
         const alta = `<button class="iv-boton sec" data-accion="nuevo-activo">Añadir activo</button>`;
-        const clasesUsadas = CLASES.filter(c => d.activos.some(a => a.clase === c.id));
-        if (!clasesUsadas.length) return toggle + alta + `<div class="bloque"><p style="margin:0">Da de alta cada inversión con su primera compra: fecha, número de acciones y precio. Después podrás añadir más compras, ventas y valores de mercado.</p></div>`;
+        const clasesUsadas = CLASES.filter(c => visibles(d.activos).some(a => a.clase === c.id));
+        if (!d.activos.length) return toggle + alta + `<div class="bloque"><p style="margin:0">Da de alta cada inversión con su primera compra: fecha, número de acciones y precio. Después podrás añadir más compras, ventas y valores de mercado.</p></div>`;
         const primera = d.activos.flatMap(a => a.ops.map(o => o.fecha)).sort()[0];
         const meses = F.meses(primera, "todo").slice().reverse().slice(0, 24);
 
         if (modo === "posiciones") {
           const t = F.totales(d.activos);
           const bloques = clasesUsadas.map(c => {
-            const acts = F.delaClase(d, c.id).sort((a, b) => F.valor(b) - F.valor(a));
+            const acts = visibles(F.delaClase(d, c.id)).sort((a, b) => F.valor(b) - F.valor(a));
             const tc = F.totales(acts), g = tc.valor - tc.coste;
             const filas = acts.map(a => {
               const p = F.posicion(a), v = F.valor(a), ga = v - p.coste;
@@ -213,7 +222,7 @@
         const celda = r => `<td class="${r === null ? "vacio" : cls(r)}">${r === null ? "–" : pct(r)}</td>`;
         let filas = "";
         clasesUsadas.forEach(c => {
-          const acts = F.delaClase(d, c.id);
+          const acts = visibles(F.delaClase(d, c.id));
           filas += `<tr class="cat"><td><span style="color:${c.color}">●</span> ${c.nombre}</td>${celda(rentTotal(acts))}${mesesR.map(m => celda(F.rentMes(acts, m))).join("")}</tr>`;
           acts.forEach(a => { filas += `<tr class="act"><td>${esc(a.nombre)}</td>${celda(rentTotal([a]))}${mesesR.map(m => celda(F.rentMes([a], m))).join("")}</tr>`; });
         });
@@ -457,6 +466,7 @@
         else if (a === "rango") rango = b.dataset.r;
         else if (a === "modo") modo = b.dataset.m;
         else if (a === "base") base = b.dataset.b;
+        else if (a === "ocultar") { d.ocultarCerradas = !d.ocultarCerradas; guardar(); }
         else if (a === "valores") return hojaValores(null);
         else if (a === "activo") return hojaActivo(b.dataset.id);
         else if (a === "nuevo-activo") return hojaOp(null, "compra", act => hojaActivo(act.id));

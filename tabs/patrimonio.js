@@ -69,6 +69,20 @@
   .pt-rent span.etiqueta + b + span.etiqueta { display:block; margin-top:2px; }
   .pt-peligro { background:none; border:0; color:var(--rojo); font:inherit; font-weight:600; margin-top:14px; cursor:pointer; padding:6px 0; }
   .panel { max-height:88vh; overflow-y:auto; }
+  .pt-grupo { border-top:1px solid var(--linea); }
+  .pt-cab + .pt-grupo { margin-top:8px; }
+  .bloque > .pt-grupo:first-child { border-top:0; }
+  .pt-grupo summary { list-style:none; cursor:pointer; padding:12px 0; }
+  .pt-grupo summary::-webkit-details-marker { display:none; }
+  .pt-grupo-cab { display:flex; align-items:center; gap:8px; margin-bottom:8px; }
+  .bloque > .pt-grupo:first-child .pt-grupo-cab, .pt-grupo-cab:only-child { margin-bottom:0; }
+  .pt-grupo-cab span:first-child { flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .pt-grupo-cab span:first-child::before { content:"›"; display:inline-block; width:14px; color:var(--tinta-suave); transition:transform .2s; }
+  .pt-grupo[open] .pt-grupo-cab span:first-child::before { transform:rotate(90deg); }
+  .pt-grupo-cab .n { font-size:12px; color:var(--tinta-suave); background:var(--papel-2); border-radius:6px; padding:1px 7px; }
+  .pt-grupo-cab b { font-weight:600; white-space:nowrap; }
+  .pt-grupo-lista { padding:0 0 6px 14px; }
+  .pt-grupo-lista .pt-fila { padding:10px 0; }
   `;  const st = document.createElement("style"); st.textContent = css; document.head.appendChild(st);
 
   // ---------- Utilidades ----------
@@ -96,12 +110,12 @@
   const MESES = ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic"];
 
   const CLASES = [
-    { id: "acciones", nombre: "Acciones", color: "#4DA3FF" },
-    { id: "etfs", nombre: "ETFs", color: "#1FD67A" },
-    { id: "materias", nombre: "Materias primas", color: "#F5C542" },
-    { id: "crypto", nombre: "Crypto", color: "#FF8A3D" }
+    { id: "acciones", nombre: "Acciones", color: "#64D2FF" },
+    { id: "etfs", nombre: "ETFs", color: "#30D158" },
+    { id: "materias", nombre: "Materias primas", color: "#FFD60A" },
+    { id: "crypto", nombre: "Crypto", color: "#FF9F0A" }
   ];
-  const COLOR_LIQ = "#5A5A61";
+  const COLOR_LIQ = "#48484E";
 
   // =====================================================================
   //  LÓGICA COMÚN (la usa también Inversiones). Fechas en formato "AAAA-MM-DD".
@@ -254,6 +268,27 @@
       g += meses.map((m, i) => (n - 1 - i) % paso === 0 ? `<text x="${pad.l + (i + 0.5) * ancho}" y="${H - 6}" text-anchor="middle">${MESES[+m.slice(5) - 1]}${i === 0 || m.endsWith("-01") ? " " + m.slice(2, 4) : ""}</text>` : "").join("");
       return `<svg viewBox="0 0 ${W} ${H}">${g}</svg>`;
     },
+    // Gráfico de líneas por meses: series [{color, vals}]; puede tener valores negativos
+    grafLineas(meses, series) {
+      const W = 340, H = 190, pad = { t: 12, r: 10, b: 22, l: 40 };
+      const todos = series.flatMap(s => s.vals).filter(v => v != null);
+      let min = Math.min(0, ...todos), max = Math.max(1, ...todos); const m = (max - min) * 0.1; max += m; if (min < 0) min -= m;
+      const n = meses.length, X = i => pad.l + (n === 1 ? (W - pad.l - pad.r) / 2 : (W - pad.l - pad.r) * i / (n - 1));
+      const Y = v => H - pad.b - (H - pad.t - pad.b) * (v - min) / (max - min);
+      const corto = v => Math.abs(v) >= 1000 ? (v / 1000).toLocaleString("es-ES", { maximumFractionDigits: 1 }) + "k" : String(Math.round(v));
+      let g = "";
+      for (let i = 0; i <= 3; i++) { const v = min + (max - min) * i / 3; g += `<line x1="${pad.l}" x2="${W - pad.r}" y1="${Y(v)}" y2="${Y(v)}" stroke="var(--linea)"/><text x="${pad.l - 6}" y="${Y(v) + 3}" text-anchor="end">${corto(v)}</text>`; }
+      if (min < 0) g += `<line x1="${pad.l}" x2="${W - pad.r}" y1="${Y(0)}" y2="${Y(0)}" stroke="var(--tinta-suave)" stroke-width=".8"/>`;
+      series.forEach(s => {
+        const pts = s.vals.map((v, i) => v == null ? null : [X(i), Y(v)]).filter(Boolean);
+        if (s.area && pts.length > 1) g += `<polygon points="${pts.map(p => p.join(",")).join(" ")} ${pts[pts.length - 1][0]},${Y(Math.max(min, 0))} ${pts[0][0]},${Y(Math.max(min, 0))}" fill="${s.color}" opacity=".12"/>`;
+        g += `<polyline points="${pts.map(p => p.join(",")).join(" ")}" fill="none" stroke="${s.color}" stroke-width="${s.fina ? 1.4 : 2.2}" ${s.discontinua ? 'stroke-dasharray="4 3"' : ""} stroke-linejoin="round" stroke-linecap="round"/>`;
+        if (!s.fina) g += pts.map(p => `<circle cx="${p[0]}" cy="${p[1]}" r="2.8" fill="var(--fondo)" stroke="${s.color}" stroke-width="1.8"/>`).join("");
+      });
+      const paso = Math.ceil(n / 7);
+      g += meses.map((mm, i) => (n - 1 - i) % paso === 0 ? `<text x="${X(i)}" y="${H - 6}" text-anchor="middle">${MESES[+mm.slice(5) - 1]}${i === 0 || mm.endsWith("-01") ? " " + mm.slice(2, 4) : ""}</text>` : "").join("");
+      return `<svg viewBox="0 0 ${W} ${H}">${g}</svg>`;
+    },
     meses(desde, rango) {
       const actual = hoyK().slice(0, 7);
       let ini = desde ? desde.slice(0, 7) : actual;
@@ -267,12 +302,13 @@
 
   // Estado de pantalla
   let vista = "resumen", rango = "1a", mesSel = null, tipoSel = "gasto";
+  const abiertos = new Set();   // categorías desplegadas en Movimientos
   const TIPOS = [{ id: "gasto", nombre: "Gasto" }, { id: "ingreso", nombre: "Ingreso" }, { id: "traspaso", nombre: "Traspaso" }];
 
   HiperApp.registrar({
     id: "patrimonio",
     titulo: "Finanzas",
-    color: "#1FD67A",
+    color: "#30D158",
     icono: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 6-6"/></svg>',
 
     render(contenedor, store) {
@@ -352,26 +388,32 @@
         const ops = d.activos.flatMap(ac => ac.ops.filter(o => o.fecha.startsWith(mesSel)).map(o => ({ o, ac })));
         const invertido = ops.reduce((s, x) => s + (x.o.tipo === "compra" ? 1 : -1) * x.o.n * x.o.precio, 0);
 
-        const porCat = {};
-        delMes.filter(x => x.tipo === "gasto").forEach(x => porCat[x.cat] = (porCat[x.cat] || 0) + x.importe);
-        const cats = Object.entries(porCat).sort((x, y) => y[1] - x[1]).map(([c, v]) => `
-          <div class="pt-cat"><div class="n"><span>${esc(c)}</span><span>${eur(v)}</span></div>
-          <div class="pt-barra"><div style="width:${v / gas * 100}%"></div></div></div>`).join("");
-
         const nomCuenta = id => { const c = cuenta(id); return c ? c.nombre : "Cuenta borrada"; };
-        const filas = delMes.map(x => ({ fecha: x.fecha, orden: x.creado || 0, html: (() => {
-          let titulo, sub, imp, cls = "";
-          if (x.tipo === "gasto") { titulo = x.cat; sub = nomCuenta(x.cuenta); imp = "−" + eur(x.importe); }
-          else if (x.tipo === "ingreso") { titulo = x.cat; sub = nomCuenta(x.cuenta); imp = "+" + eur(x.importe); cls = "pt-pos"; }
-          else { titulo = "Traspaso"; sub = nomCuenta(x.cuenta) + " a " + nomCuenta(x.destino); imp = eur(x.importe); }
-          return `<div class="pt-fila" style="cursor:default">
-            <div class="izq"><div>${esc(titulo)}${x.nota ? ` <span class="sub">${esc(x.nota)}</span>` : ""}</div><div class="sub">${esc(sub)}, ${fechaCorta(x.fecha)}</div></div>
-            <div class="der ${cls}">${imp}</div>
-            <button class="pt-borrar" data-accion="borrar-mov" data-id="${x.id}" aria-label="Borrar movimiento">×</button></div>`; })() }))
-          .concat(ops.map(({ o, ac }) => ({ fecha: o.fecha, orden: o.creado || 0, html: `<button class="pt-fila" data-accion="ir-inversiones">
-            <div class="izq"><div>${o.tipo === "compra" ? "Compra de " : "Venta de "}${esc(ac.nombre)}</div><div class="sub">${o.cuenta ? esc(nomCuenta(o.cuenta)) + ", " : ""}${fechaCorta(o.fecha)}, en Inversiones</div></div>
-            <div class="der">${eur(o.n * o.precio)}</div></button>` })))
-          .sort((x, y) => y.fecha.localeCompare(x.fecha) || y.orden - x.orden).map(x => x.html).join("");
+        const filaMov = (x, signo) => `<div class="pt-fila" style="cursor:default">
+            <div class="izq"><div>${x.nota ? esc(x.nota) : fechaCorta(x.fecha)}</div><div class="sub">${x.nota ? fechaCorta(x.fecha) + ", " : ""}${esc(x.tipo === "traspaso" ? nomCuenta(x.cuenta) + " a " + nomCuenta(x.destino) : nomCuenta(x.cuenta))}</div></div>
+            <div class="der ${signo === "+" ? "pt-pos" : ""}">${signo}${eur(x.importe)}</div>
+            <button class="pt-borrar" data-accion="borrar-mov" data-id="${x.id}" aria-label="Borrar movimiento">×</button></div>`;
+        const orden = (x, y) => y.fecha.localeCompare(x.fecha) || (y.creado || 0) - (x.creado || 0);
+        // Un bloque por tipo; dentro, una fila desplegable por categoría con sus movimientos
+        function bloqueTipo(tipo, titulo, total, signo) {
+          const xs = delMes.filter(x => x.tipo === tipo); if (!xs.length) return "";
+          const grupos = {}; xs.forEach(x => (grupos[x.cat] = grupos[x.cat] || []).push(x));
+          const filas = Object.entries(grupos).sort((a, b) => b[1].reduce((s, x) => s + x.importe, 0) - a[1].reduce((s, x) => s + x.importe, 0)).map(([cat, ms]) => {
+            const t = ms.reduce((s, x) => s + x.importe, 0), clave = tipo + ":" + cat;
+            return `<details class="pt-grupo" data-clave="${esc(clave)}" ${abiertos.has(clave) ? "open" : ""}><summary>
+                <div class="pt-grupo-cab"><span>${esc(cat)}</span><span class="n">${ms.length}</span><b class="${signo === "+" ? "pt-pos" : ""}">${signo}${eur(t)}</b></div>
+                <div class="pt-barra"><div style="width:${t / total * 100}%;${signo === "−" ? "background:var(--rojo)" : ""}"></div></div></summary>
+              <div class="pt-grupo-lista">${ms.sort(orden).map(x => filaMov(x, signo)).join("")}</div></details>`;
+          }).join("");
+          return `<div class="bloque"><div class="pt-cab"><h2>${titulo}</h2><span class="v">${signo}${eur(total)}</span></div>${filas}</div>`;
+        }
+        const trasp = delMes.filter(x => x.tipo === "traspaso").sort(orden);
+        const bloqueTrasp = trasp.length ? `<div class="bloque"><details class="pt-grupo" data-clave="traspasos" ${abiertos.has("traspasos") ? "open" : ""}><summary><div class="pt-grupo-cab"><span>Traspasos entre cuentas</span><span class="n">${trasp.length}</span><b>${eur(trasp.reduce((s, x) => s + x.importe, 0))}</b></div></summary>
+            <div class="pt-grupo-lista">${trasp.map(x => filaMov(x, "")).join("")}</div></details></div>` : "";
+        const bloqueOps = ops.length ? `<div class="bloque"><details class="pt-grupo" data-clave="ops" ${abiertos.has("ops") ? "open" : ""}><summary><div class="pt-grupo-cab"><span>Compras y ventas de inversiones</span><span class="n">${ops.length}</span><b>${eur(Math.abs(invertido))}</b></div></summary>
+            <div class="pt-grupo-lista">${ops.sort((x, y) => y.o.fecha.localeCompare(x.o.fecha)).map(({ o, ac }) => `<button class="pt-fila" data-accion="ir-inversiones">
+              <div class="izq"><div>${o.tipo === "compra" ? "Compra de " : "Venta de "}${esc(ac.nombre)}</div><div class="sub">${fechaCorta(o.fecha)}${o.cuenta ? ", " + esc(nomCuenta(o.cuenta)) : ""}</div></div>
+              <div class="der">${o.tipo === "compra" ? "−" : "+"}${eur(o.n * o.precio)}</div></button>`).join("")}</div></details></div>` : "";
 
         return `
           <div class="pt-mes">
@@ -388,11 +430,10 @@
             </div>
             ${ops.length ? `<p style="margin:12px 0 0;font-size:14px">${invertido >= 0 ? "Has invertido " + eur(invertido) : "Has retirado " + eur(-invertido) + " de inversiones"} este mes.</p>` : ""}
           </div>
-          ${cats ? `<div class="bloque"><h2>Gastos por categoría</h2>${cats}</div>` : ""}
-          <div class="bloque">
-            <h2>Movimientos</h2>
-            ${filas || `<p>Sin movimientos este mes. Usa el botón + para apuntar uno.</p>`}
-          </div>`;
+          ${bloqueTipo("gasto", "Gastos", gas, "−")}
+          ${bloqueTipo("ingreso", "Ingresos", ing, "+")}
+          ${bloqueTrasp}${bloqueOps}
+          ${!delMes.length && !ops.length ? `<div class="bloque"><p style="margin:0">Sin movimientos este mes. Usa el botón + para apuntar uno.</p></div>` : ""}`;
       }
 
       // ---------- Vista 3: evolución ----------
@@ -411,8 +452,8 @@
         const ahorroTotal = ing.reduce((a, b) => a + b, 0) - gas.reduce((a, b) => a + b, 0);
         const g1 = nDatos ? `<div class="pt-cab"><h2>Ingresos y gastos</h2><span class="v ${clsN(ahorroTotal)}">${eurS(ahorroTotal / nDatos)}</span></div>
             <p style="margin:0;font-size:14px">Ahorro medio por mes (en los ${nDatos} ${nDatos === 1 ? "mes" : "meses"} con datos).</p>
-            ${Fin.grafBarras(meses, [{ color: "var(--naranja)", vals: ing }, { color: "var(--rojo)", vals: gas }], { agrupadas: true })}
-            ${ley([["Ingresos", "var(--naranja)"], ["Gastos", "var(--rojo)"]])}`
+            ${Fin.grafLineas(meses, [{ color: "var(--naranja)", vals: ing, area: true }, { color: "var(--rojo)", vals: gas, area: true }, { color: "var(--tinta-suave)", vals: ing.map((v, i) => v - gas[i]), fina: true, discontinua: true }])}
+            ${ley([["Ingresos", "var(--naranja)"], ["Gastos", "var(--rojo)"], ["Ahorro", "var(--tinta-suave)", true]])}`
           : `<h2>Ingresos y gastos</h2><p>Aparecerá cuando apuntes ingresos o gastos.</p>`;
 
         // 2. Patrimonio a final de cada mes (reconstruido con movimientos, compras, ventas y valores)
@@ -539,6 +580,7 @@
       }
 
       // ---------- Eventos ----------
+      raiz.addEventListener("toggle", e => { const k = e.target.dataset && e.target.dataset.clave; if (k) { if (e.target.open) abiertos.add(k); else abiertos.delete(k); } }, true);
       raiz.addEventListener("click", e => {
         const b = e.target.closest("[data-accion]"); if (!b) return;
         const a = b.dataset.accion;

@@ -7,25 +7,34 @@
   .oc-seg { display:flex; background:var(--papel); border-radius:12px; padding:4px; margin-bottom:14px; }
   .oc-seg button { flex:1; border:0; background:none; color:var(--tinta-suave); font:inherit; font-weight:600; font-size:13.5px; padding:9px 0; border-radius:9px; cursor:pointer; }
   .oc-seg button.on { background:var(--papel-2); color:var(--tinta); }
-  .oc-top { display:flex; justify-content:space-between; align-items:flex-end; margin:4px 2px 14px; gap:10px; }
-  .oc-top .cifra { font-size:30px; }
-  .oc-orden { display:flex; gap:4px; }
-  .oc-orden button { border:0; background:var(--papel); color:var(--tinta-suave); font:inherit; font-size:13px; font-weight:600; padding:6px 10px; border-radius:8px; cursor:pointer; }
-  .oc-orden button.on { background:var(--naranja-suave); color:var(--naranja); }
-  .oc-grid { display:grid; grid-template-columns:repeat(3, 1fr); gap:14px 10px; align-items:start; }
+  .oc-top { margin:6px 2px 16px; }
+  .oc-top > div { min-width:0; }
+  .oc-top .cifra { font-size:40px; line-height:1; }
+  .oc-top .etiqueta { margin-top:6px; }
+  .oc-stats { display:flex; gap:18px; margin-top:10px; font-size:12.5px; color:var(--tinta-suave); }
+  .oc-stats b { display:block; font-size:16px; color:var(--tinta); font-weight:600; letter-spacing:-0.02em; }
+  .oc-orden { display:flex; border:1px solid var(--linea); border-radius:9px; padding:2px; }
+  .oc-orden button { border:0; background:none; color:var(--tinta-suave); font:inherit; font-size:12.5px; font-weight:500; padding:6px 10px; border-radius:7px; cursor:pointer; }
+  .oc-orden button.on { background:#1A1A1E; color:var(--tinta); }
+  .oc-anio-grupo { display:flex; align-items:center; gap:10px; font-size:12px; font-weight:600; letter-spacing:.1em; color:var(--tinta-suave); margin:22px 0 12px; }
+  .oc-anio-grupo::after { content:""; flex:1; height:1px; background:var(--linea); }
+  .oc-anio-grupo:first-of-type { margin-top:4px; }
+  .oc-grid { display:grid; grid-template-columns:repeat(3, 1fr); gap:18px 12px; align-items:start; }
   .oc-item { display:flex; flex-direction:column; width:100%; background:none; border:0; padding:0; color:inherit; font:inherit; text-align:left; cursor:pointer; min-width:0; }
-  .oc-poster { position:relative; aspect-ratio:2/3; border-radius:10px; overflow:hidden; background:var(--papel-2); }
+  .oc-poster { position:relative; aspect-ratio:2/3; border-radius:6px; overflow:hidden; background:linear-gradient(160deg, #1B1B1F, #0C0C0E); box-shadow:0 0 0 1px rgba(255,255,255,.07), 0 10px 24px rgba(0,0,0,.6); }
   .oc-poster img { width:100%; height:100%; object-fit:cover; display:block; }
-  .oc-poster .sin { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; padding:8px; text-align:center; font-family:var(--titulos); font-size:17px; line-height:1.1; color:var(--tinta-suave); }
-  .oc-nota { position:absolute; left:6px; bottom:6px; background:var(--naranja); color:#1A1411; font-weight:700; font-size:13px; padding:3px 7px; border-radius:7px; }
-  .oc-tit { font-size:13px; font-weight:600; margin-top:6px; line-height:1.25; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
-  .oc-anio { font-size:12px; color:var(--tinta-suave); margin-top:1px; }
+  .oc-poster .sin { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-weight:600; font-size:44px; letter-spacing:-0.04em; color:#2A2A30; }
+  .oc-nota { position:absolute; right:5px; top:5px; background:rgba(0,0,0,.72); -webkit-backdrop-filter:blur(8px); backdrop-filter:blur(8px); color:#fff; font-weight:600; font-size:12px; padding:3px 7px 3px 6px; border-radius:6px; letter-spacing:-0.01em; }
+  .oc-nota::before { content:"★"; color:var(--naranja); margin-right:3px; font-size:10.5px; }
+  .oc-tit { font-size:12.5px; font-weight:500; margin-top:8px; line-height:1.3; letter-spacing:-0.01em; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+  .oc-anio { font-size:11.5px; color:var(--tinta-suave); margin-top:2px; }
+  .oc-aviso { background:var(--naranja-suave); color:var(--tinta); border-radius:10px; padding:10px 12px; font-size:13.5px; line-height:1.45; margin:4px 0 12px; }
   .oc-anadir { width:100%; border:0; background:var(--naranja); color:#1A1411; font:inherit; font-weight:700; font-size:16px; padding:14px; border-radius:14px; cursor:pointer; margin-bottom:16px; }
   .oc-enlace { background:none; border:0; color:var(--tinta-suave); font:inherit; font-size:13px; cursor:pointer; padding:18px 0 0; text-decoration:underline; }
 
   .oc-chips { display:flex; gap:6px; margin-bottom:12px; }
-  .oc-chips button { border:0; background:var(--papel); color:var(--tinta-suave); font:inherit; font-size:13px; font-weight:600; padding:7px 12px; border-radius:20px; cursor:pointer; }
-  .oc-chips button.on { background:var(--naranja-suave); color:var(--naranja); }
+  .oc-chips button { border:1px solid var(--linea); background:none; color:var(--tinta-suave); font:inherit; font-size:13px; font-weight:500; padding:6px 12px; border-radius:8px; cursor:pointer; }
+  .oc-chips button.on { border-color:var(--naranja); color:var(--naranja); }
   .oc-fila { display:flex; align-items:center; gap:12px; padding:10px 0; border-top:1px solid var(--linea); width:100%; background:none; border-left:0; border-right:0; border-bottom:0; color:inherit; font:inherit; text-align:left; }
   .oc-fila:first-child { border-top:0; }
   .oc-mini { flex:none; width:46px; aspect-ratio:2/3; border-radius:6px; overflow:hidden; background:var(--papel-2); }
@@ -33,7 +42,7 @@
   .oc-fila .izq { flex:1; min-width:0; }
   .oc-fila .izq div:first-child { font-weight:600; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
   .oc-fila .sub { font-size:13px; color:var(--tinta-suave); margin-top:2px; }
-  .oc-visto { flex:none; border:0; background:var(--naranja-suave); color:var(--naranja); font:inherit; font-weight:700; font-size:13px; padding:8px 10px; border-radius:9px; cursor:pointer; }
+  .oc-visto { flex:none; border:1px solid var(--linea); background:none; color:var(--tinta); font:inherit; font-weight:500; font-size:13px; padding:7px 10px; border-radius:8px; cursor:pointer; }
   .oc-x { background:none; border:0; color:var(--tinta-suave); font-size:22px; line-height:1; padding:0 2px; cursor:pointer; }
 
   .oc-form label { display:block; font-size:13px; color:var(--tinta-suave); margin:14px 0 6px; }
@@ -56,6 +65,7 @@
   `;
   const st = document.createElement("style"); st.textContent = css; document.head.appendChild(st);
 
+  const normT = s => String(s || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, " ").trim();
   const esc = s => String(s == null ? "" : s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
   const clave = d => d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
   const hoyK = () => clave(new Date());
@@ -81,6 +91,8 @@
       const guardar = () => store.set(d);
       const raiz = document.createElement("div");
       contenedor.appendChild(raiz);
+      // Busca si ya tienes apuntado ese título (mismo tipo; si los dos tienen año, también el mismo año)
+      const existente = it => d.items.find(x => x.tipo === it.tipo && normT(x.titulo) === normT(it.titulo) && (!x.anio || !it.anio || x.anio === it.anio));
 
       // ---------- Búsquedas ----------
       async function buscarTMDB(tipo, q) {
@@ -114,7 +126,7 @@
       }
 
       // ---------- Vistas ----------
-      const poster = (x, cls) => x.img ? `<img src="${esc(x.img)}" alt="" loading="lazy">` : (cls === "mini" ? "" : `<div class="sin">${esc(x.titulo)}</div>`);
+      const poster = (x, cls) => x.img ? `<img src="${esc(x.img)}" alt="" loading="lazy">` : (cls === "mini" ? "" : `<div class="sin">${esc((x.titulo || "?").trim().charAt(0).toUpperCase())}</div>`);
 
       function vistaVistos(tipo) {
         let xs = d.items.filter(x => x.tipo === tipo && x.estado === "visto");
@@ -122,16 +134,25 @@
           : (a, b) => (b.fecha || "").localeCompare(a.fecha || "") || b.creado - a.creado);
         const conNota = xs.filter(x => x.nota != null);
         const media = conNota.length ? conNota.reduce((s, x) => s + x.nota, 0) / conNota.length : null;
-        const T = TIPOS[tipo];
+        const T = TIPOS[tipo], esteAnio = hoyK().slice(0, 4);
+        const delAnio = xs.filter(x => (x.fecha || "").startsWith(esteAnio)).length;
+        const mejor = conNota.slice().sort((a, b) => b.nota - a.nota)[0];
+        const tarjeta = x => `<button class="oc-item" data-accion="editar" data-id="${x.id}">
+            <div class="oc-poster">${poster(x)}${x.nota != null ? `<span class="oc-nota">${fNota(x.nota)}</span>` : ""}</div>
+            <div class="oc-tit">${esc(x.titulo)}</div><div class="oc-anio">${esc(x.autor || x.anio || "")}</div></button>`;
+        // En "Recientes" se agrupan por el año en que las viste o leíste
+        let rejilla = "";
+        if (orden === "fecha") {
+          const grupos = []; xs.forEach(x => { const a = (x.fecha || "").slice(0, 4) || "Sin fecha"; const g = grupos.find(g => g.a === a); if (g) g.xs.push(x); else grupos.push({ a, xs: [x] }); });
+          rejilla = grupos.map(g => `<div class="oc-anio-grupo">${g.a} · ${g.xs.length}</div><div class="oc-grid">${g.xs.map(tarjeta).join("")}</div>`).join("");
+        } else rejilla = `<div class="oc-grid">${xs.map(tarjeta).join("")}</div>`;
         return `<div class="oc-top">
-            <div><div class="cifra">${xs.length}</div><div class="etiqueta">${xs.length === 1 ? T.uno : T.varios}${media !== null ? ", nota media " + fNota(Math.round(media * 10) / 10) : ""}</div></div>
-            ${xs.length > 1 ? `<div class="oc-orden"><button class="${orden === "fecha" ? "on" : ""}" data-accion="orden" data-o="fecha">Recientes</button><button class="${orden === "nota" ? "on" : ""}" data-accion="orden" data-o="nota">Mejor nota</button></div>` : ""}
+            <div><div class="cifra">${xs.length}</div><div class="etiqueta">${xs.length === 1 ? T.uno : T.varios} ${tipo === "libro" ? "leídos" : tipo === "peli" ? "vistas" : "vistas"}</div>
+              ${xs.length ? `<div class="oc-stats"><span><b>${media !== null ? fNota(Math.round(media * 10) / 10) : "–"}</b>nota media</span><span><b>${delAnio}</b>en ${esteAnio}</span>${mejor ? `<span style="min-width:0;flex:1"><b style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(mejor.titulo)}</b>la mejor</span>` : ""}</div>` : ""}</div>
           </div>
           <button class="oc-anadir" data-accion="anadir" data-tipo="${tipo}" data-estado="visto">Añadir ${T.uno}</button>
-          ${xs.length ? `<div class="oc-grid">${xs.map(x => `<button class="oc-item" data-accion="editar" data-id="${x.id}">
-            <div class="oc-poster">${poster(x)}${x.nota != null ? `<span class="oc-nota">${fNota(x.nota)}</span>` : ""}</div>
-            <div class="oc-tit">${esc(x.titulo)}</div><div class="oc-anio">${esc(x.autor || x.anio || "")}</div></button>`).join("")}</div>`
-          : `<div class="bloque"><p style="margin:0">Aún no has apuntado ${T.varios}. Busca por título y la portada se añade sola.</p></div>`}
+          ${xs.length > 1 ? `<div style="display:flex;justify-content:flex-end;margin:-4px 0 10px"><div class="oc-orden"><button class="${orden === "fecha" ? "on" : ""}" data-accion="orden" data-o="fecha">Recientes</button><button class="${orden === "nota" ? "on" : ""}" data-accion="orden" data-o="nota">Mejor nota</button></div></div>` : ""}
+          ${xs.length ? rejilla : `<div class="bloque"><p style="margin:0">Aún no has apuntado ${T.varios}. Busca por título y la portada se añade sola.</p></div>`}
           ${tipo !== "libro" ? `<button class="oc-enlace" data-accion="clave">${d.tmdb ? "Cambiar clave de TMDB" : "Configurar clave de TMDB"}</button>` : ""}`;
       }
 
@@ -223,6 +244,13 @@
         });
         function siguiente(item) {
           if (!item.titulo) return;
+          const ya = existente(item);
+          if (ya) {
+            if (!ya.img && item.img) { ya.img = item.img; guardar(); }
+            h.cerrar();
+            if (estado === "pendiente" && ya.estado === "pendiente") { pintar(); alert("\"" + ya.titulo + "\" ya está en tu lista."); return; }
+            return hojaNota(ya, false, ya.estado === "visto" ? `Ya tenías ${TIPOS[ya.tipo].uno === "libro" ? "este libro" : "esta " + TIPOS[ya.tipo].uno} apuntad${TIPOS[ya.tipo].uno === "libro" ? "o" : "a"}. Puedes cambiar la nota o la fecha.` : "Estaba en tu lista de pendientes. Al guardar pasará a vistos.");
+          }
           if (estado === "pendiente") { d.items.push(item); guardar(); h.cerrar(); pintar(); return; }
           h.cerrar(); hojaNota(item, true);
         }
@@ -230,11 +258,11 @@
       }
 
       // Nota y fecha (para añadir, editar o pasar de pendiente a visto)
-      function hojaNota(item, nuevo) {
+      function hojaNota(item, nuevo, aviso) {
         const h = abrirHoja();
         const nota = item.nota != null ? item.nota : 7;
         const existe = d.items.includes(item) && item.estado === "visto";
-        h.paso.innerHTML = `<div class="oc-elegido"><div class="oc-mini">${poster(item, "mini")}</div>
+        h.paso.innerHTML = `${aviso ? `<div class="oc-aviso">${aviso}</div>` : ""}<div class="oc-elegido"><div class="oc-mini">${poster(item, "mini")}</div>
             <div><h2 style="margin:0">${esc(item.titulo)}</h2><div class="oc-nota-txt" style="margin:2px 0 0">${esc([item.autor, item.anio].filter(Boolean).join(", "))}</div></div></div>
           <label>Tu nota</label>
           <div class="oc-nota-grande" id="ocN">${fNota(nota)}</div>
