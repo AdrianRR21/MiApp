@@ -13,6 +13,7 @@ const HiperApp = (() => {
     habitos:      { titulo: "Hábitos",      color: "#BF5AF2" },
     patrimonio:   { titulo: "Finanzas",     color: "#30D158" },
     inversiones:  { titulo: "Inversiones",  color: "#FFD60A" },
+    value:        { titulo: "Value Investing", color: "#7D7AFF" },
     alimentacion: { titulo: "Alimentación", color: "#FF9F0A" },
     gimnasio:     { titulo: "Deporte",      color: "#0A84FF" },
     ocio:         { titulo: "Ocio",         color: "#C49A6C" },
