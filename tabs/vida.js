@@ -93,16 +93,82 @@
   .vd-top small { font-size:12px; color:var(--tinta-tenue); }
   .vd-top b { font-weight:600; }
 
+  .vd-mini span em { font-style:normal; }
+  .vd-c { display:none; }
+
   @media (min-width: 700px) {
     .vd-grid { grid-template-columns:repeat(2, minmax(0, 1fr)); }
     .vd-ancha { grid-column:span 2; }
     .vd-hab-cuerpo, .vd-alim { grid-template-columns:minmax(0, 1fr) minmax(0, 1.1fr); gap:28px; align-items:start; }
     .vd-hab-cuerpo .vd-barras { margin-top:0; height:120px; }
   }
-  @media (min-width: 1340px) {
-    .vd-grid { grid-template-columns:repeat(3, minmax(0, 1fr)); gap:16px; }
-    .vd-card { padding:22px 22px 24px; }
-    .vd-value { grid-column:span 1; }
+  /* ===== ORDENADOR: todo a la vez, sin desplazamiento (4 columnas × 2 filas) =====
+     Los tamaños se ajustan a la altura de la ventana con vh. */
+  @media (min-width: 1200px) and (min-height: 560px) {
+    html:has(body[data-pantalla="vida"]), body[data-pantalla="vida"] { overflow:hidden; height:100vh; }
+    body[data-pantalla="vida"] .app { height:100vh; }
+    body[data-pantalla="vida"] .cuerpo { height:100vh; display:flex; flex-direction:column; overflow:hidden; }
+    body[data-pantalla="vida"] .top { padding-top:clamp(16px, 3vh, 30px); padding-bottom:clamp(6px, 1.2vh, 12px); }
+    body[data-pantalla="vida"] .top h1 { font-size:clamp(24px, 3.6vh, 34px); }
+    body[data-pantalla="vida"] main.ancho { flex:1; min-height:0; width:100%; display:flex; flex-direction:column; padding-top:0; padding-bottom:clamp(14px, 2.6vh, 28px); }
+    .vd-raiz { flex:1; min-height:0; display:flex; flex-direction:column; }
+    .vd-resumen { margin:0 2px clamp(10px, 1.8vh, 18px); font-size:clamp(12.5px, 1.6vh, 14.5px); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .vd-grid { flex:1; min-height:0; grid-template-columns:repeat(4, minmax(0, 1fr)); grid-template-rows:repeat(2, minmax(0, 1fr)); gap:clamp(10px, 1.5vh, 16px); }
+    .vd-ancha { grid-column:auto; }
+    .vd-hab { grid-column:span 2; }
+    .vd-card { overflow:hidden; display:flex; flex-direction:column; min-height:0; padding:clamp(13px, 2vh, 20px) clamp(14px, 1.3vw, 20px); border-radius:16px; }
+    .vd-card > :not(.vd-cab) { flex:none; }
+    .vd-cab { margin-bottom:clamp(8px, 1.4vh, 14px); }
+    .vd-cifra { font-size:clamp(22px, 3.3vh, 32px); }
+    .vd-cifra small { font-size:clamp(12px, 1.5vh, 14px); }
+    .vd-sub { font-size:clamp(11.5px, 1.45vh, 13px); margin-top:4px; }
+    .vd-tit { margin-bottom:5px; }
+    .vd-sep { margin:clamp(8px, 1.4vh, 14px) 0; }
+    .vd-linea { height:clamp(30px, 5vh, 52px) !important; margin-top:clamp(8px, 1.3vh, 14px); }
+    .vd-mini { margin-top:clamp(8px, 1.4vh, 14px); gap:6px; }
+    .vd-mini div { padding:clamp(6px, 1vh, 9px) 8px; border-radius:9px; }
+    .vd-mini span { font-size:11px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .vd-mini b { font-size:clamp(13px, 1.7vh, 15px); }
+    .vd-l { display:none; } .vd-c { display:inline; }
+    .vd-extra { display:none; }
+    .vd-reparto { margin-top:clamp(8px, 1.3vh, 14px); }
+    .vd-ley { gap:2px 9px; margin-top:6px; font-size:10.5px; max-height:30px; overflow:hidden; }
+    .vd-top { padding:clamp(4px, .8vh, 8px) 0; font-size:13px; }
+    /* Hábitos: lista a la izquierda, gráfico a la derecha */
+    .vd-hab-cuerpo { grid-template-columns:minmax(0, 1fr) minmax(0, 1fr); gap:24px; flex:1 !important; min-height:0; }
+    .vd-hab-cuerpo > div:first-child { min-height:0; overflow:hidden; }
+    .vd-check { padding:clamp(6px, 1.05vh, 10px) 0; }
+    .vd-check span { font-size:clamp(13px, 1.65vh, 15px); }
+    .vd-check i { width:19px; height:19px; }
+    .vd-hab-cuerpo .vd-barras { height:clamp(90px, 22vh, 220px); }
+    /* Agenda: lo que quepa */
+    .vd-agenda .vd-ev { padding:clamp(5px, .9vh, 9px) 0; }
+    .vd-evs > :nth-child(n+4) { display:none; }
+    .vd-mini:has(> .vd-extra) { grid-template-columns:repeat(2, minmax(0, 1fr)); }
+    .vd-ev { grid-template-columns:42px 1fr; gap:9px; }
+    .vd-ev b { font-size:14px; } .vd-ev small { font-size:11.5px; }
+    .vd-tarea { font-size:13px; padding:3px 0; }
+    .vd-tareas > :nth-child(n+4) { display:none; }
+    /* Deporte */
+    .vd-rutina { font-size:clamp(17px, 2.4vh, 22px); }
+    .vd-ejs { margin-top:8px; gap:4px; max-height:52px; overflow:hidden; }
+    .vd-ejs span { font-size:11.5px; padding:3px 7px; }
+    .vd-dias { gap:3px; }
+    /* Alimentación en una columna: peso, gráfico y calorías */
+    .vd-alim { grid-template-columns:minmax(0, 1fr); gap:clamp(8px, 1.4vh, 14px); }
+    .vd-kcal { gap:12px; }
+    .vd-kcal svg { width:clamp(46px, 7vh, 66px); height:clamp(46px, 7vh, 66px); }
+    .vd-kcal .vd-cifra { font-size:clamp(18px, 2.6vh, 24px) !important; }
+    .vd-alim .vd-macro { margin-top:5px; }
+    .vd-alim .vd-macro .n { margin-bottom:3px; font-size:11.5px; }
+    .vd-alim .vd-macro:nth-child(4) { display:none; }   /* agua: se ve en la pantalla de Alimentación */
+    .vd-alim [style*="margin-top:16px"] { margin-top:8px !important; }
+  }
+  @media (min-width: 1200px) and (min-height: 560px) and (max-height: 820px) {
+    .vd-alim .vd-linea, .vd-fin-graf { display:none; }
+    .vd-tops > :nth-child(n+3), .vd-evs > :nth-child(n+3), .vd-tareas > :nth-child(n+3) { display:none; }
+    .vd-alim .vd-macro:nth-child(3) { display:none; }
+    .vd-sub { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
   }
   `;
   const st = document.createElement("style"); st.textContent = css; document.head.appendChild(st);
@@ -162,8 +228,10 @@
       const P = sto("patrimonio").get({});
       const Fin = window.Finanzas;
       const raiz = document.createElement("div");
+      raiz.className = "vd-raiz";
       contenedor.appendChild(raiz);
       const resumen = [];
+      const et = (largo, corto) => `<span><em class="vd-l">${largo}</em><em class="vd-c">${corto}</em></span>`;   // etiqueta larga (móvil) y corta (ordenador)
 
       // ---------- Hábitos ----------
       function cHabitos() {
@@ -197,11 +265,11 @@
         const lista = evs.map(e => { const ini = aMin(e.hora), fin = e.fin ? aMin(e.fin) : ini + 60, enCurso = ini <= min && min < fin, pasado = fin <= min;
           return `<div class="vd-ev ${enCurso ? "ahora" : pasado ? "pasado" : ""}"><div class="h">${e.hora}</div><div><b>${esc(e.titulo)}</b>${e.fin || e.nota ? `<small>${e.fin ? "hasta " + e.fin : ""}${e.fin && e.nota ? " · " : ""}${esc(e.nota || "")}</small>` : ""}</div></div>`; }).join("");
         const tareas = (H.tareas || []).filter(t => !t.hecha);
-        return tarjeta("habitos", "Agenda de hoy", `${lista || `<div class="vd-vacio">Nada planificado para hoy.</div>`}
-          ${manana ? `<div class="vd-sub" style="margin-top:12px">Mañana: ${manana} ${manana === 1 ? "plan" : "planes"}</div>` : ""}
+        return tarjeta("habitos", "Agenda de hoy", `${lista ? `<div class="vd-evs">${lista}</div>` : `<div class="vd-vacio">Nada planificado para hoy.</div>`}
+          ${manana ? `<div class="vd-sub vd-extra" style="margin-top:12px">Mañana: ${manana} ${manana === 1 ? "plan" : "planes"}</div>` : ""}
           <div class="vd-sep"></div>
           <div class="vd-tit">Tareas pendientes · ${tareas.length}</div>
-          ${tareas.slice(0, 4).map(t => `<div class="vd-tarea">${esc(t.texto)}<small>${esc(t.cat || "")}</small></div>`).join("") || `<div class="vd-vacio" style="font-size:13.5px">Ninguna. Todo al día.</div>`}
+          ${tareas.length ? `<div class="vd-tareas">${tareas.slice(0, 4).map(t => `<div class="vd-tarea">${esc(t.texto)}<small>${esc(t.cat || "")}</small></div>`).join("")}</div>` : `<div class="vd-vacio" style="font-size:13.5px">Ninguna. Todo al día.</div>`}
           ${tareas.length > 4 ? `<div class="vd-sub">y ${tareas.length - 4} más</div>` : ""}`, "vd-agenda");
       }
 
@@ -229,9 +297,9 @@
           <div class="vd-sep"></div>
           <div class="vd-tit">Últimos 14 días</div><div class="vd-dias">${tira.join("")}</div>
           <div class="vd-mini">
-            <div><span>Días de gym este mes</span><b>${diasMes} ${diasMes === 1 ? "día" : "días"}</b></div>
+            <div>${et("Días de gym este mes", "Gym, mes")}<b>${diasMes} ${diasMes === 1 ? "día" : "días"}</b></div>
             <div><span>Pádel</span><b>${partidos.length ? `${c.V}V ${c.E}E ${c.D}D` : "–"}</b></div>
-            <div><span>Último partido</span><b>${ult ? ult.sets.map(x => x.join("-")).join(" ") : "–"}</b></div>
+            <div class="vd-extra">${et("Último partido", "Último")}<b>${ult ? ult.sets.map(x => x.join("-")).join(" ") : "–"}</b></div>
           </div>`);
       }
 
@@ -254,7 +322,7 @@
         const pesoHtml = `<div><div class="vd-tit">Peso</div><div class="vd-cifra">${peso ? f1(peso) : "–"}<small>kg</small></div>
             <div class="vd-sub">${d && d.peso ? "Hoy" : ultimo ? "Último, " + fCorta(ultimo) + " · aún no te has pesado hoy" : ""}${cambio !== null ? ` · <span class="${cambio > 0.05 ? "vd-pos" : cambio < -0.05 ? "vd-neg" : ""}">${cambio > 0 ? "+" : ""}${f1(cambio)} kg</span> en 7 días` : ""}</div>
             ${linea([{ vals: medias, color: "var(--c)", area: true }, { vals: serie, color: "var(--tinta-suave)", fina: true, puntos: true }], 70)}
-            ${conPeso.length > 1 ? `<div class="vd-ley" style="margin-top:6px"><span><i style="background:var(--c)"></i>Media de 7 días</span><span><i style="background:var(--tinta-suave)"></i>Cada día · 30 días</span></div>` : ""}</div>`;
+            ${conPeso.length > 1 ? `<div class="vd-ley vd-extra" style="margin-top:6px"><span><i style="background:var(--c)"></i>Media de 7 días</span><span><i style="background:var(--tinta-suave)"></i>Cada día · 30 días</span></div>` : ""}</div>`;
         const comidaHtml = o ? `<div><div class="vd-tit">Hoy</div><div class="vd-kcal">
               <svg viewBox="0 0 86 86"><circle cx="43" cy="43" r="${R}" fill="none" stroke="var(--papel-2)" stroke-width="8"/><circle cx="43" cy="43" r="${R}" fill="none" stroke="${pasado ? "var(--rojo)" : "var(--c)"}" stroke-width="8" stroke-linecap="round" stroke-dasharray="${C * fr} ${C}"/></svg>
               <div><div class="vd-cifra" style="font-size:28px">${Math.round(tot.kcal).toLocaleString("es-ES")}<small>/ ${o.kcal.toLocaleString("es-ES")} kcal</small></div>
@@ -280,14 +348,14 @@
         const partes = [{ n: "Liquidez", v: liq, c: Fin.COLOR_LIQ }].concat(Fin.CLASES.map(c => ({ n: c.nombre, v: Fin.totales(Fin.delaClase(P, c.id)).valor, c: c.color }))).filter(p => p.v > 0);
         return tarjeta("patrimonio", "Finanzas", `<div class="vd-tit">Patrimonio total</div><div class="vd-cifra">${eur0(T)}</div>
           <div class="vd-sub">${delta !== null ? `<span class="${cls(delta)}">${eurS0(delta)}</span> en 30 días` : "Patrimonio de hoy"}</div>
-          ${linea([{ vals: serie, color: "var(--c)", area: true }], 56)}
+          <div class="vd-fin-graf">${linea([{ vals: serie, color: "var(--c)", area: true }], 56)}</div>
           ${T > 0 ? `<div class="vd-reparto">${partes.map(p => `<div style="flex:${p.v};background:${p.c}"></div>`).join("")}</div>
             <div class="vd-ley">${partes.map(p => `<span><i style="background:${p.c}"></i>${p.n} ${Math.round(p.v / T * 100)}%</span>`).join("")}</div>` : ""}
           <div class="vd-tit" style="margin:18px 0 0">Este mes</div>
           <div class="vd-mini" style="margin-top:8px">
             <div><span>Ingresos</span><b>${eur0(ing)}</b></div>
             <div><span>Gastos</span><b>${eur0(gas)}</b></div>
-            <div><span>Tasa de ahorro</span><b class="${cls(ing - gas)}">${ing > 0 ? Math.round((ing - gas) / ing * 100) + " %" : eurS0(ing - gas)}</b></div>
+            <div>${et("Tasa de ahorro", "Ahorro")}<b class="${cls(ing - gas)}">${ing > 0 ? Math.round((ing - gas) / ing * 100) + " %" : eurS0(ing - gas)}</b></div>
           </div>`);
       }
 
@@ -306,10 +374,10 @@
           ${linea([{ vals: valores, color: "var(--c)", area: true }, { vals: costes, color: "var(--tinta-suave)", fina: true, discontinua: true }], 56)}
           <div class="vd-mini">
             <div><span>TIR anual</span><b class="${cls(tir)}">${pct(tir)}</b></div>
-            <div><span>Activos</span><b>${P.activos.filter(a => Fin.posicion(a).n > 0).length}</b></div>
+            <div class="vd-extra"><span>Activos</span><b>${P.activos.filter(a => Fin.posicion(a).n > 0).length}</b></div>
             <div><span>Beneficio</span><b class="${cls(ben)}">${t.coste > 0 ? pct(t.valor / t.coste - 1) : "–"}</b></div>
           </div>
-          ${mejores.length ? `<div class="vd-sep"></div><div class="vd-tit">Mayores posiciones</div>${mejores.map(x => `<div class="vd-top"><span>${esc(x.a.nombre)}</span><small>${eur0(x.v)}</small><b class="${cls(x.r)}">${pct(x.r)}</b></div>`).join("")}` : ""}`);
+          ${mejores.length ? `<div class="vd-extra"><div class="vd-sep"></div><div class="vd-tit">Mayores posiciones</div>${mejores.map(x => `<div class="vd-top"><span>${esc(x.a.nombre)}</span><small>${eur0(x.v)}</small><b class="${cls(x.r)}">${pct(x.r)}</b></div>`).join("")}</div>` : ""}`);
       }
 
       // ---------- Value Investing ----------
@@ -328,11 +396,11 @@
         return tarjeta("value", "Value Investing", `<div class="vd-tit">Cartera ficticia</div><div class="vd-cifra ${cls(media)}">${pct(media)}</div>
           <div class="vd-sub">${pos.length ? `${pos.filter(x => !x.p.salida).length} abiertas, ${pos.filter(x => x.p.salida).length} vendidas · 1.000 € en cada una` : "Aún sin compras ficticias"}</div>
           <div class="vd-mini">
-            <div><span>Infravaloradas</span><b class="vd-pos">${n.infra}</b></div>
-            <div><span>Bien valoradas</span><b>${n.bien}</b></div>
-            <div><span>Sobrevaloradas</span><b class="${n.sobre ? "vd-neg" : ""}">${n.sobre}</b></div>
+            <div>${et("Infravaloradas", "Infra")}<b class="vd-pos">${n.infra}</b></div>
+            <div>${et("Bien valoradas", "Justas")}<b>${n.bien}</b></div>
+            <div>${et("Sobrevaloradas", "Sobre")}<b class="${n.sobre ? "vd-neg" : ""}">${n.sobre}</b></div>
           </div>
-          ${top.length ? `<div class="vd-sep"></div><div class="vd-tit">Más potencial</div>${top.map(e => `<div class="vd-top"><span>${esc(e.nombre)}</span><small>${esc(e.ticker || "")}</small><b class="vd-pos">${pct(pot(e))}</b></div>`).join("")}` : ""}`, "vd-value");
+          ${top.length ? `<div class="vd-sep"></div><div class="vd-tit">Más potencial</div><div class="vd-tops">${top.slice(0, 3).map(e => `<div class="vd-top"><span>${esc(e.nombre)}</span><small>${esc(e.ticker || "")}</small><b class="vd-pos">${pct(pot(e))}</b></div>`).join("")}</div>` : ""}`, "vd-value");
       }
 
       function pintar() {
