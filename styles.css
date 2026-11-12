@@ -178,7 +178,14 @@ main.ancho { max-width: 760px; }
     box-shadow: 0 30px 80px rgba(0, 0, 0, .7);
   }
   .panel::before { display: none; }
-  body .pt-fab { right: max(28px, calc((100vw - 252px - var(--ancho)) / 2 - 40px)); bottom: 32px; }
+  body .pt-fab { right: 32px; bottom: 32px; }
+}
+/* Portátiles pequeños: barra lateral y márgenes algo más estrechos */
+@media (min-width: 1024px) and (max-width: 1359px) {
+  .app { grid-template-columns: 216px minmax(0, 1fr); }
+  .menu { padding-left: 10px; padding-right: 10px; }
+  .top, body[data-pantalla="vida"] .top { padding-left: 32px; padding-right: 32px; }
+  main { padding-left: 32px; padding-right: 32px; }
 }
 
 /* ============ PIEZAS COMUNES ============ */
@@ -307,4 +314,132 @@ body .pt-rangos button.on, body .iv-mini-seg button.on, body .hb-mini-seg button
 
 @media (prefers-reduced-motion: reduce) {
   * { transition: none !important; animation: none !important; }
+}
+
+/* =====================================================================
+   ORDENADOR: DISEÑO PROPIO DE CADA PANTALLA
+   En el móvil todo va en una columna. En el ordenador cada vista reparte
+   sus piezas en columnas, paneles laterales o cuadrículas.
+   (Usa :has() para saber qué vista está abierta.)
+   ===================================================================== */
+@media (min-width: 1024px) {
+  :root { --ancho: 1120px; }
+  main:not(.ancho) > div { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px 18px; align-items: start; }
+  main:not(.ancho) > div > * { grid-column: 1 / -1; margin-bottom: 0; min-width: 0; }
+  main:not(.ancho) .bloque { padding: 22px; }
+
+  /* Las pestañas de cada pantalla se convierten en una barra superior */
+  body main .hb-seg, body main .pt-seg, body main .al-seg, body main .gy-seg, body main .oc-seg, body main .iv-seg, body main .vj-seg, body main .vi-seg {
+    background: none; border: 0; border-bottom: 1px solid var(--linea); border-radius: 0; padding: 0; gap: 4px; justify-content: flex-start; margin-bottom: 8px;
+  }
+  body main .hb-seg button, body main .pt-seg button, body main .al-seg button, body main .gy-seg button, body main .oc-seg button, body main .iv-seg button, body main .vj-seg button, body main .vi-seg button {
+    flex: none; background: none !important; box-shadow: none !important; border-radius: 0; padding: 10px 16px 13px; font-size: 14.5px; color: var(--tinta-suave);
+  }
+  body main .hb-seg button:hover, body main .pt-seg button:hover, body main .al-seg button:hover, body main .gy-seg button:hover, body main .oc-seg button:hover, body main .iv-seg button:hover, body main .vj-seg button:hover, body main .vi-seg button:hover { color: var(--tinta); }
+  body main .hb-seg button.on, body main .pt-seg button.on, body main .al-seg button.on, body main .gy-seg button.on, body main .oc-seg button.on, body main .iv-seg button.on, body main .vj-seg button.on, body main .vi-seg button.on {
+    color: var(--tinta); box-shadow: inset 0 -2px 0 var(--naranja) !important;
+  }
+  body main .vi-seg button { flex-direction: row; gap: 8px; align-items: baseline; }
+  body main .vi-seg button i { order: 1; font-size: 13px; font-weight: 500; color: var(--tinta-suave); }
+
+  /* Botones grandes de añadir: tamaño natural, alineados a la izquierda */
+  body main .oc-anadir, body main .vj-boton, body main .al-anadir, body main .gy-anadir, body main .ag-anadir, body main .iv-boton {
+    justify-self: start; width: auto; padding: 12px 22px; margin: 0;
+  }
+
+  /* ---------- HÁBITOS ---------- */
+  body[data-pantalla="habitos"] main > div:has(> .hb-dias) > .bloque { grid-column: auto; }
+  body[data-pantalla="habitos"] .hb-dias { gap: 10px; }
+  body[data-pantalla="habitos"] .hb-dia { padding: 14px 0 12px; }
+  body[data-pantalla="habitos"] .hb-dia b { font-size: 20px; }
+  /* Tareas: una columna por categoría */
+  body[data-pantalla="habitos"] main > div:has(> .bloque .hb-nuevo) { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  body[data-pantalla="habitos"] main > div:has(> .bloque .hb-nuevo) > .bloque:not(:has(.hb-nuevo)) { grid-column: auto; }
+  /* Agenda: calendario fijo a la izquierda, el día a la derecha */
+  body[data-pantalla="habitos"] main > div:has(.ag-cal) { grid-template-columns: minmax(300px, 380px) minmax(0, 1fr); row-gap: 0; column-gap: 36px; }
+  body[data-pantalla="habitos"] main > div:has(.ag-cal) > * { grid-column: 2; margin-bottom: 8px; }
+  body[data-pantalla="habitos"] main > div:has(.ag-cal) > .hb-seg { grid-column: 1 / -1; margin-bottom: 22px; }
+  body[data-pantalla="habitos"] main > div:has(.ag-cal) > .bloque:has(.ag-cal) { grid-column: 1; grid-row: 2 / span 80; position: sticky; top: 140px; }
+  body[data-pantalla="habitos"] main > div:has(.ag-cal) > .ag-anadir { margin-top: 10px; }
+  body[data-pantalla="habitos"] .ag-dia-cab h3 { font-size: 24px; }
+  body[data-pantalla="habitos"] .ag-linea { grid-template-columns: 64px 1fr; }
+
+  /* ---------- FINANZAS ---------- */
+  body[data-pantalla="patrimonio"] main > div:has(> .pt-total) > .bloque { grid-column: auto; }
+  body[data-pantalla="patrimonio"] .pt-total { padding: 8px 2px 10px; }
+  body[data-pantalla="patrimonio"] .pt-total .cifra { font-size: 58px; }
+  body[data-pantalla="patrimonio"] .pt-dist { height: 10px; border-radius: 5px; }
+  /* Movimientos: resumen del mes en una fila; gastos e ingresos lado a lado */
+  body[data-pantalla="patrimonio"] main > div:has(> .pt-mes) > .bloque { grid-column: auto; }
+  body[data-pantalla="patrimonio"] main > div:has(> .pt-mes) > .bloque:has(.pt-cuadro),
+  body[data-pantalla="patrimonio"] main > div:has(> .pt-mes) > .bloque:has(> p:only-child) { grid-column: 1 / -1; }
+  body[data-pantalla="patrimonio"] .pt-cuadro { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  body[data-pantalla="patrimonio"] .pt-cuadro b { font-size: 24px; }
+  body[data-pantalla="patrimonio"] .pt-mes { justify-content: flex-start; gap: 16px; }
+  /* Evolución: el primer gráfico ancho, los otros dos juntos */
+  body[data-pantalla="patrimonio"] main > div:has(> .pt-graf) > .pt-graf ~ .pt-graf { grid-column: auto; }
+  body[data-pantalla="patrimonio"] main > div:has(> .pt-graf) > div:has(> .pt-rangos) { justify-content: flex-end; }
+
+  /* ---------- INVERSIONES ---------- */
+  body[data-pantalla="inversiones"] main > div:has(> .iv-total) > .iv-total { grid-column: 1; }
+  body[data-pantalla="inversiones"] main > div:has(> .iv-total) > .iv-tarjetas { grid-column: 2; align-self: end; margin-bottom: 14px; }
+  body[data-pantalla="inversiones"] .iv-total .cifra { font-size: 58px; }
+  body[data-pantalla="inversiones"] main > div:has(> .iv-barra-sup) > .bloque:has(.iv-fila) { grid-column: auto; }
+  body[data-pantalla="inversiones"] .bloque:has(> .iv-donut) { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 48px; align-items: center; padding: 34px; }
+  body[data-pantalla="inversiones"] .iv-donut { max-width: 400px; }
+
+  /* ---------- VALUE INVESTING ---------- */
+  body[data-pantalla="value"] main > div > .vi-filtros { grid-column: 1; margin: 0; }
+  body[data-pantalla="value"] main > div > .vi-filtros ~ .vi-dosb { grid-column: 2; }
+  body[data-pantalla="value"] main > div > .vi-emp { grid-column: auto; }
+  body[data-pantalla="value"] .vi-cartera .vi-mini { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+
+  /* ---------- ALIMENTACIÓN ---------- */
+  /* Día: peso, calorías y agua en una fila; las comidas en tres columnas */
+  body[data-pantalla="alimentacion"] main > div:has(> .al-peso) { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  body[data-pantalla="alimentacion"] main > div:has(> .al-peso) > .al-peso,
+  body[data-pantalla="alimentacion"] main > div:has(> .al-peso) > .bloque:has(.al-kcal),
+  body[data-pantalla="alimentacion"] main > div:has(> .al-peso) > .bloque:has(.al-agua-top) { grid-column: auto; align-self: stretch; }
+  body[data-pantalla="alimentacion"] main > div:has(> .al-peso) > .bloque:has(.al-cab) { grid-column: auto; }
+  body[data-pantalla="alimentacion"] main > div:has(> .al-peso) > .al-peso { flex-direction: column; align-items: flex-start; justify-content: space-between; gap: 18px; padding: 22px; }
+  body[data-pantalla="alimentacion"] .al-peso b { font-size: 40px; letter-spacing: -0.04em; }
+  body[data-pantalla="alimentacion"] .al-peso .al-chips { justify-content: flex-start; }
+  body[data-pantalla="alimentacion"] .bloque:has(.al-agua-top) { display: flex; flex-direction: column; justify-content: space-between; }
+  body[data-pantalla="alimentacion"] .al-dia { justify-content: flex-start; gap: 16px; }
+  body[data-pantalla="alimentacion"] main > div:has(> .al-stats) > .al-graf { grid-column: auto; }
+  body[data-pantalla="alimentacion"] .al-stats { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  body[data-pantalla="alimentacion"] .al-stats b { font-size: 26px; }
+  body[data-pantalla="alimentacion"] main > div:has(> .al-stats) > .al-rangos { justify-self: end; }
+  body[data-pantalla="alimentacion"] main > div:has(> .al-form) > .bloque { grid-column: auto; }
+
+  /* ---------- DEPORTE ---------- */
+  body[data-pantalla="gimnasio"] main > div:has(> .gy-nav):not(:has(.gy-cal)) > .gy-ej { grid-column: auto; }
+  body[data-pantalla="gimnasio"] .gy-nav { justify-content: flex-start; gap: 16px; }
+  /* Calendario a la izquierda, detalle y gráfico a la derecha */
+  body[data-pantalla="gimnasio"] main > div:has(.gy-cal) { grid-template-columns: minmax(340px, 430px) minmax(0, 1fr); }
+  body[data-pantalla="gimnasio"] main > div:has(.gy-cal) > .bloque:has(.gy-cal) { grid-column: 1; grid-row: span 2; }
+  body[data-pantalla="gimnasio"] main > div:has(.gy-cal) > .bloque:not(:has(.gy-cal)) { grid-column: 2; }
+  /* Rutina: los siete días en dos columnas */
+  body[data-pantalla="gimnasio"] .bloque:has(> .gy-fila[data-accion="editar-dia"]) { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); column-gap: 32px; }
+  body[data-pantalla="gimnasio"] .bloque:has(> .gy-fila[data-accion="editar-dia"]) > :not(.gy-fila) { grid-column: 1 / -1; }
+  /* Pádel: tabla por compañero y partidos lado a lado */
+  body[data-pantalla="gimnasio"] main > div:has(.gy-marcador) > .bloque:has(table),
+  body[data-pantalla="gimnasio"] main > div:has(.gy-marcador) > .bloque:has(> .gy-fila) { grid-column: auto; }
+  body[data-pantalla="gimnasio"] .gy-marcador b { font-size: 44px; }
+
+  /* ---------- OCIO ---------- */
+  body[data-pantalla="ocio"] main > div { grid-template-columns: minmax(0, 1fr); }
+  body[data-pantalla="ocio"] .oc-grid { grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 26px 18px; }
+  body[data-pantalla="ocio"] .oc-tit { font-size: 13.5px; }
+  body[data-pantalla="ocio"] .oc-top { display: flex; align-items: flex-end; justify-content: space-between; }
+  body[data-pantalla="ocio"] .oc-top .cifra { font-size: 52px; }
+  body[data-pantalla="ocio"] .bloque:has(> .oc-fila) { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); column-gap: 32px; }
+  body[data-pantalla="ocio"] .bloque:has(> .oc-fila) > .oc-fila:nth-child(2) { border-top: 0; }
+
+  /* ---------- VIAJES ---------- */
+  body[data-pantalla="viajes"] main > div:has(> .vj-pais), body[data-pantalla="viajes"] main > div:has(> .vj-viaje) { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  body[data-pantalla="viajes"] main > div > .vj-pais, body[data-pantalla="viajes"] main > div > .vj-viaje { grid-column: auto; margin: 0; }
+  body[data-pantalla="viajes"] .vj-cont { margin: 14px 2px 0; }
+  body[data-pantalla="viajes"] .vj-stats b { font-size: 30px; }
+  body[data-pantalla="viajes"] .vj-mapa { border-radius: 18px; }
 }
