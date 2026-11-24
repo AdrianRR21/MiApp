@@ -81,9 +81,34 @@
   .es-form .dos > div { flex:1; min-width:0; }
   .es-form .acc { display:flex; gap:8px; margin-top:20px; }
   .es-form .acc .boton { flex:1; margin:0; }
+  .es-calc { display:flex; align-items:baseline; gap:10px; flex-wrap:wrap; margin-top:12px; padding:14px 16px; border-radius:14px; background:var(--naranja-suave); }
+  .es-calc b { font-size:22px; font-weight:800; letter-spacing:-0.04em; color:var(--naranja); }
+  .es-calc span { font-size:13px; color:var(--tinta-suave); }
+  .es-form [hidden] { display:none !important; }
   .es-rapidos { display:flex; flex-wrap:wrap; gap:6px; margin-top:10px; }
   .es-rapidos button { border:1px solid var(--linea-2); background:none; color:var(--tinta); font:inherit; font-size:13px; padding:7px 12px; border-radius:999px; cursor:pointer; }
 
+  /* ===== Diseño nuevo (bloques de color) ===== */
+  .es-crono { background:var(--naranja) !important; color:var(--sobre-acento); border:0 !important; border-radius:32px !important; box-shadow:0 28px 56px -30px var(--naranja) !important; }
+  .es-crono::before { inset:auto -30% -60% auto !important; width:320px; height:320px !important; border-radius:50%; background:rgba(255,255,255,.14) !important; opacity:1 !important; }
+  .es-crono .es-estado, .es-crono.on .es-estado { color:inherit !important; opacity:.8; }
+  .es-crono .es-estado i, .es-crono.on .es-estado i { background:currentColor !important; box-shadow:none !important; }
+  .es-crono .es-reloj { color:inherit !important; font-weight:600; }
+  .es-crono .es-reloj .s { color:inherit !important; opacity:.5; }
+  .es-crono .es-materia { color:inherit; border-bottom-color:rgba(0,0,0,.2) !important; background:none !important; box-shadow:none !important; font-weight:600; }
+  .es-crono .es-materia::placeholder { color:inherit; opacity:.6; }
+  :root[data-tema="claro"] .es-crono .es-materia { border-bottom-color:rgba(255,255,255,.4) !important; }
+  .es-crono .boton { background:var(--sobre-acento) !important; color:var(--naranja) !important; box-shadow:none !important; }
+  .es-crono .boton.secundario { background:rgba(0,0,0,.14) !important; color:inherit !important; }
+  :root[data-tema="claro"] .es-crono .boton.secundario { background:rgba(255,255,255,.2) !important; }
+  .es-crono .es-descartar { color:inherit; opacity:.7; }
+  .es-hoy h2 { font-size:20px; font-weight:800; }
+  .es-fila b { font-family:var(--texto) !important; font-weight:800 !important; letter-spacing:-0.03em; }
+  .es-dia { border-radius:14px !important; }
+  .es-semana { border-radius:14px !important; background:var(--tinte); box-shadow:none !important; }
+  .es-semana b { color:var(--naranja) !important; font-family:var(--texto) !important; font-weight:800 !important; }
+  .es-mes h2 { font-size:22px !important; font-weight:800 !important; }
+  .es-mes button { border-radius:50% !important; border:0 !important; background:var(--papel-2) !important; }
   @media (min-width:700px) { .es-stats { grid-template-columns:repeat(4, minmax(0, 1fr)); } }
   @media (min-width:1024px) {
     body[data-pantalla="estudio"] main > div:has(> .es-crono) { grid-template-columns:minmax(0, 1.25fr) minmax(0, 1fr); }
@@ -155,7 +180,7 @@
         const c = d.crono, on = !!(c && c.inicio), hay = !!c;
         const t = Est.porDia(d), lun = lunesDe(hoy), diasSemana = ((aFecha(hoy).getDay() + 6) % 7) + 1;
         const semana = Est.rango(t, lun, hoy), media7 = Est.rango(t, sumarK(hoy, -6), hoy) / 7, racha = Est.racha(t, hoy);
-        const ses = d.sesiones.filter(s => s.fecha === hoy).sort((a, b) => (b.creado || 0) - (a.creado || 0));
+        const ses = d.sesiones.filter(s => s.fecha === hoy).sort(porHora);
         return `
           <div class="bloque es-crono ${on ? "on" : ""}">
             <div class="es-estado"><i></i>${on ? "Estudiando" : hay ? "En pausa" : "Cronómetro"}</div>
@@ -179,6 +204,7 @@
             <button class="es-anadir" data-accion="manual" data-k="${hoy}">Añadir tiempo a mano</button>
           </div>`;
       }
+      const porHora = (a, b) => (a.desde || "99") < (b.desde || "99") ? -1 : (a.desde || "99") > (b.desde || "99") ? 1 : (a.creado || 0) - (b.creado || 0);
       const filaSesion = s => `<div class="es-fila"><div class="izq"><div>${esc(s.materia || "Estudio")}</div>${s.desde ? `<div class="sub">${s.desde}${s.hasta ? " – " + s.hasta : ""}</div>` : `<div class="sub">Apuntado a mano</div>`}</div>
         <b>${fDur(s.min)}</b><button class="es-x" data-accion="borrar" data-id="${s.id}" aria-label="Borrar">×</button></div>`;
 
@@ -204,7 +230,7 @@
         const totalMes = Est.rango(t, clave(primero), finMes);
         const estudiados = Object.keys(t).filter(k => k.startsWith(mesCal) && t[k] > 0).length;
         const mejor = Object.keys(t).filter(k => k.startsWith(mesCal)).sort((a, b) => t[b] - t[a])[0];
-        const ses = d.sesiones.filter(s => s.fecha === diaSel);
+        const ses = d.sesiones.filter(s => s.fecha === diaSel).sort(porHora);
         return `
           <div class="bloque es-cal-b">
             <div class="es-mes"><button data-accion="mes" data-n="-1" aria-label="Mes anterior">‹</button><h2>${MESES[m - 1].charAt(0).toUpperCase() + MESES[m - 1].slice(1)} ${y}</h2><button data-accion="mes" data-n="1" aria-label="Mes siguiente" ${mesCal >= hoy.slice(0, 7) ? "disabled" : ""}>›</button></div>
@@ -284,29 +310,67 @@
       }
 
       // ---------- Formulario: añadir a mano ----------
+      // Dos formas: de hora a hora (por ejemplo de 9:00 a 10:00) o solo la duración
+      let modoManual = "horario";
       function hojaManual(k) {
         const f = document.createElement("div"); f.className = "panel-fondo";
+        const ahoraH = new Date().toTimeString().slice(0, 5);
         f.innerHTML = `<div class="panel es-form" role="dialog" aria-label="Añadir tiempo"><h2>Añadir tiempo</h2>
           <label>Día</label><input type="date" id="esF" value="${k}" max="${hoy}">
-          <div class="dos"><div><label>Horas</label><input id="esH" inputmode="numeric" placeholder="0" maxlength="2"></div>
-            <div><label>Minutos</label><input id="esM" inputmode="numeric" placeholder="0" maxlength="3"></div></div>
-          <div class="es-rapidos">${[30, 60, 90, 120, 180, 240].map(m => `<button data-min="${m}">${fDur(m)}</button>`).join("")}</div>
+          <div class="es-modo es-seg" style="margin:16px 0 0"><button data-modo="horario">De hora a hora</button><button data-modo="duracion">Solo duración</button></div>
+          <div class="es-m-horario">
+            <div class="dos"><div><label>Desde</label><input type="time" id="esDe" value="${k === hoy ? "" : "09:00"}" step="300"></div>
+              <div><label>Hasta</label><input type="time" id="esA" value="${k === hoy ? ahoraH : "10:00"}" step="300"></div></div>
+            <div class="es-calc" id="esCalc"></div>
+          </div>
+          <div class="es-m-duracion">
+            <div class="dos"><div><label>Horas</label><input id="esH" inputmode="numeric" placeholder="0" maxlength="2"></div>
+              <div><label>Minutos</label><input id="esM" inputmode="numeric" placeholder="0" maxlength="3"></div></div>
+            <div class="es-rapidos">${[30, 60, 90, 120, 180, 240].map(m => `<button data-min="${m}">${fDur(m)}</button>`).join("")}</div>
+          </div>
           <label>Materia (opcional)</label><input id="esMat" list="esMats2" maxlength="40" placeholder="Contabilidad, inglés…"><datalist id="esMats2">${materias().map(m => `<option value="${esc(m)}">`).join("")}</datalist>
           <div class="acc"><button class="boton secundario" data-h="cancelar">Cancelar</button><button class="boton" data-h="guardar">Guardar</button></div></div>`;
         raiz.appendChild(f);
+        const $ = q => f.querySelector(q);
+        const aMin = t => { const m = /^(\d{1,2}):(\d{2})/.exec(t || ""); return m ? +m[1] * 60 + +m[2] : null; };
+        const tramo = () => {   // minutos entre "desde" y "hasta" (si "hasta" es menor, pasa de medianoche)
+          const de = aMin($("#esDe").value), a = aMin($("#esA").value);
+          if (de === null || a === null) return 0;
+          return a > de ? a - de : a < de ? a + 1440 - de : 0;
+        };
+        const ponerModo = m => {
+          modoManual = m;
+          f.querySelectorAll("[data-modo]").forEach(b => b.classList.toggle("on", b.dataset.modo === m));
+          $(".es-m-horario").hidden = m !== "horario"; $(".es-m-duracion").hidden = m !== "duracion";
+          calc();
+        };
+        const calc = () => {
+          const min = tramo(), dia = $("#esF").value || k, ya = totalDia(dia);
+          $("#esCalc").innerHTML = min ? `<b>${fDur(min)}</b><span>${ya ? `Ese día llevarás ${fDur(ya + min)} en total` : "Primer estudio de ese día"}</span>` : `<span>Elige a qué hora empezaste y terminaste</span>`;
+        };
+        f.addEventListener("input", calc);
         f.addEventListener("click", e => {
+          const md = e.target.closest("[data-modo]"); if (md) return ponerModo(md.dataset.modo);
           const r = e.target.closest("[data-min]");
-          if (r) { const m = +r.dataset.min; f.querySelector("#esH").value = Math.floor(m / 60) || ""; f.querySelector("#esM").value = m % 60 || ""; return; }
+          if (r) { const m = +r.dataset.min; $("#esH").value = Math.floor(m / 60) || ""; $("#esM").value = m % 60 || ""; return; }
           if (e.target === f || e.target.dataset.h === "cancelar") return f.remove();
           if (e.target.dataset.h === "guardar") {
-            const min = (parseInt(f.querySelector("#esH").value) || 0) * 60 + (parseInt(f.querySelector("#esM").value) || 0);
-            if (min <= 0 || min > 24 * 60) { f.querySelector("#esH").style.borderColor = "var(--rojo)"; f.querySelector("#esM").style.borderColor = "var(--rojo)"; return; }
-            const fecha = f.querySelector("#esF").value || k;
-            d.sesiones.push({ id: nuevoId(), creado: Date.now(), fecha: fecha > hoy ? hoy : fecha, min, materia: f.querySelector("#esMat").value.trim() });
+            const fecha = $("#esF").value || k, ses = { id: nuevoId(), creado: Date.now(), fecha: fecha > hoy ? hoy : fecha, materia: $("#esMat").value.trim() };
+            if (modoManual === "horario") {
+              const min = tramo();
+              if (!min) { $("#esDe").style.borderColor = $("#esA").style.borderColor = "var(--rojo)"; return; }
+              Object.assign(ses, { min, desde: $("#esDe").value, hasta: $("#esA").value });
+            } else {
+              const min = (parseInt($("#esH").value) || 0) * 60 + (parseInt($("#esM").value) || 0);
+              if (min <= 0 || min > 24 * 60) { $("#esH").style.borderColor = $("#esM").style.borderColor = "var(--rojo)"; return; }
+              ses.min = min;
+            }
+            d.sesiones.push(ses);
             f.remove(); guardar(); pintar();
           }
         });
-        setTimeout(() => f.querySelector("#esH").focus(), 60);
+        ponerModo(modoManual);
+        setTimeout(() => (modoManual === "horario" ? $("#esDe") : $("#esH")).focus(), 60);
       }
 
       // ---------- Eventos ----------

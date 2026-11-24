@@ -4,16 +4,17 @@
    Para cambiarla, sustituye solo este archivo. */
 (() => {
   const css = `
-  .vd-resumen { color:var(--tinta-suave); font-size:14.5px; line-height:1.6; margin:-2px 2px 22px; }
-  .vd-resumen b { color:var(--tinta); font-weight:500; }
+  .vd-resumen { color:var(--tinta-suave); font-size:15px; line-height:1.6; margin:-4px 2px 20px; }
+  .vd-resumen b { color:var(--tinta); font-weight:700; }
   .vd-grid { display:grid; gap:14px; grid-template-columns:minmax(0, 1fr); }
-  .vd-card { position:relative; background:radial-gradient(120% 70% at 100% 0%, color-mix(in srgb, var(--c) 8%, transparent), transparent 62%), var(--papel); border:1px solid var(--linea); border-radius:20px; padding:18px 18px 20px; min-width:0; box-shadow:var(--sombra-tarjeta); transition:border-color .2s, transform .2s; }
-  .vd-card:hover { border-color:color-mix(in srgb, var(--c) 35%, var(--linea)); }
+  .vd-card { position:relative; background:linear-gradient(165deg, color-mix(in srgb, var(--c) 22%, var(--papel)) 0%, color-mix(in srgb, var(--c) 6%, var(--papel)) 55%, var(--papel) 100%); border:1px solid color-mix(in srgb, var(--c) 20%, transparent); border-radius:26px; padding:18px 18px 20px; min-width:0; box-shadow:var(--sombra-tarjeta); transition:border-color .2s, transform .2s; }
+  .vd-card:hover { border-color:color-mix(in srgb, var(--c) 45%, transparent); }
+  :root[data-tema="claro"] .vd-card { background:linear-gradient(165deg, color-mix(in srgb, var(--c) 15%, #fff) 0%, color-mix(in srgb, var(--c) 4%, #fff) 55%, #fff 100%); }
   /* Accesos rápidos a cada pantalla (solo en el móvil; en el ordenador está la barra lateral) */
   .vd-accesos { display:flex; gap:8px; overflow-x:auto; margin:0 -16px 18px; padding:2px 16px 4px; scrollbar-width:none; -webkit-overflow-scrolling:touch; }
   .vd-accesos::-webkit-scrollbar { display:none; }
-  .vd-accesos button { flex:none; display:flex; flex-direction:column; align-items:center; gap:7px; width:68px; border:0; background:none; color:var(--tinta-suave); font:inherit; font-size:11.5px; font-weight:500; padding:0; cursor:pointer; letter-spacing:-0.01em; }
-  .vd-accesos i { width:54px; height:54px; border-radius:18px; display:grid; place-items:center; background:var(--papel); border:1px solid var(--linea); color:var(--c); box-shadow:var(--sombra-tarjeta); transition:transform .15s; }
+  .vd-accesos button { flex:none; display:flex; flex-direction:column; align-items:center; gap:7px; width:68px; border:0; background:none; color:var(--tinta); font:inherit; font-size:11.5px; font-weight:600; padding:0; cursor:pointer; letter-spacing:-0.01em; }
+  .vd-accesos i { width:56px; height:56px; border-radius:19px; display:grid; place-items:center; background:var(--c); color:var(--sobre-acento); box-shadow:0 8px 20px -8px var(--c); transition:transform .15s; }
   .vd-accesos i svg { width:23px; height:23px; }
   .vd-accesos button:active i { transform:scale(.93); }
   .vd-accesos span { max-width:100%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
@@ -22,24 +23,25 @@
   @keyframes vdLatido { 50% { opacity:.3; } }
   .vd-vivo .s { opacity:.6; }
   .vd-estudio .vd-mini { grid-template-columns:repeat(2, minmax(0, 1fr)); }
-  .vd-cab { display:flex; align-items:center; gap:9px; margin-bottom:16px; }
-  .vd-cab i { width:8px; height:8px; border-radius:50%; background:var(--c); box-shadow:0 0 0 3px color-mix(in srgb, var(--c) 18%, transparent); flex:none; }
-  .vd-cab span { flex:1; font-size:11px; font-weight:500; letter-spacing:.14em; text-transform:uppercase; color:var(--tinta-suave); }
-  .vd-cab button { background:none; border:0; color:var(--tinta-suave); font:inherit; font-size:13px; font-weight:500; cursor:pointer; padding:4px 0 4px 8px; display:flex; align-items:center; gap:4px; }
-  .vd-cab button:hover { color:var(--c); }
-  .vd-cifra { font-size:34px; font-weight:600; letter-spacing:-0.05em; line-height:1; }
-  .vd-cifra small { font-size:15px; font-weight:500; letter-spacing:-0.02em; color:var(--tinta-suave); margin-left:4px; }
+  .vd-cab { display:flex; align-items:center; gap:10px; margin-bottom:16px; }
+  .vd-cab i { width:32px; height:32px; border-radius:11px; background:var(--c); color:var(--sobre-acento); display:grid; place-items:center; flex:none; box-shadow:0 6px 16px -6px var(--c); }
+  .vd-cab i svg { width:17px; height:17px; stroke-width:2.2; }
+  .vd-cab span { flex:1; min-width:0; font-size:14.5px; font-weight:700; letter-spacing:-0.02em; color:var(--tinta); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .vd-cab button { background:color-mix(in srgb, var(--c) 16%, transparent); border:0; color:var(--c); font:inherit; font-size:12.5px; font-weight:700; cursor:pointer; padding:6px 10px 6px 12px; border-radius:999px; display:flex; align-items:center; gap:3px; flex:none; }
+  .vd-cab button:hover { background:var(--c); color:var(--sobre-acento); }
+  .vd-cifra { font-size:40px; font-weight:800; letter-spacing:-0.055em; line-height:1; }
+  .vd-cifra small { font-size:15px; font-weight:600; letter-spacing:-0.02em; color:var(--tinta-suave); margin-left:4px; }
   .vd-sub { font-size:13px; color:var(--tinta-suave); margin-top:7px; line-height:1.5; }
   .vd-pos { color:var(--verde); } .vd-neg { color:var(--rojo); }
   .vd-vacio { color:var(--tinta-suave); font-size:14px; line-height:1.55; }
   .vd-vacio button { margin-top:12px; }
   .vd-mini { display:grid; grid-template-columns:repeat(3, minmax(0, 1fr)); gap:8px; margin-top:16px; }
-  .vd-mini div { background:var(--papel-2); border-radius:11px; padding:10px 11px; min-width:0; }
+  .vd-mini div { background:color-mix(in srgb, var(--c) 10%, var(--papel-2)); border-radius:14px; padding:10px 12px; min-width:0; }
   .vd-mini span { display:block; font-size:11.5px; line-height:1.3; color:var(--tinta-suave); }
-  .vd-mini b { display:block; font-size:15.5px; font-weight:600; letter-spacing:-0.025em; margin-top:3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .vd-mini b { display:block; font-size:16px; font-weight:800; letter-spacing:-0.03em; margin-top:3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
   .vd-linea { display:block; width:100%; height:64px; margin-top:16px; overflow:visible; }
   .vd-sep { height:1px; background:var(--linea); margin:16px 0; }
-  .vd-tit { font-size:11px; font-weight:500; letter-spacing:.12em; text-transform:uppercase; color:var(--tinta-tenue); margin:0 0 8px; }
+  .vd-tit { font-size:11px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--tinta-suave); margin:0 0 8px; }
 
   /* Hábitos */
   .vd-hab-cuerpo { display:grid; gap:20px; }
@@ -53,8 +55,8 @@
   .vd-check span { flex:1; font-size:15px; letter-spacing:-0.01em; }
   .vd-barras { display:flex; align-items:flex-end; gap:5px; height:86px; margin-top:16px; }
   .vd-barras div { flex:1; display:flex; flex-direction:column; align-items:center; gap:6px; height:100%; justify-content:flex-end; }
-  .vd-barras em { display:block; width:100%; max-width:22px; border-radius:5px; background:var(--c); min-height:3px; }
-  .vd-barras em.cero { background:var(--papel-2); }
+  .vd-barras em { display:block; width:100%; max-width:24px; border-radius:7px; background:var(--c); min-height:3px; }
+  .vd-barras em.cero { background:color-mix(in srgb, var(--c) 14%, var(--papel-2)); }
   .vd-barras span { font-size:10.5px; color:var(--tinta-tenue); font-family:var(--mono); }
   .vd-barras div.hoy span { color:var(--tinta); }
 
@@ -72,7 +74,7 @@
   .vd-tarea small { color:var(--tinta-tenue); font-size:12px; margin-left:auto; padding-left:8px; white-space:nowrap; }
 
   /* Deporte */
-  .vd-rutina { font-size:22px; font-weight:600; letter-spacing:-0.035em; }
+  .vd-rutina { font-size:24px; font-weight:800; letter-spacing:-0.04em; }
   .vd-estado { display:inline-flex; align-items:center; gap:6px; margin-top:8px; font-size:12px; font-weight:600; padding:4px 9px; border-radius:7px; background:var(--papel-2); color:var(--tinta-suave); }
   .vd-estado.hecho { background:color-mix(in srgb, var(--c) 16%, transparent); color:var(--c); }
   .vd-ejs { display:flex; flex-wrap:wrap; gap:6px; margin-top:14px; }
@@ -130,10 +132,10 @@
     .vd-grid { flex:1; min-height:0; grid-template-columns:repeat(4, minmax(0, 1fr)); grid-template-rows:repeat(2, minmax(0, 1fr)); gap:clamp(10px, 1.5vh, 16px); }
     .vd-ancha { grid-column:auto; }
     .vd-estudio .vd-barras { height:clamp(40px, 10vh, 110px); margin-top:clamp(6px, 1vh, 12px); }
-    .vd-card { overflow:hidden; display:flex; flex-direction:column; min-height:0; padding:clamp(13px, 2vh, 20px) clamp(14px, 1.3vw, 20px); border-radius:16px; }
+    .vd-card { overflow:hidden; display:flex; flex-direction:column; min-height:0; padding:clamp(13px, 2vh, 20px) clamp(14px, 1.3vw, 20px); border-radius:22px; }
     .vd-card > :not(.vd-cab) { flex:none; }
     .vd-cab { margin-bottom:clamp(8px, 1.4vh, 14px); }
-    .vd-cifra { font-size:clamp(22px, 3.3vh, 32px); }
+    .vd-cifra { font-size:clamp(24px, 3.8vh, 38px); }
     .vd-cifra small { font-size:clamp(12px, 1.5vh, 14px); }
     .vd-sub { font-size:clamp(11.5px, 1.45vh, 13px); margin-top:4px; }
     .vd-tit { margin-bottom:5px; }
@@ -229,7 +231,7 @@
     return `<svg class="vd-linea" style="height:${alto}px" viewBox="0 0 ${W} ${alto}" preserveAspectRatio="none" aria-hidden="true"><defs><linearGradient id="${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${c}" stop-opacity=".28"/><stop offset="1" stop-color="${c}" stop-opacity="0"/></linearGradient></defs>${g}</svg>`;
   }
   const tarjeta = (id, titulo, cuerpo, extra = "") => `<section class="vd-card ${extra}" style="--c:${HiperApp.color(id)}">
-    <div class="vd-cab"><i></i><span>${titulo}</span><button data-ir="${id}" aria-label="Abrir ${titulo}">Abrir ${flecha}</button></div>${cuerpo}</section>`;
+    <div class="vd-cab"><i>${HiperApp.icono(id)}</i><span>${titulo}</span><button data-ir="${id}" aria-label="Abrir ${titulo}">Abrir ${flecha}</button></div>${cuerpo}</section>`;
   const vacio = (texto, id, boton) => `<div class="vd-vacio">${texto}${boton ? `<br><button class="boton secundario" data-ir="${id}">${boton}</button>` : ""}</div>`;
 
   HiperApp.registrar({

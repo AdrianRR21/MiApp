@@ -85,6 +85,81 @@
   .gy-mover { background:var(--papel-2); border:0; color:var(--tinta-suave); width:32px; height:32px; border-radius:8px; cursor:pointer; font-size:14px; }
   .gy-peligro { background:none; border:0; color:var(--rojo); font:inherit; font-weight:600; margin-top:14px; cursor:pointer; padding:6px 0; }
   .panel { max-height:88vh; overflow-y:auto; }
+  /* ===== Diseño nuevo (bloques de color) ===== */
+  body .gy-nav { background:var(--papel); border-radius:999px; padding:5px; box-shadow:inset 0 0 0 1px var(--linea); }
+  body .gy-nav button { width:40px; height:40px; border-radius:50%; border:0; box-shadow:none; background:var(--papel-2); }
+  body .gy-nav h2 { font-size:19px; font-weight:800; }
+  .gy-hero { position:relative; overflow:hidden; background:var(--naranja); color:var(--sobre-acento); border-radius:30px; padding:22px; margin-bottom:14px; box-shadow:0 24px 48px -28px var(--naranja); }
+  .gy-hero::after { content:""; position:absolute; right:-40px; top:-70px; width:190px; height:190px; border-radius:50%; background:rgba(255,255,255,.13); pointer-events:none; }
+  .gy-hero > * { position:relative; z-index:1; }
+  .gy-hero.descanso { background:var(--tinte); color:var(--tinta); box-shadow:none; }
+  .gy-hero-arriba { display:flex; justify-content:space-between; align-items:center; gap:14px; }
+  .gy-hero .et { font-size:13px; font-weight:700; opacity:.72; }
+  .gy-hero h2 { margin:4px 0 0; font-size:34px; font-weight:800; letter-spacing:-0.055em; line-height:1; color:inherit; }
+  .gy-hero p { margin:8px 0 0; font-size:14px; line-height:1.45; opacity:.8; color:inherit; }
+  .gy-anillo { position:relative; width:92px; height:92px; flex:none; }
+  .gy-anillo svg { width:100%; height:100%; transform:rotate(-90deg); }
+  .gy-anillo div { position:absolute; inset:0; display:grid; place-content:center; text-align:center; }
+  .gy-anillo b { font-size:20px; font-weight:800; letter-spacing:-0.04em; line-height:1; }
+  .gy-anillo span { font-size:11px; font-weight:600; opacity:.75; }
+  .gy-hero .gy-cambiar { margin-top:16px; background:rgba(0,0,0,.14); border:0; color:inherit; font-weight:700; border-radius:999px; }
+  :root[data-tema="claro"] .gy-hero:not(.descanso) .gy-cambiar { background:rgba(255,255,255,.2); }
+  .gy-hero.descanso .gy-cambiar { background:var(--papel); }
+  .gy-hero .gy-vol { margin-top:16px; padding-top:14px; border-top:1px solid rgba(0,0,0,.15); display:flex; justify-content:space-between; align-items:baseline; font-size:13px; font-weight:600; }
+  .gy-hero .gy-vol b { font-size:26px; font-weight:800; letter-spacing:-0.05em; }
+  .gy-ejs { display:grid; gap:12px; margin-bottom:12px; }
+  .gy-ej { margin:0; }
+  .gy-ej .gy-cab { align-items:center; }
+  .gy-num { flex:none; width:36px; height:36px; border-radius:12px; display:grid; place-items:center; background:var(--tinte); color:var(--naranja); font-weight:800; font-size:16px; }
+  .gy-ej.completo .gy-num { background:var(--naranja); color:var(--sobre-acento); }
+  .gy-tit { flex:1; min-width:0; }
+  .gy-ej h2 { font-size:19px !important; font-weight:800; letter-spacing:-0.035em; line-height:1.15; }
+  .gy-prog { font-size:12px; font-weight:700; color:var(--tinta-suave); }
+  .gy-ej.completo .gy-prog { color:var(--naranja); }
+  .gy-ref { background:var(--papel-2); border-radius:12px; padding:9px 12px; margin:12px 0 8px !important; }
+  .gy-serie { grid-template-columns:30px 1fr 1fr 48px !important; }
+  .gy-etq { grid-template-columns:30px 1fr 1fr 48px !important; }
+  .gy-serie span { width:26px; height:26px; border-radius:50%; display:grid; place-items:center; background:var(--papel-2); font-weight:800; font-size:12px !important; color:var(--tinta) !important; }
+  .gy-serie input { border-radius:14px; font-weight:700; font-size:17px; }
+  .gy-ok { height:46px !important; border-radius:14px !important; }
+  .gy-serie.hecha span { background:var(--naranja); color:var(--sobre-acento) !important; }
+  .gy-btns button { border-radius:999px !important; font-weight:700 !important; }
+  .gy-rut-cab h2 { margin:4px 2px 4px; font-size:24px; font-weight:800; letter-spacing:-0.045em; }
+  .gy-rut-cab p { margin:0 2px 14px; color:var(--tinta-suave); font-size:14px; line-height:1.5; }
+  .gy-semana { display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:10px; }
+  .gy-dia-r { position:relative; text-align:left; border:0; font:inherit; cursor:pointer; min-height:120px; padding:15px; border-radius:22px; background:var(--naranja); color:var(--sobre-acento); display:flex; flex-direction:column; gap:4px; box-shadow:0 14px 30px -20px var(--naranja); }
+  .gy-dia-r .d { font-size:12px; font-weight:800; text-transform:uppercase; letter-spacing:.08em; opacity:.7; }
+  .gy-dia-r b { font-size:19px; font-weight:800; letter-spacing:-0.04em; line-height:1.15; }
+  .gy-dia-r .e { font-size:12px; opacity:.75; line-height:1.4; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; }
+  .gy-dia-r .n { position:absolute; top:12px; right:12px; min-width:24px; height:24px; border-radius:999px; display:grid; place-items:center; font-size:12px; font-weight:800; background:rgba(0,0,0,.15); }
+  .gy-dia-r.libre { background:var(--papel); color:var(--tinta); box-shadow:inset 0 0 0 1.5px var(--linea-2); }
+  .gy-dia-r.libre b { color:var(--tinta-suave); }
+  .gy-dia-r.hoy { outline:3px solid var(--tinta); outline-offset:2px; }
+  .gy-marc-b { background:var(--naranja); color:var(--sobre-acento); border-radius:30px; padding:24px 16px 20px; margin-bottom:12px; box-shadow:0 24px 48px -28px var(--naranja); }
+  .gy-marc-b .gy-marcador b { font-size:40px; font-weight:800; letter-spacing:-0.05em; color:inherit !important; }
+  .gy-marc-b .gy-marcador span { color:inherit; opacity:.75; font-weight:600; }
+  .gy-marc-b .gy-marcador .g { background:rgba(0,0,0,.14); border-radius:18px; padding:6px 12px; }
+  .gy-marc-p { margin:16px 0 0; text-align:center; font-size:14px; opacity:.85; }
+  .gy-marc-p b { font-weight:800; }
+  @media (min-width:700px) { .gy-semana { grid-template-columns:repeat(4, minmax(0, 1fr)); } }
+  @media (min-width:1024px) {
+    body[data-pantalla="gimnasio"] main > div:has(> .gy-hero) > .gy-nav { width:max-content; gap:14px; }
+    body[data-pantalla="gimnasio"] main > div > .gy-hero { padding:30px; margin:0; }
+    body[data-pantalla="gimnasio"] main > div > .gy-hero h2 { font-size:48px; }
+    body[data-pantalla="gimnasio"] main > div > .gy-hero .gy-anillo { width:120px; height:120px; }
+    body[data-pantalla="gimnasio"] .gy-hero .gy-cambiar { max-width:360px; }
+    body[data-pantalla="gimnasio"] .gy-ejs { grid-template-columns:repeat(2, minmax(0, 1fr)); align-items:start; margin:0; }
+    body[data-pantalla="gimnasio"] main > div > .gy-anadir { justify-self:start; width:auto; padding:13px 26px; }
+    body[data-pantalla="gimnasio"] .gy-semana { grid-template-columns:repeat(7, minmax(0, 1fr)); }
+    body[data-pantalla="gimnasio"] .gy-dia-r { min-height:200px; }
+    body[data-pantalla="gimnasio"] main > div:has(> .gy-marc-b) > .gy-marc-b { margin:0; }
+    body[data-pantalla="gimnasio"] main > div:has(> .gy-marc-b) > .bloque { grid-column:auto; }
+    body[data-pantalla="gimnasio"] main > div:has(> .gy-marc-b) > .gy-anadir { justify-self:start; width:auto; padding:13px 26px; }
+    body[data-pantalla="gimnasio"] main > div:has(.gy-cal) { grid-template-columns:minmax(340px, 430px) minmax(0, 1fr); }
+    body[data-pantalla="gimnasio"] main > div:has(.gy-cal) > .bloque:has(.gy-cal) { grid-column:1; grid-row:span 2; }
+    body[data-pantalla="gimnasio"] main > div:has(.gy-cal) > .bloque:not(:has(.gy-cal)) { grid-column:2; }
+    body[data-pantalla="gimnasio"] main > div:has(.gy-cal) > .gy-nav { width:max-content; gap:14px; }
+  }
   /* Descanso entre series */
   .gy-cab-der { display:flex; align-items:center; gap:6px; flex:none; }
   .gy-desc-btn { display:inline-flex; align-items:center; gap:5px; border:0; background:var(--papel-2); color:var(--tinta-suave); font:inherit; font-family:var(--mono); font-size:12.5px; font-weight:500; padding:6px 9px; border-radius:999px; cursor:pointer; }
@@ -271,21 +346,30 @@
               <input inputmode="numeric" data-campo="reps" value="${esc(s.reps)}" placeholder="${r ? num(r.reps) : "reps"}" aria-label="Repeticiones serie ${j + 1}">
               <button class="gy-ok" data-accion="ok" data-e="${i}" data-s="${j}" aria-label="Serie hecha">${tick}</button></div>`;
           }).join("");
-          return `<div class="bloque gy-ej"><div class="gy-cab"><h2>${esc(nombreEj(e.ex))}</h2><div class="gy-cab-der"><button class="gy-desc-btn" data-accion="descanso" data-ex="${e.ex}" aria-label="Descanso entre series">${reloj}${mmss(descansoDe(e.ex))}</button><button class="gy-x" data-accion="quitar-ej" data-e="${i}" aria-label="Quitar de hoy">×</button></div></div>
+          const hechas = e.series.filter(x => x.hecho).length;
+          return `<div class="bloque gy-ej ${hechas && hechas === e.series.length ? "completo" : ""}"><div class="gy-cab"><span class="gy-num">${i + 1}</span><div class="gy-tit"><h2>${esc(nombreEj(e.ex))}</h2><span class="gy-prog">${hechas}/${e.series.length} series</span></div><div class="gy-cab-der"><button class="gy-desc-btn" data-accion="descanso" data-ex="${e.ex}" aria-label="Descanso entre series">${reloj}${mmss(descansoDe(e.ex))}</button><button class="gy-x" data-accion="quitar-ej" data-e="${i}" aria-label="Quitar de hoy">×</button></div></div>
             ${ref}<div class="gy-etq"><span></span><span>kg</span><span>reps</span><span></span></div>${filas}
             <div class="gy-btns"><button data-accion="menos-serie" data-e="${i}">− Serie</button><button data-accion="mas-serie" data-e="${i}">+ Serie</button></div></div>`;
         }).join("");
 
         const vol = volumenSesion(d.sesiones[diaSel]), ns = seriesSesion(d.sesiones[diaSel]);
+        const totS = p.ejercicios.reduce((t, e) => t + e.series.length, 0), hechasS = p.ejercicios.reduce((t, e) => t + e.series.filter(x => x.hecho).length, 0);
+        const R = 40, C = 2 * Math.PI * R, fr = totS ? hechasS / totS : 0;
         return nav + `
-          <div class="bloque">
-            <div class="gy-cab"><div><h2>${descanso ? "Descanso" : esc(p.nombre)}</h2>
-              <div class="gy-sub">${descanso ? "No tienes rutina para este día. Si entrenas igualmente, elige qué vas a hacer." : `Rutina del ${DIAS[p.plan] ? DIAS[p.plan].toLowerCase() : "día"}`.replace("Rutina del día", "Ejercicios que tú elijas")}</div></div></div>
+          <div class="gy-hero ${descanso ? "descanso" : ""}">
+            <div class="gy-hero-arriba">
+              <div class="gy-hero-txt">
+                <div class="et">${descanso ? "Hoy toca" : `Rutina del ${DIAS[p.plan] ? DIAS[p.plan].toLowerCase() : "día"}`.replace("Rutina del día", "Entreno libre")}</div>
+                <h2>${descanso ? "Descanso" : esc(p.nombre)}</h2>
+                ${descanso ? `<p>No tienes rutina para este día. Si entrenas igualmente, elige qué vas a hacer.</p>` : ""}
+              </div>
+              ${totS ? `<div class="gy-anillo"><svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="${R}" fill="none" stroke="currentColor" stroke-opacity=".2" stroke-width="10"/><circle cx="50" cy="50" r="${R}" fill="none" stroke="currentColor" stroke-width="10" stroke-linecap="round" stroke-dasharray="${C * fr} ${C}"/></svg><div><b>${hechasS}/${totS}</b><span>series</span></div></div>` : ""}
+            </div>
             ${!guardada ? `<select class="gy-cambiar" data-accion="plan" aria-label="Cambiar rutina">${opciones}</select>` : ""}
-            ${ns ? `<div class="gy-vol" style="margin-top:14px"><span class="etiqueta">Volumen de hoy</span><span><b id="gyVol">${fN(vol, 0)}</b> <span class="etiqueta">kg en <span id="gySeries">${ns}</span> series</span></span></div>` : `<div id="gyVolHueco"></div>`}
+            ${ns ? `<div class="gy-vol"><span>Volumen</span><span><b id="gyVol">${fN(vol, 0)}</b> kg en <span id="gySeries">${ns}</span> series</span></div>` : `<div id="gyVolHueco"></div>`}
           </div>
-          ${ejercicios}
-          ${!descanso || p.plan === "libre" ? `<button class="gy-anadir" data-accion="anadir-ej">Añadir ejercicio${p.ejercicios.length ? " a este día" : ""}</button>` : ""}`;
+          <div class="gy-ejs">${ejercicios}</div>
+          ${!descanso || p.plan === "libre" ? `<button class="gy-anadir" data-accion="anadir-ej">+ Añadir ejercicio${p.ejercicios.length ? " a este día" : ""}</button>` : ""}`;
       }
 
       // ---------- Vista: calendario ----------
@@ -342,11 +426,13 @@
 
       // ---------- Vista: rutina ----------
       function vistaRutina() {
-        return `<div class="bloque"><h2>Tu semana</h2><div class="gy-sub" style="margin-bottom:6px">Toca un día para ponerle nombre y ejercicios. Los días sin rutina son de descanso.</div>
-          ${DIAS.map((n, i) => { const r = d.rutina[i];
-            return `<button class="gy-fila" data-accion="editar-dia" data-i="${i}"><div class="izq"><div>${n}</div>
-              <div class="sub">${r ? r.ejercicios.map(nombreEj).map(esc).join(", ") || "Sin ejercicios" : "Descanso"}</div></div>
-              <div class="der ${r ? "" : "gy-desc"}">${r ? esc(r.nombre) : "–"}</div></button>`; }).join("")}</div>`;
+        const hoyDia = (aFecha(hoy).getDay() + 6) % 7;
+        return `<div class="gy-rut-cab"><h2>Tu semana</h2><p>Toca un día para ponerle nombre y ejercicios. Los días sin rutina son de descanso.</p></div>
+          <div class="gy-semana">${DIAS.map((n, i) => { const r = d.rutina[i];
+            return `<button class="gy-dia-r ${r ? "" : "libre"} ${i === hoyDia ? "hoy" : ""}" data-accion="editar-dia" data-i="${i}">
+              <span class="d">${n.slice(0, 3)}</span><b>${r ? esc(r.nombre) : "Descanso"}</b>
+              <span class="e">${r ? (r.ejercicios.length ? r.ejercicios.map(nombreEj).map(esc).join(" · ") : "Sin ejercicios") : "Toca para añadir"}</span>
+              ${r ? `<span class="n">${r.ejercicios.length}</span>` : ""}</button>`; }).join("")}</div>`;
       }
 
       // ---------- Vista: pádel ----------
@@ -358,14 +444,14 @@
         const tabla = Object.entries(porComp).sort((a, b) => (b[1].V + b[1].E + b[1].D) - (a[1].V + a[1].E + a[1].D)).map(([n, x]) => {
           const t = x.V + x.E + x.D; return `<tr><td>${esc(n)}</td><td>${t}</td><td>${x.V}</td><td>${x.E}</td><td>${x.D}</td><td>${Math.round(x.V / t * 100)}%</td></tr>`; }).join("");
         return `
-          <div class="bloque">
+          <div class="gy-marc-b">
             <div class="gy-marcador">
               <div><b>${ps.length}</b><span>Jugados</span></div>
               <div class="g"><b>${c.V}</b><span>Ganados</span></div>
               <div><b>${c.E}</b><span>Empatados</span></div>
               <div><b>${c.D}</b><span>Perdidos</span></div>
             </div>
-            ${ps.length ? `<p style="margin:14px 0 0;text-align:center">Ganas el ${Math.round(c.V / ps.length * 100)} % de tus partidos.</p>` : ""}
+            ${ps.length ? `<p class="gy-marc-p">Ganas el <b>${Math.round(c.V / ps.length * 100)} %</b> de tus partidos</p>` : ""}
           </div>
           <button class="gy-anadir" data-accion="nuevo-partido">Apuntar partido</button>
           ${ps.length ? `<div class="bloque"><h2>Por compañero</h2><table class="gy-tabla"><tr><th></th><th>PJ</th><th>G</th><th>E</th><th>P</th><th>% G</th></tr>${tabla}</table></div>

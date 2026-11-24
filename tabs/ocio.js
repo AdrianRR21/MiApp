@@ -58,6 +58,54 @@
   .oc-elegido .oc-mini { width:64px; }
   .oc-acciones { display:flex; gap:8px; margin-top:20px; }
   .oc-acciones .boton { flex:1; margin:0; }
+  /* ===== Diseño nuevo (bloques de color) ===== */
+  .oc-hero { position:relative; overflow:hidden; border-radius:30px; background:var(--naranja); color:var(--sobre-acento); margin-bottom:14px; box-shadow:0 24px 48px -28px var(--naranja); }
+  .oc-hero.con-img { background:#111; color:#fff; }
+  .oc-hero-fondo { position:absolute; inset:-30px; background-size:cover; background-position:center; filter:blur(28px) saturate(1.4); opacity:.75; transform:scale(1.1); }
+  .oc-hero.con-img::after { content:""; position:absolute; inset:0; background:linear-gradient(90deg, rgba(0,0,0,.55), rgba(0,0,0,.2)); }
+  .oc-hero-dentro { position:relative; z-index:1; display:flex; gap:18px; align-items:center; padding:20px; }
+  .oc-hero-poster { flex:none; width:112px; aspect-ratio:2/3; border:0; padding:0; border-radius:14px; overflow:hidden; cursor:pointer; background:rgba(0,0,0,.18); box-shadow:0 18px 36px -12px rgba(0,0,0,.6); position:relative; }
+  .oc-hero-poster img { width:100%; height:100%; object-fit:cover; display:block; }
+  .oc-hero-poster .sin { position:absolute; inset:0; display:grid; place-items:center; font-size:44px; font-weight:800; color:inherit; opacity:.6; }
+  .oc-hero-txt { min-width:0; flex:1; }
+  .oc-hero .cifra { font-size:56px; line-height:.95; color:inherit; letter-spacing:-0.06em; }
+  .oc-hero .et { font-size:13.5px; font-weight:700; opacity:.75; margin-top:4px; }
+  .oc-hero .oc-stats { color:inherit !important; margin-top:12px; gap:16px; }
+  .oc-hero .oc-stats span { opacity:.8; font-weight:600; }
+  .oc-hero .oc-stats b { color:inherit !important; font-size:18px; font-weight:800; }
+  .oc-mejor { margin-top:12px; padding:10px 12px; border-radius:16px; background:rgba(0,0,0,.16); display:grid; grid-template-columns:minmax(0, 1fr) auto; column-gap:8px; align-items:center; }
+  :root[data-tema="claro"] .oc-hero:not(.con-img) .oc-mejor { background:rgba(255,255,255,.2); }
+  .oc-mejor span { grid-column:1 / -1; font-size:11px; font-weight:700; opacity:.7; text-transform:uppercase; letter-spacing:.08em; }
+  .oc-mejor b { font-size:15px; font-weight:800; letter-spacing:-0.02em; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .oc-mejor i { font-style:normal; font-weight:800; font-size:14px; }
+  .oc-grid { grid-template-columns:repeat(2, minmax(0, 1fr)) !important; gap:20px 14px !important; }
+  .oc-poster { border-radius:18px !important; background:linear-gradient(160deg, var(--tinte-2), var(--tinte)) !important; box-shadow:var(--sombra-poster) !important; }
+  .oc-poster .sin { font-size:64px !important; font-weight:800 !important; color:var(--naranja) !important; opacity:.55; }
+  .oc-nota { top:8px !important; right:8px !important; border-radius:999px !important; padding:4px 9px !important; font-weight:800 !important; font-size:13px !important; background:var(--naranja) !important; color:var(--sobre-acento) !important; }
+  .oc-nota::before { color:inherit !important; }
+  .oc-tit { font-size:14.5px !important; font-weight:700 !important; margin-top:10px !important; letter-spacing:-0.02em !important; }
+  .oc-anio-grupo { font-size:26px !important; font-weight:800 !important; letter-spacing:-0.05em !important; color:var(--tinta) !important; margin:26px 2px 12px !important; }
+  .oc-anio-grupo::after { display:none; }
+  .oc-orden { border-radius:999px !important; }
+  .oc-orden button { border-radius:999px !important; }
+  .oc-chips button { border-radius:999px !important; font-weight:600 !important; }
+  .oc-chips button.on { background:var(--naranja) !important; border-color:var(--naranja) !important; color:var(--sobre-acento) !important; }
+  .oc-lista { display:grid; gap:10px; }
+  .oc-lista > p { color:var(--tinta-suave); text-align:center; padding:24px; border:1.5px dashed var(--linea-2); border-radius:22px; }
+  .oc-lista .oc-fila { border:0 !important; background:var(--papel); border-radius:20px; padding:10px 14px 10px 10px !important; box-shadow:inset 0 0 0 1px var(--linea), var(--sombra-tarjeta); }
+  .oc-lista .oc-mini { width:54px !important; border-radius:10px !important; }
+  .oc-visto { border:0 !important; background:var(--naranja) !important; color:var(--sobre-acento) !important; border-radius:999px !important; font-weight:700 !important; padding:8px 14px !important; }
+  @media (min-width:600px) { .oc-grid { grid-template-columns:repeat(3, minmax(0, 1fr)) !important; } }
+  @media (min-width:1024px) {
+    body[data-pantalla="ocio"] main > div { grid-template-columns:minmax(0, 1fr); }
+    body[data-pantalla="ocio"] .oc-grid { grid-template-columns:repeat(6, minmax(0, 1fr)) !important; gap:28px 18px !important; }
+    body[data-pantalla="ocio"] .oc-hero-dentro { padding:28px; gap:28px; }
+    body[data-pantalla="ocio"] .oc-hero-poster { width:150px; }
+    body[data-pantalla="ocio"] .oc-hero .cifra { font-size:80px; }
+    body[data-pantalla="ocio"] .oc-mejor { max-width:420px; }
+    body[data-pantalla="ocio"] main > div > .oc-anadir { justify-self:start; width:auto; padding:13px 28px; }
+    body[data-pantalla="ocio"] .oc-lista { grid-template-columns:repeat(2, minmax(0, 1fr)); }
+  }
   .oc-nota-txt { font-size:13.5px; color:var(--tinta-suave); line-height:1.55; margin:10px 0 0; }
   .oc-nota-txt ol { padding-left:20px; margin:8px 0; }
   .oc-peligro { background:none; border:0; color:var(--rojo); font:inherit; font-weight:600; margin-top:14px; cursor:pointer; padding:6px 0; }
@@ -146,9 +194,17 @@
           const grupos = []; xs.forEach(x => { const a = (x.fecha || "").slice(0, 4) || "Sin fecha"; const g = grupos.find(g => g.a === a); if (g) g.xs.push(x); else grupos.push({ a, xs: [x] }); });
           rejilla = grupos.map(g => `<div class="oc-anio-grupo">${g.a} · ${g.xs.length}</div><div class="oc-grid">${g.xs.map(tarjeta).join("")}</div>`).join("");
         } else rejilla = `<div class="oc-grid">${xs.map(tarjeta).join("")}</div>`;
-        return `<div class="oc-top">
-            <div><div class="cifra">${xs.length}</div><div class="etiqueta">${xs.length === 1 ? T.uno : T.varios} ${tipo === "libro" ? "leídos" : tipo === "peli" ? "vistas" : "vistas"}</div>
-              ${xs.length ? `<div class="oc-stats"><span><b>${media !== null ? fNota(Math.round(media * 10) / 10) : "–"}</b>nota media</span><span><b>${delAnio}</b>en ${esteAnio}</span>${mejor ? `<span style="min-width:0;flex:1"><b style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(mejor.titulo)}</b>la mejor</span>` : ""}</div>` : ""}</div>
+        const verbo = tipo === "libro" ? "leídos" : "vistas";
+        return `<div class="oc-hero ${mejor && mejor.img ? "con-img" : ""}">
+            ${mejor && mejor.img ? `<div class="oc-hero-fondo" style="background-image:url('${esc(mejor.img)}')"></div>` : ""}
+            <div class="oc-hero-dentro">
+              ${mejor ? `<button class="oc-hero-poster" data-accion="editar" data-id="${mejor.id}" aria-label="${esc(mejor.titulo)}">${poster(mejor)}</button>` : ""}
+              <div class="oc-hero-txt">
+                <div class="cifra">${xs.length}</div><div class="et">${xs.length === 1 ? T.uno : T.varios} ${verbo}</div>
+                ${xs.length ? `<div class="oc-stats"><span><b>${media !== null ? fNota(Math.round(media * 10) / 10) : "–"}</b>nota media</span><span><b>${delAnio}</b>en ${esteAnio}</span></div>` : ""}
+                ${mejor ? `<div class="oc-mejor"><span>Tu mejor nota</span><b>${esc(mejor.titulo)}</b><i>★ ${fNota(mejor.nota)}</i></div>` : ""}
+              </div>
+            </div>
           </div>
           <button class="oc-anadir" data-accion="anadir" data-tipo="${tipo}" data-estado="visto">Añadir ${T.uno}</button>
           ${xs.length > 1 ? `<div style="display:flex;justify-content:flex-end;margin:-4px 0 10px"><div class="oc-orden"><button class="${orden === "fecha" ? "on" : ""}" data-accion="orden" data-o="fecha">Recientes</button><button class="${orden === "nota" ? "on" : ""}" data-accion="orden" data-o="nota">Mejor nota</button></div></div>` : ""}
@@ -159,10 +215,10 @@
       function vistaProximo() {
         const xs = d.items.filter(x => x.estado === "pendiente" && (filtro === "todo" || x.tipo === filtro)).sort((a, b) => a.creado - b.creado);
         const total = d.items.filter(x => x.estado === "pendiente").length;
-        return `<div class="oc-top"><div><div class="cifra">${total}</div><div class="etiqueta">en tu lista</div></div></div>
+        return `<div class="oc-hero"><div class="oc-hero-dentro"><div class="oc-hero-txt"><div class="cifra">${total}</div><div class="et">en tu lista para ver o leer</div></div></div></div>
           <button class="oc-anadir" data-accion="anadir" data-tipo="${filtro === "todo" ? "peli" : filtro}" data-estado="pendiente">Añadir a la lista</button>
           <div class="oc-chips">${[["todo", "Todo"], ["peli", "Pelis"], ["serie", "Series"], ["libro", "Libros"]].map(([k, n]) => `<button class="${filtro === k ? "on" : ""}" data-accion="filtro" data-f="${k}">${n}</button>`).join("")}</div>
-          <div class="bloque">${xs.length ? xs.map(x => `<div class="oc-fila">
+          <div class="oc-lista">${xs.length ? xs.map(x => `<div class="oc-fila">
             <div class="oc-mini">${poster(x, "mini")}</div>
             <div class="izq"><div>${esc(x.titulo)}</div><div class="sub">${TIPOS[x.tipo].uno.charAt(0).toUpperCase() + TIPOS[x.tipo].uno.slice(1)}${x.autor ? ", " + esc(x.autor) : x.anio ? ", " + esc(x.anio) : ""}</div></div>
             <button class="oc-visto" data-accion="ya-visto" data-id="${x.id}">${x.tipo === "libro" ? "Leído" : "Visto"}</button>

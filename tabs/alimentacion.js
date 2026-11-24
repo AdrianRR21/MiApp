@@ -85,6 +85,61 @@
   .al-leyenda span { display:inline-flex; align-items:center; gap:6px; }
   .al-leyenda i { width:10px; height:3px; border-radius:2px; display:inline-block; }
   .panel { max-height:88vh; overflow-y:auto; }
+    /* ===== Diseño nuevo (bloques de color) ===== */
+  .al-dia { background:var(--papel); border-radius:999px; padding:5px; box-shadow:inset 0 0 0 1px var(--linea); }
+  body .al-dia button { width:40px; height:40px; border-radius:50%; border:0; box-shadow:none; background:var(--papel-2); }
+  body .al-dia h2 { font-size:19px; font-weight:800; }
+  .al-hero { display:grid; grid-template-columns:auto minmax(0, 1fr); gap:20px; align-items:center; background:var(--naranja); color:var(--sobre-acento); border-radius:30px; padding:22px; margin-bottom:12px; box-shadow:0 24px 48px -28px var(--naranja); position:relative; overflow:hidden; }
+  .al-hero.pasado { background:var(--rojo); box-shadow:0 24px 48px -28px var(--rojo); color:#fff; }
+  .al-hero::after { content:""; position:absolute; left:-50px; bottom:-80px; width:200px; height:200px; border-radius:50%; background:rgba(255,255,255,.12); pointer-events:none; }
+  .al-hero > * { position:relative; z-index:1; }
+  .al-hero .al-anillo { width:124px; height:124px; }
+  .al-hero .al-anillo span { color:inherit; opacity:.75; font-weight:600; }
+  .al-hero .al-anillo b { font-size:28px; font-weight:800; letter-spacing:-0.05em; }
+  .al-hero .et { font-size:13px; font-weight:700; opacity:.72; }
+  .al-hero .big { font-size:46px; font-weight:800; letter-spacing:-0.06em; line-height:1; margin:4px 0 12px; }
+  .al-hero .big small { font-size:16px; letter-spacing:-0.02em; opacity:.75; }
+  body .al-hero .al-peso { display:flex; flex-wrap:wrap; gap:6px; background:none !important; border:0 !important; box-shadow:none !important; padding:0; margin:0; width:auto; color:inherit; justify-content:flex-start; border-radius:0; }
+  .al-hero .al-peso span { font-size:12.5px; font-weight:700; padding:6px 10px; border-radius:999px; background:rgba(0,0,0,.14); }
+  :root[data-tema="claro"] .al-hero .al-peso span { background:rgba(255,255,255,.2); }
+  .al-macs { display:grid; grid-template-columns:repeat(3, minmax(0, 1fr)); gap:10px; margin-bottom:12px; }
+  .al-mac { background:var(--papel); border-radius:22px; padding:14px 8px 13px; text-align:center; box-shadow:inset 0 0 0 1px var(--linea), var(--sombra-tarjeta); }
+  .al-mac-an { position:relative; width:66px; height:66px; margin:0 auto 8px; }
+  .al-mac-an svg { width:100%; height:100%; transform:rotate(-90deg); }
+  .al-mac-an b { position:absolute; inset:0; display:grid; place-items:center; font-size:14px; font-weight:800; letter-spacing:-0.03em; }
+  .al-mac .n { font-size:13.5px; font-weight:700; }
+  .al-mac .v { font-size:11.5px; color:var(--tinta-suave); margin-top:2px; font-weight:600; }
+  .al-agua { position:relative; overflow:hidden; border-radius:26px; padding:18px; margin-bottom:12px; background:color-mix(in srgb, #40C8E0 12%, var(--papel)); box-shadow:inset 0 0 0 1px color-mix(in srgb, #40C8E0 25%, transparent); }
+  .al-agua-ola { position:absolute; left:0; top:0; bottom:0; width:var(--a); background:linear-gradient(90deg, color-mix(in srgb, #40C8E0 30%, transparent), color-mix(in srgb, #40C8E0 48%, transparent)); border-radius:0 26px 26px 0; transition:width .4s; }
+  .al-agua > *:not(.al-agua-ola) { position:relative; }
+  .al-agua .et { font-size:13px; font-weight:700; color:var(--tinta-suave); }
+  .al-agua b { font-size:30px; font-weight:800; letter-spacing:-0.05em; }
+  .al-agua b small { font-size:14px; font-weight:600; color:var(--tinta-suave); letter-spacing:-0.01em; }
+  .al-agua .pc { font-size:15px; font-weight:800; color:#1A9FB8; }
+  :root:not([data-tema="claro"]) .al-agua .pc { color:#40C8E0; }
+  .al-agua-top { display:flex; justify-content:space-between; align-items:flex-end; }
+  .al-agua-btns button { border-radius:999px !important; background:var(--papel) !important; color:var(--tinta) !important; font-weight:700 !important; }
+  .al-agua-btns button.mas { background:#40C8E0 !important; color:#00303A !important; }
+  .al-comidas { display:grid; gap:12px; }
+  .al-momento { margin:0; }
+  .al-momento .al-cab h2 { font-size:19px; font-weight:800; }
+  .al-momento .al-cab .v { font-size:13px; font-weight:800; color:var(--sobre-acento); background:var(--naranja); padding:4px 10px; border-radius:999px; }
+  .al-ini { flex:none; width:38px; height:38px; border-radius:12px; display:grid; place-items:center; background:var(--tinte); color:var(--naranja); font-weight:800; }
+  .al-fila .der { font-weight:800 !important; }
+  .al-fila .der span { font-size:12px; color:var(--tinta-suave); font-weight:600; }
+  @media (min-width:1024px) {
+    body[data-pantalla="alimentacion"] main > div:has(> .al-hero) { grid-template-columns:minmax(0, 1.2fr) minmax(0, 1fr); align-items:stretch; }
+    body[data-pantalla="alimentacion"] main > div > .al-dia { grid-column:1 / -1; width:max-content; gap:14px; }
+    body[data-pantalla="alimentacion"] main > div > .al-hero { grid-column:1; margin:0; padding:30px; }
+    body[data-pantalla="alimentacion"] main > div > .al-macs { grid-column:2; margin:0; }
+    body[data-pantalla="alimentacion"] main > div > .al-macs .al-mac { display:flex; flex-direction:column; justify-content:center; }
+    body[data-pantalla="alimentacion"] main > div > .al-agua { grid-column:1; margin:0; }
+    body[data-pantalla="alimentacion"] main > div > .al-anadir { grid-column:2; margin:0; align-self:center; }
+    body[data-pantalla="alimentacion"] main > div > .al-comidas { grid-column:1 / -1; grid-template-columns:repeat(auto-fill, minmax(320px, 1fr)); align-items:start; }
+    body[data-pantalla="alimentacion"] .al-mac-an { width:88px; height:88px; }
+    body[data-pantalla="alimentacion"] .al-hero .big { font-size:64px; }
+    body[data-pantalla="alimentacion"] .al-hero .al-anillo { width:160px; height:160px; }
+  }
   `;
   const st = document.createElement("style"); st.textContent = css; document.head.appendChild(st);
 
@@ -226,13 +281,17 @@
         }
 
         const t = totales(dd), o = dd.obj;
-        const frac = Math.min(t.kcal / o.kcal, 1), R = 50, C = 2 * Math.PI * R;
+        const frac = Math.min(t.kcal / o.kcal, 1), R = 52, C = 2 * Math.PI * R;
         const pasado = t.kcal > o.kcal * 1.05;
-        const anillo = `<div class="al-anillo"><svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="${R}" fill="none" stroke="var(--papel-2)" stroke-width="10"/>
-          <circle cx="60" cy="60" r="${R}" fill="none" stroke="${pasado ? "var(--rojo)" : "var(--naranja)"}" stroke-width="10" stroke-linecap="round" stroke-dasharray="${C * frac} ${C}"/></svg>
+        const anillo = `<div class="al-anillo"><svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="${R}" fill="none" stroke="currentColor" stroke-opacity=".2" stroke-width="12"/>
+          <circle cx="60" cy="60" r="${R}" fill="none" stroke="currentColor" stroke-width="12" stroke-linecap="round" stroke-dasharray="${C * frac} ${C}"/></svg>
           <div><b>${r0(t.kcal)}</b><span>de ${o.kcal} kcal</span></div></div>`;
-        const macro = (n, v, obj) => `<div class="al-macro"><div class="n"><span>${n}</span><span>${r0(v)} / ${obj} g</span></div>
-          <div class="al-barra"><div class="${v > obj * 1.1 ? "pasado" : ""}" style="width:${Math.min(v / obj, 1) * 100}%"></div></div></div>`;
+        // Cada macro, un anillo
+        const r2 = 30, c2 = 2 * Math.PI * r2;
+        const macro = (n, v, obj) => { const f = Math.min(v / obj, 1), mas = v > obj * 1.1;
+          return `<div class="al-mac"><div class="al-mac-an"><svg viewBox="0 0 72 72"><circle cx="36" cy="36" r="${r2}" fill="none" stroke="var(--tinte-2)" stroke-width="8"/>
+            <circle cx="36" cy="36" r="${r2}" fill="none" stroke="${mas ? "var(--rojo)" : "var(--naranja)"}" stroke-width="8" stroke-linecap="round" stroke-dasharray="${c2 * f} ${c2}"/></svg><b>${Math.round(v / obj * 100)}%</b></div>
+            <div class="n">${n}</div><div class="v">${r0(v)} / ${obj} g</div></div>`; };
         const restan = o.kcal - r0(t.kcal);
 
         const aguaPct = Math.min(dd.agua / o.agua, 1) * 100;
@@ -240,29 +299,30 @@
           const xs = dd.comidas.filter(x => x.momento === m);
           if (!xs.length) return "";
           const k = xs.reduce((s, x) => s + x.kcal, 0);
-          return `<div class="bloque"><div class="al-cab"><h2>${m}</h2><span class="v">${r0(k)} kcal</span></div>
-            ${xs.map(x => `<div class="al-fila"><div class="izq"><div>${esc(x.nombre)}</div>
-              <div class="sub">${r0(x.gramos)} g, P ${r0(x.p)} C ${r0(x.c)} G ${r0(x.g)}</div></div>
-              <div class="der">${r0(x.kcal)} kcal</div>
+          return `<div class="bloque al-momento"><div class="al-cab"><h2>${m}</h2><span class="v">${r0(k)} kcal</span></div>
+            ${xs.map(x => `<div class="al-fila"><span class="al-ini">${esc(x.nombre.trim().charAt(0).toUpperCase())}</span><div class="izq"><div>${esc(x.nombre)}</div>
+              <div class="sub">${r0(x.gramos)} g · P ${r0(x.p)} · C ${r0(x.c)} · G ${r0(x.g)}</div></div>
+              <div class="der">${r0(x.kcal)}<span> kcal</span></div>
               <button class="al-borrar" data-accion="borrar-comida" data-id="${x.id}" aria-label="Borrar">×</button></div>`).join("")}</div>`;
         }).join("");
 
         return nav + `
-          <button class="al-peso" data-accion="editar-peso">
-            <div><div class="etiqueta">Peso</div><b>${f1(dd.peso)} kg</b></div>
-            <div class="al-chips">${dd.gym ? `<span class="al-chip">Gimnasio</span>` : ""}${dd.padel ? `<span class="al-chip">Pádel</span>` : ""}${!dd.gym && !dd.padel ? `<span class="al-chip gris">Descanso</span>` : ""}</div>
-          </button>
-          <div class="bloque">
-            <div class="al-kcal">${anillo}<div class="al-macros">${macro("Proteína", t.p, o.p)}${macro("Hidratos", t.c, o.c)}${macro("Grasa", t.g, o.g)}</div></div>
-            <div class="al-resumen"><span>${restan >= 0 ? "Te quedan " + restan + " kcal" : "Te has pasado " + (-restan) + " kcal"}</span></div>
+          <div class="al-hero ${pasado ? "pasado" : ""}">
+            ${anillo}
+            <div class="al-hero-txt">
+              <div class="et">${restan >= 0 ? "Te quedan" : "Te has pasado"}</div>
+              <div class="big">${Math.abs(restan)}<small> kcal</small></div>
+              <button class="al-peso" data-accion="editar-peso"><span>${f1(dd.peso)} kg</span>${dd.gym ? `<span>Gimnasio</span>` : ""}${dd.padel ? `<span>Pádel</span>` : ""}${!dd.gym && !dd.padel ? `<span>Descanso</span>` : ""}<span class="ed">✎</span></button>
+            </div>
           </div>
-          <div class="bloque">
-            <div class="al-agua-top"><h2>Agua</h2><span><b>${f1(dd.agua)}</b> <span class="etiqueta">de ${f1(o.agua)} l</span></span></div>
-            <div class="al-barra" style="margin-top:10px"><div style="width:${aguaPct}%"></div></div>
-            <div class="al-agua-btns"><button data-accion="agua" data-l="-0.25">−</button><button class="mas" data-accion="agua" data-l="0.25">+ Vaso</button><button class="mas" data-accion="agua" data-l="0.5">+ Botella</button></div>
+          <div class="al-macs">${macro("Proteína", t.p, o.p)}${macro("Hidratos", t.c, o.c)}${macro("Grasa", t.g, o.g)}</div>
+          <div class="al-agua" style="--a:${aguaPct}%">
+            <div class="al-agua-ola"></div>
+            <div class="al-agua-top"><div><div class="et">Agua</div><b>${f1(dd.agua)}<small> de ${f1(o.agua)} l</small></b></div><span class="pc">${Math.round(aguaPct)} %</span></div>
+            <div class="al-agua-btns"><button data-accion="agua" data-l="-0.25" aria-label="Quitar un vaso">−</button><button class="mas" data-accion="agua" data-l="0.25">+ Vaso</button><button class="mas" data-accion="agua" data-l="0.5">+ Botella</button></div>
           </div>
-          <button class="al-anadir" data-accion="anadir">Añadir comida</button>
-          ${grupos}`;
+          <button class="al-anadir" data-accion="anadir">+ Añadir comida</button>
+          <div class="al-comidas">${grupos}</div>`;
       }
 
       // ---------- Evolución ----------

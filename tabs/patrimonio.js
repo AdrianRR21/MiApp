@@ -83,6 +83,93 @@
   .pt-grupo-cab b { font-weight:600; white-space:nowrap; }
   .pt-grupo-lista { padding:0 0 6px 14px; }
   .pt-grupo-lista .pt-fila { padding:10px 0; }
+  /* ===== Diseño nuevo (bloques de color) ===== */
+  .pf-hero { position:relative; overflow:hidden; background:var(--naranja); color:var(--sobre-acento); border-radius:30px; padding:22px 22px 0; margin-bottom:14px; box-shadow:0 24px 48px -28px var(--naranja); }
+  .pf-hero .et { font-size:13px; font-weight:700; opacity:.72; }
+  .pf-hero .cifra { font-size:clamp(40px, 12vw, 60px); line-height:1; margin-top:6px; letter-spacing:-0.06em; color:inherit; }
+  .pf-hero .chip { display:inline-flex; align-items:center; gap:6px; margin-top:12px; font-size:13px; font-weight:700; padding:6px 12px; border-radius:999px; background:rgba(0,0,0,.14); }
+  :root[data-tema="claro"] .pf-hero .chip { background:rgba(255,255,255,.2); }
+  .pf-hero svg { display:block; width:calc(100% + 44px); margin:14px -22px 0; height:90px; }
+  .pf-hero .sin { height:22px; }
+  .pf-reparto { display:grid; grid-template-columns:132px minmax(0, 1fr); gap:20px; align-items:center; }
+  .pf-dona { position:relative; width:132px; height:132px; }
+  .pf-dona svg { width:100%; height:100%; transform:rotate(-90deg); }
+  .pf-dona .c { position:absolute; inset:0; display:grid; place-content:center; text-align:center; }
+  .pf-dona .c b { font-size:20px; font-weight:800; letter-spacing:-0.04em; }
+  .pf-dona .c span { font-size:11px; color:var(--tinta-suave); font-weight:600; }
+  .pf-ley { display:grid; gap:9px; }
+  .pf-ley div { display:grid; grid-template-columns:12px minmax(0, 1fr) auto; gap:10px; align-items:center; font-size:14px; font-weight:600; }
+  .pf-ley i { width:12px; height:12px; border-radius:4px; }
+  .pf-ley span:last-child { font-weight:800; font-variant-numeric:tabular-nums; }
+  .pf-sec { display:flex; justify-content:space-between; align-items:flex-end; margin:22px 4px 12px; gap:10px; }
+  .pf-sec h2 { margin:0; font-size:22px; font-weight:800; letter-spacing:-0.045em; }
+  .pf-sec b { font-size:22px; font-weight:800; letter-spacing:-0.045em; color:var(--naranja); }
+  .pf-cuentas { display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:10px; }
+  .pf-cuenta { text-align:left; border:0; font:inherit; color:var(--tinta); cursor:pointer; min-height:104px; padding:16px; border-radius:22px; background:var(--papel); box-shadow:inset 0 0 0 1px var(--linea), var(--sombra-tarjeta); display:flex; flex-direction:column; justify-content:space-between; gap:12px; }
+  .pf-cuenta .ic { width:34px; height:34px; border-radius:11px; display:grid; place-items:center; background:var(--tinte); color:var(--naranja); font-weight:800; font-size:15px; }
+  .pf-cuenta span { font-size:13px; font-weight:600; color:var(--tinta-suave); }
+  .pf-cuenta b { display:block; font-size:19px; font-weight:800; letter-spacing:-0.04em; margin-top:2px; }
+  .pf-cuenta.nueva { background:none; box-shadow:inset 0 0 0 1.5px var(--linea-2); color:var(--naranja); align-items:center; justify-content:center; font-weight:700; font-size:14px; }
+  .pf-clases { display:grid; gap:8px; }
+  .pf-clase { display:grid; grid-template-columns:40px minmax(0, 1fr) auto; gap:12px; align-items:center; width:100%; text-align:left; font:inherit; color:inherit; cursor:pointer; border:0; padding:12px 14px 12px 12px; border-radius:20px; background:var(--papel); box-shadow:inset 0 0 0 1px var(--linea), var(--sombra-tarjeta); }
+  .pf-clase .ic { width:40px; height:40px; border-radius:13px; display:grid; place-items:center; color:#000; font-weight:800; font-size:15px; }
+  .pf-clase .n { font-weight:700; font-size:15px; }
+  .pf-clase .s { font-size:12.5px; color:var(--tinta-suave); margin-top:1px; }
+  .pf-clase .v { text-align:right; font-weight:800; letter-spacing:-0.03em; }
+  .pf-clase .g { font-size:12px; font-weight:700; margin-top:2px; }
+  .pf-rent { display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:10px; margin-top:10px; }
+  .pf-rent div { border-radius:22px; padding:16px; background:var(--tinte); }
+  .pf-rent div:first-child { background:var(--naranja); color:var(--sobre-acento); }
+  .pf-rent span { display:block; font-size:12.5px; font-weight:600; opacity:.75; }
+  .pf-rent b { display:block; font-size:28px; font-weight:800; letter-spacing:-0.05em; margin:4px 0 2px; }
+  .pf-rent div:first-child b { color:inherit !important; }
+  .pf-nota { font-size:12.5px; color:var(--tinta-suave); line-height:1.5; margin:12px 4px 0; }
+
+  .pf-mes { display:flex; align-items:center; justify-content:space-between; gap:10px; margin:2px 0 14px; }
+  .pf-mes h2 { margin:0; font-size:28px; font-weight:800; letter-spacing:-0.05em; text-align:center; flex:1; }
+  .pf-mes button { width:44px; height:44px; border-radius:50%; border:0; background:var(--papel); box-shadow:inset 0 0 0 1px var(--linea-2); color:var(--tinta); font-size:20px; cursor:pointer; }
+  .pf-ahorro { border-radius:30px; padding:22px; margin-bottom:10px; color:#000; background:var(--verde); box-shadow:0 24px 48px -28px var(--verde); }
+  .pf-ahorro.neg { background:var(--rojo); color:#fff; box-shadow:0 24px 48px -28px var(--rojo); }
+  :root[data-tema="claro"] .pf-ahorro { color:#fff; }
+  .pf-ahorro .et { font-size:13px; font-weight:700; opacity:.72; }
+  .pf-ahorro .cifra { font-size:clamp(38px, 11vw, 54px); line-height:1; margin:6px 0 14px; color:inherit; }
+  .pf-ahorro .tasa { float:right; text-align:right; }
+  .pf-ahorro .tasa b { display:block; font-size:26px; font-weight:800; letter-spacing:-0.05em; }
+  .pf-split { display:flex; height:12px; border-radius:6px; overflow:hidden; gap:3px; background:rgba(0,0,0,.14); }
+  .pf-split i { display:block; height:100%; border-radius:6px; }
+  .pf-io { display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:10px; margin-bottom:14px; }
+  .pf-io div { border-radius:22px; padding:15px 16px; background:var(--papel); box-shadow:inset 0 0 0 1px var(--linea), var(--sombra-tarjeta); }
+  .pf-io span { display:flex; align-items:center; gap:8px; font-size:13px; font-weight:700; color:var(--tinta-suave); }
+  .pf-io span i { width:26px; height:26px; border-radius:9px; display:grid; place-items:center; font-style:normal; font-size:14px; font-weight:800; }
+  .pf-io b { display:block; font-size:22px; font-weight:800; letter-spacing:-0.045em; margin-top:8px; }
+  .pf-ops { font-size:13.5px; color:var(--tinta-suave); margin:-4px 4px 14px; }
+  .pt-grupo-cab span:first-child { font-weight:600; }
+  .pt-grupo-cab b { font-weight:800 !important; }
+  .pt-cab h2 { font-size:19px; }
+  .pt-cab .v { font-size:20px; font-weight:800; letter-spacing:-0.04em; }
+  .pt-barra { height:8px; border-radius:4px; }
+  .pf-evo .pt-cab .v { font-size:26px; }
+
+  @media (min-width:1024px) {
+    body[data-pantalla="patrimonio"] main > div:has(> .pf-hero) { grid-template-columns:minmax(0, 1.4fr) minmax(0, 1fr); align-items:start; }
+    body[data-pantalla="patrimonio"] main > div > .pf-hero { grid-column:1; margin:0; }
+    body[data-pantalla="patrimonio"] main > div > .pf-hero .cifra { font-size:72px; }
+    body[data-pantalla="patrimonio"] main > div > .pf-hero svg { height:120px; }
+    body[data-pantalla="patrimonio"] main > div > .pf-reparto-b { grid-column:2; margin:0; align-self:stretch; display:flex; align-items:center; }
+    body[data-pantalla="patrimonio"] main > div > .pf-col { grid-column:auto; }
+    body[data-pantalla="patrimonio"] main > div > .pf-col .pf-sec { margin-top:6px; }
+    body[data-pantalla="patrimonio"] main > div:has(> .pf-ahorro) { grid-template-columns:repeat(2, minmax(0, 1fr)); }
+    body[data-pantalla="patrimonio"] main > div:has(> .pf-ahorro) > .bloque { grid-column:auto; }
+    body[data-pantalla="patrimonio"] main > div:has(> .pf-ahorro) > .pf-ahorro { grid-column:1; margin:0; }
+    body[data-pantalla="patrimonio"] main > div:has(> .pf-ahorro) > .pf-io { grid-column:2; margin:0; align-self:stretch; }
+    body[data-pantalla="patrimonio"] main > div:has(> .pf-ahorro) > .pf-ops, body[data-pantalla="patrimonio"] main > div:has(> .pf-ahorro) > .pf-mes { grid-column:1 / -1; }
+    body[data-pantalla="patrimonio"] .pf-mes { justify-content:flex-start; }
+    body[data-pantalla="patrimonio"] .pf-mes h2 { flex:none; min-width:260px; font-size:34px; }
+    body[data-pantalla="patrimonio"] .pf-io div { display:flex; flex-direction:column; justify-content:center; }
+    body[data-pantalla="patrimonio"] .pf-io b { font-size:30px; }
+    body[data-pantalla="patrimonio"] main > div:has(> .pf-evo) > .pf-evo ~ .pf-evo { grid-column:auto; }
+    body[data-pantalla="patrimonio"] main > div:has(> .pf-evo) > div:has(> .pt-rangos) { justify-content:flex-start !important; }
+  }
   `;  const st = document.createElement("style"); st.textContent = css; document.head.appendChild(st);
 
   // ---------- Utilidades ----------
@@ -350,28 +437,55 @@
         const vacio = !d.cuentas.some(c => c.saldo) && !d.activos.length && !d.movs.length ? `<div class="bloque"><h2>Primeros pasos</h2>
           <p>Toca cada cuenta para poner su saldo actual. Tus inversiones se dan de alta en la pantalla Inversiones. A partir de ahí, apunta tus ingresos y gastos con el botón +.</p></div>` : "";
 
+        // Línea del patrimonio a final de cada mes (último año) para la tarjeta grande
+        let spark = `<div class="sin"></div>`;
+        if (primera) {
+          const ms = Fin.meses(primera, "1a"), vals = ms.map(m => Fin.patrimonio(d, Fin.corte(m)));
+          if (vals.length > 1) {
+            const W = 400, H = 90, mn = Math.min(...vals), mx = Math.max(...vals), r = mx - mn || 1;
+            const pts = vals.map((v, i) => [i / (vals.length - 1) * W, H - 10 - (v - mn) / r * (H - 26)]);
+            const l = pts.map(p => p.map(n => n.toFixed(1)).join(",")).join(" ");
+            spark = `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" aria-hidden="true"><polygon points="${l} ${W},${H} 0,${H}" fill="currentColor" opacity=".12"/>
+              <polyline points="${l}" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"/></svg>`;
+          }
+        }
+        // Dona del reparto
+        const R = 52, C = 2 * Math.PI * R; let acum = 0;
+        const segs = T > 0 ? partes.filter(p => p.v > 0).map(p => { const f = p.v / T, seg = `<circle cx="60" cy="60" r="${R}" fill="none" stroke="${p.c}" stroke-width="16" stroke-dasharray="${Math.max(f * C - 2, 0.5)} ${C}" stroke-dashoffset="${-acum * C}"/>`; acum += f; return seg; }).join("") : `<circle cx="60" cy="60" r="${R}" fill="none" stroke="var(--papel-2)" stroke-width="16"/>`;
+        const leyenda = partes.filter(p => p.v > 0 || p.n === "Liquidez").map(p => `<div><i style="background:${p.c}"></i><span>${p.n}</span><span>${T > 0 ? Math.round(Math.max(p.v, 0) / T * 100) + " %" : "–"}</span></div>`).join("");
+        const cuentasT = d.cuentas.map(c => `<button class="pf-cuenta" data-accion="cuenta" data-id="${c.id}"><span class="ic">${esc((c.nombre || "?").trim().charAt(0).toUpperCase())}</span><div><span>${esc(c.nombre)}</span><b>${eur(c.saldo)}</b></div></button>`).join("");
+        const clasesT = CLASES.map(c => {
+          const acts = Fin.delaClase(d, c.id).filter(a => Fin.posicion(a).n > 0);
+          const t = Fin.totales(acts), g = t.valor - t.coste;
+          return `<button class="pf-clase" data-accion="ir-inversiones"><span class="ic" style="background:${c.color}">${c.nombre.charAt(0)}</span>
+            <div><div class="n">${c.nombre}</div><div class="s">${acts.length ? acts.length + (acts.length === 1 ? " activo · " : " activos · ") : ""}aportado ${eur(t.coste)}</div></div>
+            <div><div class="v">${eur(t.valor)}</div><div class="g ${clsN(g)}">${eurS(g)}${t.coste > 0 ? " · " + pct(t.valor / t.coste - 1) : ""}</div></div></button>`;
+        }).join("");
+        const dif30 = primera && primera <= hace30 ? T - Fin.patrimonio(d, hace30) : null;
+
         return `
-          <div class="pt-total">
-            <div class="etiqueta">Patrimonio total</div>
+          <div class="pf-hero">
+            <div class="et">Patrimonio total</div>
             <div class="cifra">${eur(T)}</div>
-            ${delta}
-            <div class="pt-dist">${dist}</div>
-            <div class="pt-leyenda">${ley}</div>
+            ${dif30 !== null ? `<div class="chip">${dif30 >= 0 ? "▲" : "▼"} ${eurS(dif30)} en 30 días</div>` : ""}
+            ${spark}
           </div>
+          <div class="bloque pf-reparto-b"><div class="pf-reparto">
+            <div class="pf-dona"><svg viewBox="0 0 120 120">${segs}</svg><div class="c"><span>Inversión</span><b>${T > 0 ? Math.round(inv.valor / T * 100) : 0} %</b></div></div>
+            <div class="pf-ley">${leyenda}</div></div></div>
           ${vacio}
-          <div class="bloque">
-            <div class="pt-cab"><h2>Liquidez</h2><span class="v">${eur(liq)}</span></div>
-            ${cuentas}
-            <button class="pt-enlace" data-accion="nueva-cuenta">Añadir cuenta</button>
+          <div class="pf-col">
+            <div class="pf-sec"><h2>Liquidez</h2><b>${eur(liq)}</b></div>
+            <div class="pf-cuentas">${cuentasT}<button class="pf-cuenta nueva" data-accion="nueva-cuenta">+ Añadir cuenta</button></div>
           </div>
-          <div class="bloque">
-            <div class="pt-cab"><h2>Inversión</h2><span class="v">${eur(inv.valor)}</span></div>
-            ${filasInv}
-            <div class="pt-rent">
-              <div><span class="etiqueta">Beneficio sobre lo aportado</span><b class="${clsN(ben)}">${inv.coste > 0 ? pct(inv.valor / inv.coste - 1) : "–"}</b><span class="etiqueta">${eurS(ben)}</span></div>
-              <div><span class="etiqueta">Rentabilidad anualizada</span><b class="${clsN(tir)}">${tir === null ? "–" : pct(tir)}</b><span class="etiqueta">${tir === null ? (d.activos.length ? "con 3 meses de historia" : "") : "al año"}</span></div>
+          <div class="pf-col">
+            <div class="pf-sec"><h2>Inversión</h2><b>${eur(inv.valor)}</b></div>
+            <div class="pf-clases">${clasesT}</div>
+            <div class="pf-rent">
+              <div><span>Beneficio sobre lo aportado</span><b>${inv.coste > 0 ? pct(inv.valor / inv.coste - 1) : "–"}</b><span>${eurS(ben)}</span></div>
+              <div><span>Rentabilidad anualizada</span><b class="${clsN(tir)}">${tir === null ? "–" : pct(tir)}</b><span>${tir === null ? (d.activos.length ? "con 3 meses de historia" : "") : "al año"}</span></div>
             </div>
-            <p class="aviso" style="margin:12px 0 0;font-size:12.5px">La rentabilidad anualizada es el interés al año equivalente a tu beneficio, teniendo en cuenta cuándo aportaste cada euro.</p>
+            <p class="pf-nota">La rentabilidad anualizada es el interés al año equivalente a tu beneficio, teniendo en cuenta cuándo aportaste cada euro.</p>
           </div>`;
       }
 
@@ -415,25 +529,28 @@
               <div class="izq"><div>${o.tipo === "compra" ? "Compra de " : "Venta de "}${esc(ac.nombre)}</div><div class="sub">${fechaCorta(o.fecha)}${o.cuenta ? ", " + esc(nomCuenta(o.cuenta)) : ""}</div></div>
               <div class="der">${o.tipo === "compra" ? "−" : "+"}${eur(o.n * o.precio)}</div></button>`).join("")}</div></details></div>` : "";
 
+        const tasa = ing > 0 ? Math.round(ahorro / ing * 100) : null;
         return `
-          <div class="pt-mes">
+          <div class="pf-mes">
             <button data-accion="mes" data-d="-1" aria-label="Mes anterior">‹</button>
             <h2>${nombreMes}</h2>
             <button data-accion="mes" data-d="1" aria-label="Mes siguiente">›</button>
           </div>
-          <div class="bloque">
-            <div class="pt-cuadro">
-              <div><span class="etiqueta">Ingresos</span><b>${eur(ing)}</b></div>
-              <div><span class="etiqueta">Gastos</span><b>${eur(gas)}</b></div>
-              <div><span class="etiqueta">Ahorro</span><b class="${clsN(ahorro)}">${eurS(ahorro)}</b></div>
-              <div><span class="etiqueta">Tasa de ahorro</span><b>${ing > 0 ? Math.round(ahorro / ing * 100) + " %" : "–"}</b></div>
-            </div>
-            ${ops.length ? `<p style="margin:12px 0 0;font-size:14px">${invertido >= 0 ? "Has invertido " + eur(invertido) : "Has retirado " + eur(-invertido) + " de inversiones"} este mes.</p>` : ""}
+          <div class="pf-ahorro ${ahorro < 0 ? "neg" : ""}">
+            <div class="tasa"><span class="et">Tasa de ahorro</span><b>${tasa === null ? "–" : tasa + " %"}</b></div>
+            <div class="et">Ahorro del mes</div>
+            <div class="cifra">${eurS(ahorro)}</div>
+            <div class="pf-split">${ing + gas > 0 ? `<i style="flex:${ing};background:currentColor;opacity:.9"></i><i style="flex:${gas};background:currentColor;opacity:.35"></i>` : ""}</div>
           </div>
+          <div class="pf-io">
+            <div><span><i style="background:color-mix(in srgb, var(--verde) 20%, transparent);color:var(--verde)">↑</i>Ingresos</span><b>${eur(ing)}</b></div>
+            <div><span><i style="background:var(--rojo-suave);color:var(--rojo)">↓</i>Gastos</span><b>${eur(gas)}</b></div>
+          </div>
+          ${ops.length ? `<p class="pf-ops">${invertido >= 0 ? "Has invertido " + eur(invertido) : "Has retirado " + eur(-invertido) + " de inversiones"} este mes.</p>` : ""}
           ${bloqueTipo("gasto", "Gastos", gas, "−")}
           ${bloqueTipo("ingreso", "Ingresos", ing, "+")}
           ${bloqueTrasp}${bloqueOps}
-          ${!delMes.length && !ops.length ? `<div class="bloque"><p style="margin:0">Sin movimientos este mes. Usa el botón + para apuntar uno.</p></div>` : ""}`;
+          ${!delMes.length && !ops.length ? `<div class="ag-vacio" style="text-align:center;padding:30px;border:1.5px dashed var(--linea-2);border-radius:24px;color:var(--tinta-suave)">Sin movimientos este mes.<br>Usa el botón + para apuntar uno.</div>` : ""}`;
       }
 
       // ---------- Vista 3: evolución ----------
@@ -480,9 +597,9 @@
         }
 
         return `<div style="display:flex;justify-content:flex-end;margin-bottom:12px">${rangos}</div>
-          <div class="bloque pt-graf">${g1}</div>
-          <div class="bloque pt-graf">${g2}</div>
-          <div class="bloque pt-graf">${g3}</div>`;
+          <div class="bloque pt-graf pf-evo">${g1}</div>
+          <div class="bloque pt-graf pf-evo">${g2}</div>
+          <div class="bloque pt-graf pf-evo">${g3}</div>`;
       }
 
       function pintar() {

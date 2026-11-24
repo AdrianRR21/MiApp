@@ -68,6 +68,46 @@
   .vi-dosb .vi-boton { flex:1; }
   .vi-dosb .vi-boton.sec { color:var(--tinta); box-shadow:inset 0 0 0 1px var(--linea); }
   .vi-emp .meta { font-size:12.5px; color:var(--tinta-suave); margin-top:3px; }
+  /* ===== Diseño nuevo (bloques de color) ===== */
+  .vi-cartera { background:var(--naranja) !important; color:var(--sobre-acento); border:0 !important; border-radius:30px !important; padding:24px !important; box-shadow:0 24px 48px -28px var(--naranja); position:relative; overflow:hidden; }
+  .vi-cartera::after { content:""; position:absolute; right:-60px; top:-60px; width:200px; height:200px; border-radius:50%; background:rgba(255,255,255,.13); }
+  .vi-cartera > * { position:relative; z-index:1; }
+  .vi-cartera .etiqueta, .vi-cartera .sub { color:inherit !important; opacity:.78; }
+  .vi-cartera .cifra { font-size:56px !important; color:inherit !important; letter-spacing:-0.06em; }
+  .vi-cartera .sub span { color:inherit !important; font-weight:800; }
+  .vi-cartera .vi-mini div { background:rgba(0,0,0,.14) !important; border-radius:16px !important; }
+  :root[data-tema="claro"] .vi-cartera .vi-mini div { background:rgba(255,255,255,.2) !important; }
+  .vi-cartera .vi-mini b { color:inherit !important; font-size:19px !important; font-weight:800 !important; }
+  .vi-titulo { font-size:20px !important; font-weight:800 !important; letter-spacing:-0.04em !important; text-transform:none !important; color:var(--tinta) !important; margin:24px 4px 12px !important; }
+  .vi-titulo::after { display:none; }
+  .vi-lista { display:grid; gap:10px; }
+  .vi-emp { border-radius:24px !important; padding:16px !important; margin:0 !important; border:0 !important; box-shadow:inset 0 0 0 1px var(--linea), var(--sombra-tarjeta); }
+  .vi-emp .l1 { align-items:center !important; gap:12px !important; }
+  .vi-av { flex:none; width:48px; height:48px; border-radius:15px; display:grid; place-items:center; font-size:12px; font-weight:800; letter-spacing:-0.02em; background:var(--papel-2); color:var(--tinta); text-transform:uppercase; }
+  .vi-av.si { background:var(--verde); color:#000; }
+  .vi-av.no { background:var(--rojo); color:#fff; }
+  .vi-nom { flex:1; min-width:0; }
+  .vi-nom b { display:block; font-weight:800 !important; font-size:17px !important; letter-spacing:-0.03em; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .vi-emp .pot { text-align:right; font-size:24px !important; font-weight:800 !important; letter-spacing:-0.05em !important; line-height:1; }
+  .vi-emp .pot small { display:block; font-size:11px; font-weight:600; letter-spacing:0; color:var(--tinta-suave); margin-top:3px; }
+  .vi-emp .l2 { margin-top:14px !important; font-size:12.5px !important; }
+  .vi-emp .l2 b { color:var(--tinta); font-weight:800; }
+  .vi-barra { height:8px !important; border-radius:4px !important; margin-top:8px !important; }
+  .vi-barra .fill { height:8px !important; border-radius:4px !important; opacity:.6 !important; }
+  .vi-barra i { top:-4px !important; width:4px !important; height:16px !important; border-radius:2px !important; }
+  .vi-tag { border-radius:999px !important; padding:4px 10px !important; font-weight:700 !important; margin-top:12px !important; }
+  .vi-seg button i { font-size:20px !important; font-weight:800 !important; }
+  .vi-seg button.on i { color:inherit !important; }
+  .vi-filtros select { border-radius:999px !important; }
+  .vi-dosb .vi-boton { border-radius:999px !important; background:var(--naranja) !important; color:var(--sobre-acento) !important; box-shadow:0 12px 26px -14px var(--naranja) !important; font-weight:700 !important; }
+  .vi-dosb .vi-boton.sec { background:var(--tinte) !important; color:var(--naranja) !important; box-shadow:inset 0 0 0 1.5px var(--tinte-2) !important; }
+  @media (min-width:1024px) {
+    body[data-pantalla="value"] .vi-lista { grid-template-columns:repeat(2, minmax(0, 1fr)); }
+    body[data-pantalla="value"] main > div > .vi-filtros { grid-column:1; margin:0; }
+    body[data-pantalla="value"] main > div > .vi-filtros ~ .vi-dosb { grid-column:2; }
+    body[data-pantalla="value"] .vi-cartera .vi-mini { grid-template-columns:repeat(3, minmax(0, 220px)); }
+    body[data-pantalla="value"] .vi-cartera .cifra { font-size:72px !important; }
+  }
   .vi-val { display:grid; grid-template-columns:1fr 112px; gap:10px; align-items:center; padding:9px 0; border-top:1px solid var(--linea); }
   .vi-val .n { font-size:14.5px; line-height:1.3; min-width:0; }
   .vi-val .n .sub { font-size:12px; color:var(--tinta-suave); }
@@ -151,9 +191,10 @@
         const max = Math.max(v.intrinseco, p.precio) * 1.15, ip = p.precio / max * 100, iv = v.intrinseco / max * 100;
         const col = x > 0 ? "var(--verde)" : "var(--rojo)";
         return `<button class="vi-emp" data-accion="empresa" data-id="${e.id}">
-          <div class="l1"><b>${esc(e.nombre)}</b>${e.ticker ? `<span class="tk">${esc(e.ticker)}</span>` : ""}<span class="pot ${cls(x)}">${pct(x)}</span></div>
-          ${e.pais || e.sector ? `<div class="meta">${e.pais ? bandera(e.pais) + " " + esc(nombrePais(e.pais)) : ""}${e.pais && e.sector ? " · " : ""}${esc(e.sector)}</div>` : ""}
-          <div class="l2"><span>Precio ${precioTxt(p.precio, e.moneda)} · Valor ${precioTxt(v.intrinseco, e.moneda)}</span><span>${x > 0 ? "potencial" : x < 0 ? "por encima" : ""}</span></div>
+          <div class="l1"><span class="vi-av ${x > 0 ? "si" : x < 0 ? "no" : ""}">${esc((e.ticker || e.nombre).trim().slice(0, 4))}</span>
+            <div class="vi-nom"><b>${esc(e.nombre)}</b>${e.pais || e.sector ? `<div class="meta">${e.pais ? bandera(e.pais) + " " + esc(nombrePais(e.pais)) : ""}${e.pais && e.sector ? " · " : ""}${esc(e.sector)}</div>` : ""}</div>
+            <span class="pot ${cls(x)}">${pct(x)}<small>${x > 0 ? "potencial" : x < 0 ? "por encima" : ""}</small></span></div>
+          <div class="l2"><span>Precio <b>${precioTxt(p.precio, e.moneda)}</b></span><span>Valor <b>${precioTxt(v.intrinseco, e.moneda)}</b></span></div>
           <div class="vi-barra"><div class="fill" style="left:${Math.min(ip, iv)}%;width:${Math.abs(iv - ip)}%;background:${col};opacity:.45"></div>
             <i style="left:${ip}%;background:var(--tinta)"></i><i style="left:${iv}%;background:${col}"></i></div>
           ${pos ? `<span class="vi-tag">En cartera ficticia ${pct(rentPos(e, pos))}</span>` : ""}${viejo ? `<span class="vi-tag viejo">Precio de hace ${dias(p.fecha, hoyK())} días</span>` : ""}
@@ -211,7 +252,7 @@
             ${filtroPais || filtroSector ? `<div class="vi-filtrado"><span>${filtradas().length} de ${d.empresas.length} empresas</span><button data-accion="sin-filtros">Quitar filtros</button></div>` : ""}` : ""}
           <div class="vi-dosb"><button class="vi-boton" data-accion="nueva">Añadir empresa</button>${d.empresas.length ? `<button class="vi-boton sec" data-accion="precios">Actualizar precios</button>` : ""}</div>
           ${vista === "infra" ? bloqueCartera() + (lista.length ? `<div class="vi-titulo">Infravaloradas ahora</div>` : "") : ""}
-          ${lista.map(tarjeta).join("") || (d.empresas.length || vista !== "infra" ? `<div class="bloque"><p style="margin:0">${!d.empresas.length ? "Aún no has añadido empresas." : (filtroPais || filtroSector) && !filtradas().length ? "Ninguna empresa cumple estos filtros." : vacio}</p></div>` : "")}
+          <div class="vi-lista">${lista.map(tarjeta).join("")}</div>${lista.length ? "" : (d.empresas.length || vista !== "infra" ? `<div class="bloque"><p style="margin:0">${!d.empresas.length ? "Aún no has añadido empresas." : (filtroPais || filtroSector) && !filtradas().length ? "Ninguna empresa cumple estos filtros." : vacio}</p></div>` : "")}
           <button class="vi-enlace" data-accion="umbral">Margen para clasificar: ±${d.umbral} % · Cambiar</button>`;
       }
 

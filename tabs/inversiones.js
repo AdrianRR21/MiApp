@@ -100,6 +100,45 @@
   .iv-interruptor.on i { background:var(--naranja); box-shadow:none; }
   .iv-interruptor.on i::after { transform:translateX(14px); background:var(--sobre-acento); }
   .iv-enlace { background:none; border:0; color:var(--tinta-suave); font:inherit; font-size:13.5px; font-weight:600; padding:12px 0 0; cursor:pointer; }
+  
+  /* ===== Diseño nuevo (bloques de color) ===== */
+  .iv-hero { position:relative; overflow:hidden; background:var(--naranja); color:var(--sobre-acento); border-radius:30px; padding:22px; margin-bottom:12px; box-shadow:0 24px 48px -28px var(--naranja); }
+  .iv-hero::after { content:""; position:absolute; right:-70px; bottom:-90px; width:240px; height:240px; border-radius:50%; border:28px solid rgba(255,255,255,.14); pointer-events:none; }
+  .iv-hero .et { font-size:13px; font-weight:700; opacity:.72; }
+  .iv-hero .cifra { font-size:clamp(40px, 12vw, 62px); line-height:1; margin:6px 0 18px; color:inherit; letter-spacing:-0.06em; }
+  .iv-hero-fila { display:grid; grid-template-columns:repeat(3, minmax(0, 1fr)); gap:8px; position:relative; z-index:1; }
+  .iv-hero-fila div { background:rgba(0,0,0,.12); border-radius:16px; padding:10px 11px; min-width:0; }
+  :root[data-tema="claro"] .iv-hero-fila div { background:rgba(255,255,255,.18); }
+  .iv-hero-fila span { display:block; font-size:11.5px; font-weight:600; opacity:.75; }
+  .iv-hero-fila b { display:block; font-size:15.5px; font-weight:800; letter-spacing:-0.03em; margin-top:3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .iv-hero-real { margin-top:12px; font-size:13px; font-weight:600; opacity:.85; position:relative; z-index:1; }
+  body .iv-rents > div b { font-size:30px; }
+  body .iv-rents .etiqueta { color:var(--tinta-suave) !important; }
+  .iv-graf-cab { display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap; }
+  .iv-graf-cab h2 { margin:0; }
+  .iv-boton { border-radius:999px !important; box-shadow:0 12px 28px -14px var(--naranja); }
+  .iv-boton.sec { background:var(--tinte) !important; border:0 !important; box-shadow:none; }
+  .iv-totalb { background:var(--tinte) !important; border:0 !important; }
+  .iv-totalb .v { font-size:24px !important; font-weight:800; color:var(--naranja); }
+  .iv-clase { padding-top:0 !important; overflow:hidden; }
+  .iv-clase .iv-cab { margin:0 -20px 10px; padding:16px 20px; background:color-mix(in srgb, var(--cc) 18%, var(--papel)); }
+  .iv-clase .iv-cab h2 { font-size:19px; font-weight:800; }
+  .iv-clase .iv-cab h2 i { width:14px; height:14px; border-radius:5px; }
+  .iv-clase .iv-cab .v { font-size:19px; font-weight:800; letter-spacing:-0.035em; }
+  .iv-av { flex:none; width:40px; height:40px; border-radius:13px; display:grid; place-items:center; background:var(--cc); color:#000; font-weight:800; font-size:13px; text-transform:uppercase; letter-spacing:-0.02em; }
+  .iv-fila .der { font-weight:800 !important; }
+  .iv-fila .der .iv-sub { display:inline-block; margin-top:4px; padding:2px 8px; border-radius:999px; font-weight:700; font-size:12px; background:var(--papel-2); }
+  .iv-reparto b { font-weight:800; font-size:20px !important; }
+  @media (min-width:1024px) {
+    body[data-pantalla="inversiones"] main > div:has(> .iv-hero) { grid-template-columns:minmax(0, 1.3fr) minmax(0, 1fr); align-items:stretch; }
+    body[data-pantalla="inversiones"] main > div > .iv-hero { grid-column:1; margin:0; padding:30px; }
+    body[data-pantalla="inversiones"] main > div > .iv-hero .cifra { font-size:76px; }
+    body[data-pantalla="inversiones"] main > div > .iv-rents { grid-column:2; margin:0; grid-template-columns:1fr; }
+    body[data-pantalla="inversiones"] main > div > .iv-rents > div { display:flex; flex-direction:column; justify-content:center; }
+    body[data-pantalla="inversiones"] main > div > .iv-boton { justify-self:start; width:auto; padding:13px 26px; }
+    body[data-pantalla="inversiones"] main > div:has(> .iv-clase) > .iv-clase { grid-column:auto; }
+    body[data-pantalla="inversiones"] main > div:has(> .iv-reparto-b) .iv-reparto-b { display:grid; grid-template-columns:minmax(260px, 360px) minmax(0, 1fr); gap:36px; align-items:center; padding:32px; }
+  }
   `;
   const st = document.createElement("style"); st.textContent = css; document.head.appendChild(st);
 
@@ -158,20 +197,25 @@
         const meses = F.meses(primera, rango), cortes = meses.map(F.corte);
         const valor = cortes.map(c => F.totales(d.activos, c).valor), aport = cortes.map(c => F.totales(d.activos, c).coste);
         const rangos = `<div class="iv-mini-seg">${[["6m", "6 meses"], ["1a", "1 año"], ["todo", "Todo"]].map(([k, n]) => `<button class="${rango === k ? "on" : ""}" data-accion="rango" data-r="${k}">${n}</button>`).join("")}</div>`;
+        const g = t.coste > 0 ? t.valor / t.coste - 1 : null;
         return `
-          <div class="iv-total">
-            <div class="etiqueta">Valor de mercado</div>
+          <div class="iv-hero">
+            <div class="et">Valor de mercado</div>
             <div class="cifra">${eur(t.valor)}</div>
-            <div class="sub">Aportado ${eur(t.coste)}, <span class="${cls(ben)}">${eurS(ben)}${t.coste > 0 ? " (" + pct(t.valor / t.coste - 1) + ")" : ""}</span></div>
-            ${Math.abs(t.realizado) > 0.004 ? `<div class="sub">Beneficio ya realizado con ventas: <span class="${cls(t.realizado)}">${eurS(t.realizado)}</span></div>` : ""}
+            <div class="iv-hero-fila">
+              <div><span>Aportado</span><b>${eur0(t.coste)}</b></div>
+              <div><span>Ganancia</span><b>${(ben > 0.5 ? "+" : "") + eur0(ben)}</b></div>
+              <div><span>Sobre lo aportado</span><b>${pct(g)}</b></div>
+            </div>
+            ${Math.abs(t.realizado) > 0.004 ? `<div class="iv-hero-real">Beneficio ya realizado con ventas: <b>${eurS(t.realizado)}</b></div>` : ""}
           </div>
-          <div class="iv-tarjetas">
+          <div class="iv-tarjetas iv-rents">
             <div><span class="etiqueta">TIR anual</span><b class="${cls(tir)}">${pct(tir)}</b><div class="iv-exp">Tu rentabilidad al año, teniendo en cuenta cuándo compraste y vendiste.</div></div>
             <div><span class="etiqueta">TWR anualizada</span><b class="${cls(twr)}">${pct(twr)}</b><div class="iv-exp">Lo que han rendido tus activos al año, sin el efecto de cuándo metes dinero.</div></div>
           </div>
           ${tir === null ? `<p class="iv-nota" style="margin:-4px 0 12px">Las rentabilidades anuales aparecen cuando tu primera compra tiene al menos 3 meses, para no dar cifras exageradas.</p>` : ""}
           <div class="bloque iv-graf">
-            <h2>Aportado y valor</h2><div style="margin-top:10px">${rangos}</div>
+            <div class="iv-graf-cab"><h2>Aportado y valor</h2>${rangos}</div>
             ${grafEvolucion(meses, valor, aport)}
             <div class="iv-leyenda"><span><i style="background:var(--naranja)"></i>Valor de mercado a fin de mes</span><span><i style="background:var(--tinta);height:2px;width:12px;border-radius:0"></i>Aportado</span></div>
           </div>
@@ -197,7 +241,7 @@
             const tc = F.totales(acts), g = tc.valor - tc.coste;
             const filas = acts.map(a => {
               const p = F.posicion(a), v = F.valor(a), ga = v - p.coste;
-              return `<button class="iv-fila" data-accion="activo" data-id="${a.id}"><div class="izq"><div>${esc(a.nombre)}</div>
+              return `<button class="iv-fila" data-accion="activo" data-id="${a.id}"><span class="iv-av" style="--cc:${c.color}">${esc(a.nombre.trim().slice(0, 2))}</span><div class="izq"><div>${esc(a.nombre)}</div>
                 <div class="iv-sub">${p.n > 0 ? nAcc(p.n) + " a " + precioTxt(p.medio) + " de media" : "Vendido todo"}</div></div>
                 <div class="der">${eur(v)}<div class="iv-sub ${cls(p.n > 0 ? ga : rentTotal([a]))}">${p.n > 0 ? pct(p.coste > 0 ? v / p.coste - 1 : null) : pct(rentTotal([a])) + " total"}</div></div></button>`;
             }).join("");
@@ -205,7 +249,7 @@
               const acum = F.totales(acts, F.corte(m)).coste, prev = F.totales(acts, F.corte(mesMas(m, -1))).coste, x = acum - prev;
               return `<tr><td>${nomMes(m)}</td><td class="${Math.abs(x) > 0.5 ? "" : "vacio"}">${Math.abs(x) > 0.5 ? (x > 0 ? "+" : "") + eur0(x) : "–"}</td><td>${eur0(acum)}</td><td>${eur0(F.totales(acts, F.corte(m)).valor)}</td></tr>`;
             }).join("");
-            return `<div class="bloque">
+            return `<div class="bloque iv-clase" style="--cc:${c.color}">
               <div class="iv-cab"><h2><i style="background:${c.color}"></i>${c.nombre}</h2><span class="v">${eur(tc.valor)}</span></div>
               <div class="iv-sub">Aportado ${eur(tc.coste)}, <span class="${cls(g)}">${eurS(g)}${tc.coste > 0 ? " (" + pct(tc.valor / tc.coste - 1) + ")" : ""}</span></div>
               ${filas}
@@ -213,7 +257,7 @@
                 <div class="iv-tabla-caja"><table class="iv-tabla"><tr><th>Mes</th><th>Aportado en el mes</th><th>Aportado acumulado</th><th>Valor</th></tr>${filasMes}</table></div>
               </details></div>`;
           }).join("");
-          return toggle + `<div class="bloque"><div class="iv-cab"><h2>Total</h2><span class="v">${eur(t.valor)}</span></div>
+          return toggle + `<div class="bloque iv-totalb"><div class="iv-cab"><h2>Total</h2><span class="v">${eur(t.valor)}</span></div>
             <div class="iv-sub">Aportado ${eur(t.coste)}, <span class="${cls(t.valor - t.coste)}">${eurS(t.valor - t.coste)}${t.coste > 0 ? " (" + pct(t.valor / t.coste - 1) + ")" : ""}</span></div></div>` + bloques + alta;
         }
 
@@ -271,7 +315,7 @@
             <div><div style="font-weight:600">${p.c.nombre}</div><div class="iv-sub">${eur(p.v)}</div></div><b>${(p.v / T * 100).toLocaleString("es-ES", { maximumFractionDigits: 1 })} %</b>
             ${acts.length ? `<div class="acts">${acts.map(x => `${esc(x.nombre)} ${(valorDe(x) / T * 100).toLocaleString("es-ES", { maximumFractionDigits: 1 })} %`).join("<br>")}</div>` : ""}</div>`;
         }).join("");
-        return toggle + `<div class="bloque">${donut}<div class="iv-reparto">${leyenda}</div></div>`;
+        return toggle + `<div class="bloque iv-reparto-b">${donut}<div class="iv-reparto">${leyenda}</div></div>`;
       }
 
       function pintar() {

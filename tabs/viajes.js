@@ -72,6 +72,54 @@
   .vj-acciones { display:flex; gap:8px; margin-top:20px; }
   .vj-acciones .boton { flex:1; margin:0; }
   .vj-peligro { background:none; border:0; color:var(--rojo); font:inherit; font-weight:600; margin-top:14px; cursor:pointer; padding:6px 0; }
+  /* ===== Diseño nuevo (bloques de color) ===== */
+  .vj-hero { position:relative; overflow:hidden; background:var(--naranja); color:var(--sobre-acento); border-radius:30px; padding:22px; margin-bottom:12px; box-shadow:0 24px 48px -28px var(--naranja); }
+  .vj-hero::after { content:""; position:absolute; right:-80px; top:-80px; width:230px; height:230px; border-radius:50%; border:30px solid rgba(255,255,255,.14); }
+  .vj-hero > * { position:relative; z-index:1; }
+  .vj-hero-top { display:flex; justify-content:space-between; align-items:flex-end; gap:12px; }
+  .vj-hero .cifra { font-size:64px; line-height:.9; color:inherit; letter-spacing:-0.06em; }
+  .vj-hero .et { font-size:13.5px; font-weight:700; opacity:.75; margin-top:4px; }
+  .vj-pm { text-align:right; }
+  .vj-pm b { display:block; font-size:30px; font-weight:800; letter-spacing:-0.05em; }
+  .vj-pm span { font-size:12px; font-weight:600; opacity:.75; }
+  .vj-barra-m { height:10px; border-radius:5px; background:rgba(0,0,0,.16); margin-top:16px; overflow:hidden; }
+  .vj-barra-m i { display:block; height:100%; border-radius:5px; background:currentColor; }
+  .vj-hero-fila { display:grid; grid-template-columns:repeat(3, minmax(0, 1fr)); gap:8px; margin-top:14px; }
+  .vj-hero-fila div { background:rgba(0,0,0,.13); border-radius:16px; padding:10px 12px; }
+  :root[data-tema="claro"] .vj-hero-fila div, :root[data-tema="claro"] .vj-barra-m { background:rgba(255,255,255,.2); }
+  .vj-hero-fila b { display:block; font-size:20px; font-weight:800; letter-spacing:-0.04em; }
+  .vj-hero-fila span { font-size:11.5px; font-weight:600; opacity:.75; }
+  .vj-mapa { border-radius:26px !important; border:0 !important; box-shadow:inset 0 0 0 1px var(--linea), var(--sombra-tarjeta); }
+  .vj-mapa .vj-zoom button { border-radius:50% !important; }
+  .vj-boton { border-radius:999px !important; background:var(--naranja) !important; color:var(--sobre-acento) !important; box-shadow:0 12px 26px -14px var(--naranja) !important; font-weight:700 !important; }
+  .vj-cont { font-size:22px !important; font-weight:800 !important; letter-spacing:-0.045em !important; text-transform:none !important; color:var(--tinta) !important; margin:24px 4px 12px !important; }
+  .vj-cont::after { display:none; }
+  .vj-cont span { font-size:13px !important; font-weight:800 !important; background:var(--naranja); color:var(--sobre-acento); border-radius:999px; padding:3px 10px; letter-spacing:0 !important; }
+  .vj-pais { border:0 !important; border-radius:22px !important; box-shadow:inset 0 0 0 1px var(--linea), var(--sombra-tarjeta); }
+  .vj-pais .fl { font-size:34px !important; }
+  .vj-pais .nm b { font-weight:800 !important; font-size:16.5px !important; letter-spacing:-0.03em !important; }
+  .vj-pais[open] { box-shadow:inset 0 0 0 1.5px var(--naranja); }
+  .vj-anio { font-size:30px !important; font-weight:800 !important; letter-spacing:-0.055em !important; color:var(--tinta) !important; margin:26px 4px 12px !important; }
+  .vj-anio::after { display:none; }
+  .vj-viaje { display:flex !important; gap:14px; align-items:flex-start; border:0 !important; border-radius:24px !important; padding:14px !important; box-shadow:inset 0 0 0 1px var(--linea), var(--sombra-tarjeta); }
+  .vj-fecha { flex:none; width:58px; padding:9px 0 8px; border-radius:16px; background:var(--naranja); color:var(--sobre-acento); text-align:center; }
+  .vj-fecha b { display:block !important; font-size:24px !important; font-weight:800 !important; letter-spacing:-0.05em; margin:0 !important; line-height:1; }
+  .vj-fecha span { font-size:12px !important; font-weight:700; color:inherit !important; text-transform:uppercase; opacity:.8; }
+  .vj-v-txt { flex:1; min-width:0; }
+  .vj-v-txt .fls { font-size:22px !important; }
+  .vj-v-txt b { font-weight:800 !important; font-size:18px !important; letter-spacing:-0.035em !important; margin-top:4px !important; }
+  .vj-v-txt span { line-height:1.5; }
+  @media (min-width:1024px) {
+    body[data-pantalla="viajes"] main > div:has(> .vj-pais), body[data-pantalla="viajes"] main > div:has(> .vj-viaje) { grid-template-columns:repeat(3, minmax(0, 1fr)); }
+    body[data-pantalla="viajes"] main > div > .vj-pais, body[data-pantalla="viajes"] main > div > .vj-viaje { grid-column:auto; margin:0; }
+    body[data-pantalla="viajes"] main > div > .vj-boton { justify-self:start; width:auto; padding:13px 28px; }
+    body[data-pantalla="viajes"] main > div:has(> #vjMapa) { grid-template-columns:minmax(0, 1fr) minmax(0, 2.2fr); align-items:stretch; }
+    body[data-pantalla="viajes"] main > div:has(> #vjMapa) > .vj-hero { grid-column:1; margin:0; display:flex; flex-direction:column; justify-content:space-between; }
+    body[data-pantalla="viajes"] main > div:has(> #vjMapa) > .vj-hero .vj-hero-fila { grid-template-columns:1fr; }
+    body[data-pantalla="viajes"] main > div:has(> #vjMapa) > #vjMapa { grid-column:2; margin:0; }
+    body[data-pantalla="viajes"] main > div:has(> #vjMapa) > .vj-boton { grid-column:1 / -1; }
+    body[data-pantalla="viajes"] .vj-hero .cifra { font-size:84px; }
+  }
   .panel { max-height:88vh; overflow-y:auto; }
   `;
   const st = document.createElement("style"); st.textContent = css; document.head.appendChild(st);
@@ -139,11 +187,12 @@
       function vistaMapa() {
         const vis = visitados(), conts = new Set([...vis].map(a => PAISES[a] && PAISES[a].cont).filter(c => c && c !== "AN"));
         const nCiudades = [...vis].reduce((s, a) => s + ciudadesDe(a).length, 0);
-        return `<div class="vj-stats">
-            <div><b>${vis.size}</b><span>países</span></div>
-            <div><b>${Math.round(vis.size / TOTAL_MUNDO * 100)}%</b><span>del mundo</span></div>
-            <div><b>${conts.size}/6</b><span>continentes</span></div>
-            <div><b>${nCiudades}</b><span>ciudades</span></div>
+        const pm = vis.size / TOTAL_MUNDO;
+        return `<div class="vj-hero">
+            <div class="vj-hero-top"><div><div class="cifra">${vis.size}</div><div class="et">${vis.size === 1 ? "país visitado" : "países visitados"}</div></div>
+              <div class="vj-pm"><b>${Math.round(pm * 100)}%</b><span>del mundo</span></div></div>
+            <div class="vj-barra-m"><i style="width:${Math.max(pm * 100, vis.size ? 1.5 : 0)}%"></i></div>
+            <div class="vj-hero-fila"><div><b>${conts.size}/6</b><span>continentes</span></div><div><b>${nCiudades}</b><span>ciudades</span></div><div><b>${d.viajes.length}</b><span>viajes</span></div></div>
           </div>
           <div class="vj-mapa" id="vjMapa"><div class="vj-cargando">Cargando el mapa…</div></div>
           <button class="vj-boton" data-accion="nuevo-viaje">Añadir viaje</button>`;
@@ -193,18 +242,21 @@
       function vistaViajes() {
         const vs = d.viajes.slice().sort((a, b) => b.inicio.localeCompare(a.inicio));
         const este = hoyK().slice(0, 4), diasAnio = vs.filter(v => v.inicio.startsWith(este)).reduce((s, v) => s + diasViaje(v), 0);
-        let html = `<div class="vj-stats" style="grid-template-columns:repeat(3,1fr)">
-            <div><b>${vs.length}</b><span>viajes</span></div>
-            <div><b>${vs.filter(v => v.inicio.startsWith(este)).length}</b><span>en ${este}</span></div>
-            <div><b>${diasAnio}</b><span>días fuera en ${este}</span></div></div>
+        let html = `<div class="vj-hero">
+            <div class="vj-hero-top"><div><div class="cifra">${vs.length}</div><div class="et">${vs.length === 1 ? "viaje" : "viajes"} en total</div></div>
+              <div class="vj-pm"><b>${diasAnio}</b><span>días fuera en ${este}</span></div></div>
+            <div class="vj-hero-fila"><div><b>${vs.filter(v => v.inicio.startsWith(este)).length}</b><span>viajes en ${este}</span></div><div><b>${new Set(vs.flatMap(v => v.destinos.map(x => x.pais))).size}</b><span>países</span></div><div><b>${vs.reduce((s, v) => s + diasViaje(v), 0)}</b><span>días viajando</span></div></div>
+          </div>
           <button class="vj-boton" data-accion="nuevo-viaje">Añadir viaje</button>`;
         let anio = "";
         vs.forEach(v => {
           const y = v.inicio.slice(0, 4);
           if (y !== anio) { anio = y; html += `<div class="vj-anio">${y}</div>`; }
           const cs = v.destinos.flatMap(x => x.ciudades);
-          html += `<button class="vj-viaje" data-accion="viaje" data-id="${v.id}"><div class="fls">${v.destinos.map(x => bandera(x.pais)).join("")}</div>
-            <b>${esc(v.nombre)}</b><span>${rangoFechas(v)}, ${diasViaje(v)} ${diasViaje(v) === 1 ? "día" : "días"}${cs.length ? ". " + esc(cs.join(", ")) : ""}</span></button>`;
+          const fi = aFecha(v.inicio);
+          html += `<button class="vj-viaje" data-accion="viaje" data-id="${v.id}"><div class="vj-fecha"><b>${fi.getDate()}</b><span>${fi.toLocaleDateString("es-ES", { month: "short" }).replace(".", "")}</span></div>
+            <div class="vj-v-txt"><div class="fls">${v.destinos.map(x => bandera(x.pais)).join("")}</div>
+            <b>${esc(v.nombre)}</b><span>${rangoFechas(v)} · ${diasViaje(v)} ${diasViaje(v) === 1 ? "día" : "días"}${cs.length ? "<br>" + esc(cs.join(", ")) : ""}</span></div></button>`;
         });
         if (!vs.length) html += `<div class="bloque"><p style="margin:0">Apunta tu primer viaje con sus fechas, países y ciudades.</p></div>`;
         return html;
