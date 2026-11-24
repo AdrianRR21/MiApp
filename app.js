@@ -12,16 +12,18 @@ const HiperApp = (() => {
   const CLAVE = "hiperapp-datos";
 
   // NOMBRE, COLOR Y GRUPO DE CADA PANTALLA (se cambian aquí, para todas a la vez)
+  // "color" es el del tema oscuro y "claro" el del tema claro (algo más intenso para que se lea sobre blanco)
   const PANTALLAS = {
-    vida:         { titulo: "Vida",            color: "#F5F5F7", grupo: "" },
-    habitos:      { titulo: "Hábitos",         color: "#BF5AF2", grupo: "Día a día" },
-    alimentacion: { titulo: "Alimentación",    color: "#FF9F0A", grupo: "Día a día" },
-    gimnasio:     { titulo: "Deporte",         color: "#0A84FF", grupo: "Día a día" },
-    patrimonio:   { titulo: "Finanzas",        color: "#30D158", grupo: "Dinero" },
-    inversiones:  { titulo: "Inversiones",     color: "#FFD60A", grupo: "Dinero" },
-    value:        { titulo: "Value Investing", color: "#7D7AFF", grupo: "Dinero" },
-    ocio:         { titulo: "Ocio",            color: "#C49A6C", grupo: "Tiempo libre" },
-    viajes:       { titulo: "Viajes",          color: "#40C8E0", grupo: "Tiempo libre" }
+    vida:         { titulo: "Vida",            color: "#F5F5F7", claro: "#0B0B0C", grupo: "" },
+    habitos:      { titulo: "Hábitos",         color: "#BF5AF2", claro: "#9A3BD6", grupo: "Día a día" },
+    estudio:      { titulo: "Estudio",         color: "#FF6FB1", claro: "#D6266F", grupo: "Día a día" },
+    alimentacion: { titulo: "Alimentación",    color: "#FF9F0A", claro: "#E07000", grupo: "Día a día" },
+    gimnasio:     { titulo: "Deporte",         color: "#0A84FF", claro: "#0062D6", grupo: "Día a día" },
+    patrimonio:   { titulo: "Finanzas",        color: "#30D158", claro: "#14923F", grupo: "Dinero" },
+    inversiones:  { titulo: "Inversiones",     color: "#FFD60A", claro: "#B98500", grupo: "Dinero" },
+    value:        { titulo: "Value Investing", color: "#7D7AFF", claro: "#5653D9", grupo: "Dinero" },
+    ocio:         { titulo: "Ocio",            color: "#C49A6C", claro: "#9C6A3A", grupo: "Tiempo libre" },
+    viajes:       { titulo: "Viajes",          color: "#40C8E0", claro: "#0A8BA6", grupo: "Tiempo libre" }
   };
   const GRUPOS = ["", "Día a día", "Dinero", "Tiempo libre"];
   const suave = (hex, a) => { const n = parseInt(hex.slice(1), 16); return `rgba(${n >> 16}, ${(n >> 8) & 255}, ${n & 255}, ${a})`; };
@@ -247,18 +249,42 @@ const HiperApp = (() => {
   //  PANTALLAS Y NAVEGACIÓN
   // =====================================================================
   function registrar(p) { Object.assign(p, PANTALLAS[p.id] || {}); p.nombreCorto = p.titulo; pestanas.push(p); }
+
+  // =====================================================================
+  //  TEMA CLARO / OSCURO (se recuerda en cada dispositivo)
+  // =====================================================================
+  const TEMA = "hiperapp-tema";
+  const sistemaClaro = window.matchMedia ? matchMedia("(prefers-color-scheme: light)") : null;
+  const temaElegido = () => { try { return localStorage.getItem(TEMA) || "oscuro"; } catch (e) { return "oscuro"; } };   // oscuro | claro | auto
+  const temaReal = () => { const t = temaElegido(); return t === "auto" ? (sistemaClaro && sistemaClaro.matches ? "claro" : "oscuro") : t; };
+  const claroActivo = () => document.documentElement.dataset.tema === "claro";
+  // Color de una pantalla en el tema actual
+  function color(id) { const p = PANTALLAS[id]; return p ? (claroActivo() ? p.claro : p.color) : "#888888"; }
+  function aplicarTema(animar) {
+    const raiz = document.documentElement, nuevo = temaReal();
+    if (animar) { raiz.classList.add("cambiando-tema"); setTimeout(() => raiz.classList.remove("cambiando-tema"), 450); }
+    raiz.dataset.tema = nuevo;
+    const fondo = nuevo === "claro" ? "#F3F2EF" : "#000000";
+    document.querySelectorAll('meta[name="theme-color"]').forEach(m => m.setAttribute("content", fondo));
+    document.querySelectorAll("#menuLista button").forEach(b => { const c = color(b.dataset.id); b.style.setProperty("--c", c); b.style.setProperty("--c-suave", suave(c, nuevo === "claro" ? 0.12 : 0.16)); });
+    document.querySelectorAll("[data-tema-op]").forEach(b => b.classList.toggle("on", b.dataset.temaOp === temaElegido()));
+    if (actual) mostrar(actual, true);
+  }
+  function ponerTema(t) { try { localStorage.setItem(TEMA, t); } catch (e) {} aplicarTema(true); }
+  if (sistemaClaro && sistemaClaro.addEventListener) sistemaClaro.addEventListener("change", () => { if (temaElegido() === "auto") aplicarTema(true); });
   const ordenadas = () => GRUPOS.flatMap(g => pestanas.filter(p => (p.grupo || "") === g));
 
   function mostrar(id, mantenerScroll) {
     const p = pestanas.find(x => x.id === id) || pestanas.find(x => x.id === "vida") || pestanas[0];
     actual = p.id;
-    const raizCss = document.documentElement.style;
-    raizCss.setProperty("--naranja", p.color);        // color de acento que usan todas las pantallas
-    raizCss.setProperty("--naranja-suave", suave(p.color, 0.14));
-    raizCss.setProperty("--acento", p.color);
+    const raizCss = document.documentElement.style, c = color(p.id), claro = claroActivo();
+    raizCss.setProperty("--naranja", c);        // color de acento que usan todas las pantallas
+    raizCss.setProperty("--naranja-suave", suave(c, claro ? 0.1 : 0.14));
+    raizCss.setProperty("--brillo", suave(p.id === "vida" ? (claro ? "#9A3BD6" : "#7D7AFF") : c, claro ? 0.07 : 0.11));
+    raizCss.setProperty("--acento", c);
     document.body.dataset.pantalla = p.id;
-    document.getElementById("titulo").textContent = p.id === "vida" ? saludo() : p.titulo;
-    const fechaHoy = new Date().toLocaleDateString("es-ES", { weekday: "long", day: "numeric", month: "long" });
+    const fechaHoy = new Date().toLocaleDateString("es-ES", { weekday: "long", day: "numeric", month: innerWidth < 520 ? "short" : "long" }).replace(".", "");
+    const tit = document.getElementById("titulo"); tit.textContent = p.titulo; tit.classList.toggle("largo", p.titulo.length > 11);
     document.getElementById("supertitulo").textContent = p.id === "vida" ? fechaHoy : (p.grupo || "");
     document.title = p.titulo + " · Mi app";
     document.querySelectorAll("#menuLista button").forEach(b => {
@@ -266,15 +292,12 @@ const HiperApp = (() => {
     });
     const cont = document.getElementById("contenido");
     const y = window.scrollY;
-    cont.className = p.ancho ? "ancho" : "";
+    cont.className = (p.ancho ? "ancho" : "") + (mantenerScroll ? "" : " entra");
+    clearTimeout(mostrar.t); mostrar.t = setTimeout(() => cont.classList.remove("entra"), 450);   // la animación de entrada no debe quedarse puesta
     cont.innerHTML = "";
     p.render(cont, almacen(p.datos || p.id));   // "datos" permite que una pantalla comparta los datos de otra
     window.scrollTo(0, mantenerScroll ? y : 0);
     try { localStorage.setItem("hiperapp-ultima", p.id); } catch (e) {}
-  }
-  function saludo() {
-    const h = new Date().getHours();
-    return (h < 6 ? "Buenas noches" : h < 14 ? "Buenos días" : h < 21 ? "Buenas tardes" : "Buenas noches") + (HiperApp.nombre ? ", " + HiperApp.nombre : "");
   }
   function ir(id) { location.hash = id; }
 
@@ -292,9 +315,7 @@ const HiperApp = (() => {
       }
       const b = document.createElement("button");
       b.dataset.id = p.id;
-      b.style.setProperty("--c", p.color);
-      b.style.setProperty("--c-suave", suave(p.color, 0.14));
-      b.innerHTML = p.icono + "<span>" + p.titulo + "</span>";
+      b.innerHTML = "<i>" + p.icono + "</i><span>" + p.titulo + "</span>";
       b.addEventListener("click", () => { abrirMenu(false); if (location.hash.slice(1) === p.id) mostrar(p.id); else ir(p.id); });
       lista.appendChild(b);
     });
@@ -303,6 +324,8 @@ const HiperApp = (() => {
     document.getElementById("btnCopias").onclick = () => { abrirMenu(false); abrirAjustes(); };
     document.getElementById("btnNube").onclick = () => { abrirMenu(false); abrirAjustes(); };
     document.getElementById("btnNubeTop").onclick = () => abrirAjustes();
+    document.getElementById("btnTema").onclick = () => ponerTema(claroActivo() ? "oscuro" : "claro");
+    document.querySelectorAll("#menu [data-tema-op]").forEach(b => b.onclick = () => ponerTema(b.dataset.temaOp));
     document.addEventListener("keydown", e => { if (e.key === "Escape") { abrirMenu(false); const f = [...document.querySelectorAll(".panel-fondo")].pop(); if (f) f.remove(); } });
     let x0 = null;
     const menu = document.getElementById("menu");
@@ -348,7 +371,11 @@ const HiperApp = (() => {
     cerrarAjustes();
     const fondo = document.createElement("div");
     fondo.className = "panel-fondo"; fondo.id = "ajustes";
-    fondo.innerHTML = `<div class="panel ajustes" role="dialog" aria-label="Ajustes"><div id="ajNube"></div>
+    fondo.innerHTML = `<div class="panel ajustes" role="dialog" aria-label="Ajustes">
+      <div class="ajustes-seccion"><div class="ajustes-tit">Apariencia</div>
+        <div class="temas">${[["oscuro", "Oscuro", "o"], ["claro", "Claro", "c"], ["auto", "Automático", "a"]].map(([id, n, k]) => `<button data-tema-op="${id}" class="${temaElegido() === id ? "on" : ""}"><span class="mini ${k}"></span>${n}</button>`).join("")}</div>
+        <p class="aviso">Automático sigue el modo claro u oscuro del dispositivo. Se recuerda en cada dispositivo por separado.</p></div>
+      <div id="ajNube"></div>
       <div class="ajustes-seccion"><div class="ajustes-tit">Copias de seguridad</div>
         <p class="aviso">Un archivo con todos tus datos, para guardarlo donde quieras (Archivos, iCloud Drive…). ${Nube.conectada() ? "Con la nube no es imprescindible, pero es una buena red de seguridad." : "Mientras no conectes la nube, es la única forma de no perder nada si borras la app o cambias de dispositivo."}</p>
         <div class="ajustes-botones"><button class="boton secundario" id="btnExportar">Guardar copia</button><button class="boton secundario" id="btnImportar">Restaurar copia</button></div>
@@ -359,6 +386,7 @@ const HiperApp = (() => {
     document.getElementById("btnExportar").onclick = exportar;
     document.getElementById("btnImportar").onclick = importar;
     document.getElementById("btnCerrarAj").onclick = cerrarAjustes;
+    fondo.querySelectorAll("[data-tema-op]").forEach(b => b.onclick = () => ponerTema(b.dataset.temaOp));
     pintarNube();
   }
   function cerrarAjustes() { const a = document.getElementById("ajustes"); if (a) a.remove(); }
@@ -417,6 +445,7 @@ const HiperApp = (() => {
   async function iniciar() {
     await cargar();
     montarMenu();
+    aplicarTema(false);
     document.getElementById("btnAjustes").onclick = abrirAjustes;
     // ¿Llega un enlace de conexión desde otro dispositivo?
     const h = location.hash;
@@ -441,5 +470,5 @@ const HiperApp = (() => {
     setInterval(comprobarDia, 60000);
   }
 
-  return { registrar, iniciar, almacen, ir, nombre: "Adrián" };
+  return { registrar, iniciar, almacen, ir, color, tema: () => document.documentElement.dataset.tema, nombre: "Adrián" };
 })();
