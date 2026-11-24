@@ -27,7 +27,7 @@
   .pt-fila .sub { font-size:13px; color:var(--tinta-suave); margin-top:2px; }
   .pt-fila .der { text-align:right; font-weight:600; white-space:nowrap; }
   .pt-pos, .pt-fila .sub.pt-pos { color:var(--naranja); }
-  .pt-neg, .pt-fila .sub.pt-neg { color:#E5776B; }
+  .pt-neg, .pt-fila .sub.pt-neg { color:var(--rojo); }
   .pt-raiz { padding-bottom:64px; }
   .pt-enlace { background:none; border:0; color:var(--naranja); font:inherit; font-weight:600; font-size:14px; cursor:pointer; padding:10px 0 0; }
   .pt-rent { display:flex; gap:10px; margin-top:14px; }
@@ -48,7 +48,7 @@
   .pt-borrar { background:none; border:0; color:var(--tinta-suave); font-size:22px; line-height:1; padding:2px 4px 2px 8px; cursor:pointer; }
 
   .pt-fab { position:fixed; right:20px; bottom:calc(var(--barra-alto) + env(safe-area-inset-bottom, 0px) + 18px); z-index:6;
-    width:56px; height:56px; border-radius:50%; border:0; background:var(--naranja); color:#1A1411; font-size:30px; line-height:1; cursor:pointer;
+    width:56px; height:56px; border-radius:50%; border:0; background:var(--naranja); color:var(--sobre-acento); font-size:30px; line-height:1; cursor:pointer;
     box-shadow:0 6px 20px rgba(0,0,0,.45); }
 
   .pt-rangos { display:flex; gap:4px; }

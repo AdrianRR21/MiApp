@@ -14,12 +14,12 @@
   .iv-barra-sup { display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:12px; }
 
   .iv-aviso { display:flex; gap:12px; align-items:center; background:var(--naranja-suave); color:var(--tinta); border-radius:14px; padding:14px; margin-bottom:12px; font-size:14px; line-height:1.4; }
-  .iv-aviso button { flex:none; border:0; background:var(--naranja); color:#17130A; font:inherit; font-weight:700; font-size:13.5px; padding:9px 12px; border-radius:10px; cursor:pointer; }
+  .iv-aviso button { flex:none; border:0; background:var(--naranja); color:var(--sobre-acento); font:inherit; font-weight:700; font-size:13.5px; padding:9px 12px; border-radius:10px; cursor:pointer; }
   .iv-total { padding:4px 2px 16px; }
   .iv-total .cifra { font-size:42px; line-height:1.05; }
   .iv-total .sub { font-size:14.5px; color:var(--tinta-suave); margin-top:6px; }
   .iv-tarjetas { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:12px; }
-  .iv-tarjetas div { background:var(--papel); border-radius:14px; padding:14px; }
+  .iv-tarjetas > div { background:var(--papel); border-radius:14px; padding:14px; }
   .iv-tarjetas b { display:block; font-size:24px; margin-top:3px; letter-spacing:-.02em; }
   .iv-pos, .iv-sub.iv-pos { color:var(--naranja); }
   .iv-neg, .iv-sub.iv-neg { color:var(--rojo); }
@@ -29,7 +29,7 @@
   .iv-leyenda span { display:inline-flex; align-items:center; gap:6px; }
   .iv-leyenda i { width:10px; height:10px; border-radius:3px; display:inline-block; }
   .iv-nota { font-size:13px; color:var(--tinta-suave); line-height:1.55; margin:12px 0 0; }
-  .iv-boton { width:100%; border:0; background:var(--naranja); color:#17130A; font:inherit; font-weight:700; font-size:16px; padding:14px; border-radius:14px; cursor:pointer; margin-bottom:12px; }
+  .iv-boton { width:100%; border:0; background:var(--naranja); color:var(--sobre-acento); font:inherit; font-weight:700; font-size:16px; padding:14px; border-radius:14px; cursor:pointer; margin-bottom:12px; }
   .iv-boton.sec { background:none; border:1.5px dashed var(--linea); color:var(--naranja); font-size:15px; }
 
   .iv-cab { display:flex; justify-content:space-between; align-items:baseline; gap:10px; }
@@ -51,7 +51,7 @@
   .iv-tabla tr.cat td:first-child { color:var(--tinta); }
   .iv-tabla tr.act td:first-child { padding-left:10px; color:var(--tinta-suave); }
   .iv-tabla tr.tot td { font-weight:700; border-top:2px solid var(--linea); }
-  .iv-tabla .vacio { color:#56565C; }
+  .iv-tabla .vacio { color:var(--tinta-tenue); }
   .iv-mesmes { margin-top:14px; padding-top:4px; }
   .iv-mesmes summary { cursor:pointer; color:var(--naranja); font-weight:600; font-size:14px; padding:6px 0; list-style:none; }
   .iv-mesmes summary::-webkit-details-marker { display:none; }
@@ -83,7 +83,7 @@
   .iv-grid b { display:block; font-size:17px; margin-top:2px; }
   .iv-botones { display:flex; gap:8px; margin-top:14px; }
   .iv-botones button { flex:1; border:0; border-radius:11px; padding:12px 4px; font:inherit; font-weight:700; font-size:14px; cursor:pointer; background:var(--naranja-suave); color:var(--naranja); }
-  .iv-botones button.pri { background:var(--naranja); color:#17130A; }
+  .iv-botones button.pri { background:var(--naranja); color:var(--sobre-acento); }
   .iv-hist { display:flex; align-items:center; gap:10px; padding:10px 0; border-top:1px solid var(--linea); font-size:14px; }
   .iv-hist .izq { flex:1; min-width:0; }
   .iv-hist .tipo { font-weight:600; }
@@ -98,7 +98,7 @@
   .iv-interruptor i::after { content:""; position:absolute; top:3px; left:3px; width:14px; height:14px; border-radius:50%; background:var(--tinta-suave); transition:transform .2s, background .2s; }
   .iv-interruptor.on { color:var(--tinta); }
   .iv-interruptor.on i { background:var(--naranja); box-shadow:none; }
-  .iv-interruptor.on i::after { transform:translateX(14px); background:#000; }
+  .iv-interruptor.on i::after { transform:translateX(14px); background:var(--sobre-acento); }
   .iv-enlace { background:none; border:0; color:var(--tinta-suave); font:inherit; font-size:13.5px; font-weight:600; padding:12px 0 0; cursor:pointer; }
   `;
   const st = document.createElement("style"); st.textContent = css; document.head.appendChild(st);

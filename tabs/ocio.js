@@ -15,21 +15,21 @@
   .oc-stats b { display:block; font-size:16px; color:var(--tinta); font-weight:600; letter-spacing:-0.02em; }
   .oc-orden { display:flex; border:1px solid var(--linea); border-radius:9px; padding:2px; }
   .oc-orden button { border:0; background:none; color:var(--tinta-suave); font:inherit; font-size:12.5px; font-weight:500; padding:6px 10px; border-radius:7px; cursor:pointer; }
-  .oc-orden button.on { background:#1A1A1E; color:var(--tinta); }
+  .oc-orden button.on { background:var(--papel-3); color:var(--tinta); }
   .oc-anio-grupo { display:flex; align-items:center; gap:10px; font-size:12px; font-weight:600; letter-spacing:.1em; color:var(--tinta-suave); margin:22px 0 12px; }
   .oc-anio-grupo::after { content:""; flex:1; height:1px; background:var(--linea); }
   .oc-anio-grupo:first-of-type { margin-top:4px; }
   .oc-grid { display:grid; grid-template-columns:repeat(3, 1fr); gap:18px 12px; align-items:start; }
   .oc-item { display:flex; flex-direction:column; width:100%; background:none; border:0; padding:0; color:inherit; font:inherit; text-align:left; cursor:pointer; min-width:0; }
-  .oc-poster { position:relative; aspect-ratio:2/3; border-radius:6px; overflow:hidden; background:linear-gradient(160deg, #1B1B1F, #0C0C0E); box-shadow:0 0 0 1px rgba(255,255,255,.07), 0 10px 24px rgba(0,0,0,.6); }
+  .oc-poster { position:relative; aspect-ratio:2/3; border-radius:6px; overflow:hidden; background:linear-gradient(160deg, var(--papel-2), var(--papel)); box-shadow:0 0 0 1px var(--linea), var(--sombra-poster); }
   .oc-poster img { width:100%; height:100%; object-fit:cover; display:block; }
-  .oc-poster .sin { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-weight:600; font-size:44px; letter-spacing:-0.04em; color:#2A2A30; }
+  .oc-poster .sin { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-weight:600; font-size:44px; letter-spacing:-0.04em; color:var(--linea-2); }
   .oc-nota { position:absolute; right:5px; top:5px; background:rgba(0,0,0,.72); -webkit-backdrop-filter:blur(8px); backdrop-filter:blur(8px); color:#fff; font-weight:600; font-size:12px; padding:3px 7px 3px 6px; border-radius:6px; letter-spacing:-0.01em; }
   .oc-nota::before { content:"★"; color:var(--naranja); margin-right:3px; font-size:10.5px; }
   .oc-tit { font-size:12.5px; font-weight:500; margin-top:8px; line-height:1.3; letter-spacing:-0.01em; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
   .oc-anio { font-size:11.5px; color:var(--tinta-suave); margin-top:2px; }
   .oc-aviso { background:var(--naranja-suave); color:var(--tinta); border-radius:10px; padding:10px 12px; font-size:13.5px; line-height:1.45; margin:4px 0 12px; }
-  .oc-anadir { width:100%; border:0; background:var(--naranja); color:#1A1411; font:inherit; font-weight:700; font-size:16px; padding:14px; border-radius:14px; cursor:pointer; margin-bottom:16px; }
+  .oc-anadir { width:100%; border:0; background:var(--naranja); color:var(--sobre-acento); font:inherit; font-weight:700; font-size:16px; padding:14px; border-radius:14px; cursor:pointer; margin-bottom:16px; }
   .oc-enlace { background:none; border:0; color:var(--tinta-suave); font:inherit; font-size:13px; cursor:pointer; padding:18px 0 0; text-decoration:underline; }
 
   .oc-chips { display:flex; gap:6px; margin-bottom:12px; }
@@ -48,7 +48,7 @@
   .oc-form label { display:block; font-size:13px; color:var(--tinta-suave); margin:14px 0 6px; }
   .oc-busca { display:flex; gap:8px; }
   .oc-busca input { flex:1; min-width:0; }
-  .oc-busca button { flex:none; border:0; background:var(--naranja); color:#1A1411; font:inherit; font-weight:700; padding:0 14px; border-radius:10px; cursor:pointer; }
+  .oc-busca button { flex:none; border:0; background:var(--naranja); color:var(--sobre-acento); font:inherit; font-weight:700; padding:0 14px; border-radius:10px; cursor:pointer; }
   .oc-res { margin-top:8px; }
   .oc-res .oc-fila { cursor:pointer; }
   .oc-nota-grande { text-align:center; font-size:54px; font-weight:700; letter-spacing:-.03em; color:var(--naranja); margin:6px 0 0; }
@@ -60,7 +60,7 @@
   .oc-acciones .boton { flex:1; margin:0; }
   .oc-nota-txt { font-size:13.5px; color:var(--tinta-suave); line-height:1.55; margin:10px 0 0; }
   .oc-nota-txt ol { padding-left:20px; margin:8px 0; }
-  .oc-peligro { background:none; border:0; color:#E5776B; font:inherit; font-weight:600; margin-top:14px; cursor:pointer; padding:6px 0; }
+  .oc-peligro { background:none; border:0; color:var(--rojo); font:inherit; font-weight:600; margin-top:14px; cursor:pointer; padding:6px 0; }
   .panel { max-height:88vh; overflow-y:auto; }
   `;
   const st = document.createElement("style"); st.textContent = css; document.head.appendChild(st);

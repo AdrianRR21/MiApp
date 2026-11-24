@@ -24,7 +24,7 @@
   .hb-fila { display:flex; align-items:center; gap:12px; padding:12px 0; border-top:1px solid var(--linea); }
   .hb-fila:first-of-type { border-top:0; }
   .hb-fila .txt { flex:1; line-height:1.35; word-break:break-word; }
-  .hb-check { flex:none; width:28px; height:28px; border-radius:50%; border:2px solid var(--tinta-suave); background:none; cursor:pointer; display:grid; place-items:center; padding:0; color:#1A1411; }
+  .hb-check { flex:none; width:28px; height:28px; border-radius:50%; border:2px solid var(--tinta-suave); background:none; cursor:pointer; display:grid; place-items:center; padding:0; color:var(--sobre-acento); }
   .hb-check.on { background:var(--naranja); border-color:var(--naranja); }
   .hb-check svg { width:15px; height:15px; opacity:0; }
   .hb-check.on svg { opacity:1; }
@@ -34,7 +34,7 @@
   .hb-nuevo { display:flex; gap:8px; margin-top:12px; }
   .hb-nuevo input { flex:1; min-width:0; }
   .hb-nuevo select { width:auto; max-width:40%; }
-  .hb-mas { flex:none; width:46px; border:0; border-radius:10px; background:var(--naranja); color:#1A1411; font-size:24px; cursor:pointer; }
+  .hb-mas { flex:none; width:46px; border:0; border-radius:10px; background:var(--naranja); color:var(--sobre-acento); font-size:24px; cursor:pointer; }
 
   .hb-pct-top { display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:14px; }
   .hb-mini-seg { display:flex; gap:4px; }
@@ -59,11 +59,11 @@
   .ag-cal { display:grid; grid-template-columns:repeat(7, 1fr); gap:2px; text-align:center; }
   .ag-cal .l { font-size:11.5px; color:var(--tinta-suave); padding-bottom:6px; }
   .ag-cal button { position:relative; aspect-ratio:1; border:0; background:none; color:var(--tinta); font:inherit; font-size:14px; border-radius:10px; cursor:pointer; padding:0; }
-  .ag-cal button.pasado { color:#4A4A50; }
+  .ag-cal button.pasado { color:var(--tinta-tenue); }
   .ag-cal button.hoy { box-shadow:inset 0 0 0 1px var(--linea); }
-  .ag-cal button.sel { background:var(--naranja); color:#000; font-weight:600; }
+  .ag-cal button.sel { background:var(--naranja); color:var(--sobre-acento); font-weight:600; }
   .ag-cal button.tiene::after { content:""; position:absolute; bottom:5px; left:50%; margin-left:-2px; width:4px; height:4px; border-radius:50%; background:var(--naranja); }
-  .ag-cal button.sel.tiene::after { background:#000; }
+  .ag-cal button.sel.tiene::after { background:var(--sobre-acento); }
   .ag-mes { display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; }
   .ag-mes b { font-weight:600; font-size:15px; letter-spacing:-0.02em; }
   .ag-mes button { background:none; border:1px solid var(--linea); color:var(--tinta); width:32px; height:32px; border-radius:9px; font-size:16px; cursor:pointer; }

@@ -8,10 +8,10 @@
   const css = `
   .vi-seg { display:flex; border:1px solid var(--linea); border-radius:11px; padding:3px; margin-bottom:14px; }
   .vi-seg button { flex:1; min-width:0; display:flex; flex-direction:column; align-items:center; gap:1px; border:0; background:none; color:var(--tinta-suave); font:inherit; font-weight:500; font-size:12.5px; padding:7px 2px; border-radius:8px; cursor:pointer; white-space:nowrap; }
-  .vi-seg button.on { background:#1A1A1E; color:var(--tinta); }
+  .vi-seg button.on { background:var(--papel-3); color:var(--tinta); }
   .vi-seg button i { font-style:normal; font-size:17px; font-weight:600; letter-spacing:-0.02em; color:inherit; order:-1; }
   .vi-seg button.on i { color:var(--naranja); }
-  .vi-pos { color:#30D158; } .vi-neg { color:var(--rojo); }
+  .vi-pos { color:var(--verde); } .vi-neg { color:var(--rojo); }
   .vi-cartera { border:1px solid var(--linea); border-radius:14px; background:var(--papel); padding:18px; margin-bottom:12px; }
   .vi-cartera .cifra { font-size:38px; line-height:1.05; margin-top:2px; }
   .vi-cartera .sub { font-size:13.5px; color:var(--tinta-suave); margin-top:6px; line-height:1.5; }
@@ -49,7 +49,7 @@
   .vi-grid b { display:block; font-size:17px; font-weight:600; margin-top:2px; }
   .vi-botones { display:flex; gap:8px; margin-top:14px; }
   .vi-botones button { flex:1; border:1px solid var(--linea); border-radius:10px; padding:11px 4px; font:inherit; font-weight:600; font-size:13.5px; cursor:pointer; background:none; color:var(--tinta); }
-  .vi-botones button.pri { background:var(--naranja); border-color:var(--naranja); color:#000; }
+  .vi-botones button.pri { background:var(--naranja); border-color:var(--naranja); color:var(--sobre-acento); }
   .vi-grupo { font-size:12px; font-weight:600; letter-spacing:.1em; text-transform:uppercase; color:var(--tinta-suave); margin:18px 0 4px; }
   .vi-hist { display:flex; align-items:center; gap:10px; padding:9px 0; border-top:1px solid var(--linea); font-size:14px; }
   .vi-hist .izq { flex:1; min-width:0; }
@@ -149,7 +149,7 @@
         const viejo = p && dias(p.fecha, hoyK()) > 30;
         // Barra: dónde está el precio frente al valor intrínseco
         const max = Math.max(v.intrinseco, p.precio) * 1.15, ip = p.precio / max * 100, iv = v.intrinseco / max * 100;
-        const col = x > 0 ? "#30D158" : "var(--rojo)";
+        const col = x > 0 ? "var(--verde)" : "var(--rojo)";
         return `<button class="vi-emp" data-accion="empresa" data-id="${e.id}">
           <div class="l1"><b>${esc(e.nombre)}</b>${e.ticker ? `<span class="tk">${esc(e.ticker)}</span>` : ""}<span class="pot ${cls(x)}">${pct(x)}</span></div>
           ${e.pais || e.sector ? `<div class="meta">${e.pais ? bandera(e.pais) + " " + esc(nombrePais(e.pais)) : ""}${e.pais && e.sector ? " · " : ""}${esc(e.sector)}</div>` : ""}

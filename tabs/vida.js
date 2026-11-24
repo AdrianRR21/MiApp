@@ -7,10 +7,23 @@
   .vd-resumen { color:var(--tinta-suave); font-size:14.5px; line-height:1.6; margin:-2px 2px 22px; }
   .vd-resumen b { color:var(--tinta); font-weight:500; }
   .vd-grid { display:grid; gap:14px; grid-template-columns:minmax(0, 1fr); }
-  .vd-card { position:relative; background:var(--papel); border:1px solid var(--linea); border-radius:18px; padding:18px 18px 20px; min-width:0; transition:border-color .2s; }
-  .vd-card:hover { border-color:var(--linea-2); }
+  .vd-card { position:relative; background:radial-gradient(120% 70% at 100% 0%, color-mix(in srgb, var(--c) 8%, transparent), transparent 62%), var(--papel); border:1px solid var(--linea); border-radius:20px; padding:18px 18px 20px; min-width:0; box-shadow:var(--sombra-tarjeta); transition:border-color .2s, transform .2s; }
+  .vd-card:hover { border-color:color-mix(in srgb, var(--c) 35%, var(--linea)); }
+  /* Accesos rápidos a cada pantalla (solo en el móvil; en el ordenador está la barra lateral) */
+  .vd-accesos { display:flex; gap:8px; overflow-x:auto; margin:0 -16px 18px; padding:2px 16px 4px; scrollbar-width:none; -webkit-overflow-scrolling:touch; }
+  .vd-accesos::-webkit-scrollbar { display:none; }
+  .vd-accesos button { flex:none; display:flex; flex-direction:column; align-items:center; gap:7px; width:68px; border:0; background:none; color:var(--tinta-suave); font:inherit; font-size:11.5px; font-weight:500; padding:0; cursor:pointer; letter-spacing:-0.01em; }
+  .vd-accesos i { width:54px; height:54px; border-radius:18px; display:grid; place-items:center; background:var(--papel); border:1px solid var(--linea); color:var(--c); box-shadow:var(--sombra-tarjeta); transition:transform .15s; }
+  .vd-accesos i svg { width:23px; height:23px; }
+  .vd-accesos button:active i { transform:scale(.93); }
+  .vd-accesos span { max-width:100%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .vd-vivo { color:var(--c); font-weight:500; }
+  .vd-vivo::before { content:""; display:inline-block; width:6px; height:6px; border-radius:50%; background:var(--c); margin-right:6px; vertical-align:1px; animation:vdLatido 1.6s ease-in-out infinite; }
+  @keyframes vdLatido { 50% { opacity:.3; } }
+  .vd-vivo .s { opacity:.6; }
+  .vd-estudio .vd-mini { grid-template-columns:repeat(2, minmax(0, 1fr)); }
   .vd-cab { display:flex; align-items:center; gap:9px; margin-bottom:16px; }
-  .vd-cab i { width:7px; height:7px; border-radius:50%; background:var(--c); box-shadow:0 0 12px var(--c); flex:none; }
+  .vd-cab i { width:8px; height:8px; border-radius:50%; background:var(--c); box-shadow:0 0 0 3px color-mix(in srgb, var(--c) 18%, transparent); flex:none; }
   .vd-cab span { flex:1; font-size:11px; font-weight:500; letter-spacing:.14em; text-transform:uppercase; color:var(--tinta-suave); }
   .vd-cab button { background:none; border:0; color:var(--tinta-suave); font:inherit; font-size:13px; font-weight:500; cursor:pointer; padding:4px 0 4px 8px; display:flex; align-items:center; gap:4px; }
   .vd-cab button:hover { color:var(--c); }
@@ -67,7 +80,7 @@
   .vd-dias { display:grid; grid-template-columns:repeat(14, 1fr); gap:4px; margin-top:8px; }
   .vd-dias i { aspect-ratio:1; border-radius:4px; background:var(--papel-2); position:relative; }
   .vd-dias i.g { background:var(--c); }
-  .vd-dias i.p::after { content:""; position:absolute; inset:30%; border-radius:50%; background:#fff; }
+  .vd-dias i.p::after { content:""; position:absolute; inset:30%; border-radius:50%; background:var(--tinta); }
   .vd-dias i.hoy { box-shadow:0 0 0 1px var(--tinta-suave); }
 
   /* Alimentación */
@@ -96,6 +109,7 @@
   .vd-mini span em { font-style:normal; }
   .vd-c { display:none; }
 
+  @media (min-width: 1024px) { .vd-accesos { display:none; } }
   @media (min-width: 700px) {
     .vd-grid { grid-template-columns:repeat(2, minmax(0, 1fr)); }
     .vd-ancha { grid-column:span 2; }
@@ -115,7 +129,7 @@
     .vd-resumen { margin:0 2px clamp(10px, 1.8vh, 18px); font-size:clamp(12.5px, 1.6vh, 14.5px); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
     .vd-grid { flex:1; min-height:0; grid-template-columns:repeat(4, minmax(0, 1fr)); grid-template-rows:repeat(2, minmax(0, 1fr)); gap:clamp(10px, 1.5vh, 16px); }
     .vd-ancha { grid-column:auto; }
-    .vd-hab { grid-column:span 2; }
+    .vd-estudio .vd-barras { height:clamp(40px, 10vh, 110px); margin-top:clamp(6px, 1vh, 12px); }
     .vd-card { overflow:hidden; display:flex; flex-direction:column; min-height:0; padding:clamp(13px, 2vh, 20px) clamp(14px, 1.3vw, 20px); border-radius:16px; }
     .vd-card > :not(.vd-cab) { flex:none; }
     .vd-cab { margin-bottom:clamp(8px, 1.4vh, 14px); }
@@ -134,13 +148,15 @@
     .vd-reparto { margin-top:clamp(8px, 1.3vh, 14px); }
     .vd-ley { gap:2px 9px; margin-top:6px; font-size:10.5px; max-height:30px; overflow:hidden; }
     .vd-top { padding:clamp(4px, .8vh, 8px) 0; font-size:13px; }
-    /* Hábitos: lista a la izquierda, gráfico a la derecha */
-    .vd-hab-cuerpo { grid-template-columns:minmax(0, 1fr) minmax(0, 1fr); gap:24px; flex:1 !important; min-height:0; }
-    .vd-hab-cuerpo > div:first-child { min-height:0; overflow:hidden; }
+    /* Hábitos: lista arriba, gráfico de 14 días abajo */
+    .vd-hab-cuerpo { grid-template-columns:minmax(0, 1fr); grid-template-rows:minmax(0, 1fr) auto; align-items:stretch; gap:clamp(8px, 1.4vh, 14px); flex:1 !important; min-height:0; }
+    .vd-hab-cuerpo > div:first-child { min-height:0; overflow:hidden; align-self:stretch; -webkit-mask-image:linear-gradient(#000 calc(100% - 26px), transparent); mask-image:linear-gradient(#000 calc(100% - 26px), transparent); }
+    .vd-hab .vd-sub, .vd-estudio .vd-sub { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
     .vd-check { padding:clamp(6px, 1.05vh, 10px) 0; }
     .vd-check span { font-size:clamp(13px, 1.65vh, 15px); }
     .vd-check i { width:19px; height:19px; }
-    .vd-hab-cuerpo .vd-barras { height:clamp(90px, 22vh, 220px); }
+    .vd-hab-cuerpo .vd-barras { height:clamp(40px, 8vh, 90px); gap:3px; margin-top:0; }
+    .vd-hab-cuerpo .vd-barras span { font-size:9.5px; }
     /* Agenda: lo que quepa */
     .vd-agenda .vd-ev { padding:clamp(5px, .9vh, 9px) 0; }
     .vd-evs > :nth-child(n+4) { display:none; }
@@ -168,6 +184,8 @@
     .vd-alim .vd-linea, .vd-fin-graf { display:none; }
     .vd-tops > :nth-child(n+3), .vd-evs > :nth-child(n+3), .vd-tareas > :nth-child(n+3) { display:none; }
     .vd-alim .vd-macro:nth-child(3) { display:none; }
+    .vd-hab .vd-sub { display:none; }
+    .vd-hab-cuerpo .vd-barras { height:clamp(32px, 6vh, 48px); }
     .vd-sub { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
   }
   `;
@@ -187,9 +205,8 @@
   const cls = n => n > 0.00001 ? "vd-pos" : n < -0.00001 ? "vd-neg" : "";
   const f1 = n => (Math.round(n * 10) / 10).toLocaleString("es-ES", { maximumFractionDigits: 1 });
   const DIAS = ["D", "L", "M", "X", "J", "V", "S"];
-  const tick = '<svg viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
+  const tick = '<svg viewBox="0 0 24 24" fill="none" stroke="var(--sobre-acento)" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
   const flecha = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>';
-  const COLORES = { habitos: "#BF5AF2", alimentacion: "#FF9F0A", gimnasio: "#0A84FF", patrimonio: "#30D158", inversiones: "#FFD60A", value: "#7D7AFF" };
 
   // Línea fina con área degradada. series: [{vals, color, area, discontinua}]
   let nGraf = 0;
@@ -211,14 +228,14 @@
     const c = series[0].color;
     return `<svg class="vd-linea" style="height:${alto}px" viewBox="0 0 ${W} ${alto}" preserveAspectRatio="none" aria-hidden="true"><defs><linearGradient id="${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${c}" stop-opacity=".28"/><stop offset="1" stop-color="${c}" stop-opacity="0"/></linearGradient></defs>${g}</svg>`;
   }
-  const tarjeta = (id, titulo, cuerpo, extra = "") => `<section class="vd-card ${extra}" style="--c:${COLORES[id]}">
+  const tarjeta = (id, titulo, cuerpo, extra = "") => `<section class="vd-card ${extra}" style="--c:${HiperApp.color(id)}">
     <div class="vd-cab"><i></i><span>${titulo}</span><button data-ir="${id}" aria-label="Abrir ${titulo}">Abrir ${flecha}</button></div>${cuerpo}</section>`;
   const vacio = (texto, id, boton) => `<div class="vd-vacio">${texto}${boton ? `<br><button class="boton secundario" data-ir="${id}">${boton}</button>` : ""}</div>`;
 
   HiperApp.registrar({
     id: "vida",
     ancho: true,
-    usa: ["habitos", "patrimonio", "value", "alimentacion", "gimnasio"],   // se repinta si cambian
+    usa: ["habitos", "patrimonio", "value", "alimentacion", "gimnasio", "estudio"],   // se repinta si cambian
     icono: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7.5" height="9" rx="2"/><rect x="13.5" y="3" width="7.5" height="5.5" rx="2"/><rect x="13.5" y="11.5" width="7.5" height="9.5" rx="2"/><rect x="3" y="15" width="7.5" height="6" rx="2"/></svg>',
 
     render(contenedor) {
@@ -403,11 +420,40 @@
           ${top.length ? `<div class="vd-sep"></div><div class="vd-tit">Más potencial</div><div class="vd-tops">${top.slice(0, 3).map(e => `<div class="vd-top"><span>${esc(e.nombre)}</span><small>${esc(e.ticker || "")}</small><b class="vd-pos">${pct(pot(e))}</b></div>`).join("")}</div>` : ""}`, "vd-value");
       }
 
+      // ---------- Estudio ----------
+      function cEstudio() {
+        const Es = window.Estudio; if (!Es) return "";
+        const E = sto("estudio").get({}), t = Es.porDia(E), c = E.crono, on = !!(c && c.inicio);
+        if (!(E.sesiones || []).length && !c) return tarjeta("estudio", "Estudio", vacio("Usa el cronómetro o apunta tus horas para ver aquí lo que estudias cada día y cada semana.", "estudio", "Empezar a estudiar"), "vd-estudio");
+        const hoyMin = t[hoy] || 0, lun = Es.lunesDe(hoy), sem = Es.rango(t, lun, hoy), nDias = ((aFecha(hoy).getDay() + 6) % 7) + 1;
+        if (hoyMin) resumen.push(`<b>${Es.fDur(hoyMin)}</b> de estudio`);
+        const dur = m => { m = Math.round(m); const h = Math.floor(m / 60), r = m % 60; return h ? `${h}<small>h</small>${r ? ` ${r}<small>min</small>` : ""}` : `${r}<small>min</small>`; };
+        const vals = [0, 1, 2, 3, 4, 5, 6].map(i => sumarK(lun, i)), max = Math.max(60, ...vals.map(k => t[k] || 0));
+        const barras = vals.map(k => { const v = t[k] || 0; return `<div class="${k === hoy ? "hoy" : ""}"><em class="${!v ? "cero" : ""}" style="height:${v ? Math.max(v / max * 100, 6) : 4}%"></em><span>${DIAS[aFecha(k).getDay()]}</span></div>`; }).join("");
+        return tarjeta("estudio", "Estudio", `<div class="vd-tit">Hoy</div><div class="vd-cifra">${dur(hoyMin)}</div>
+          <div class="vd-sub">${on ? `<span class="vd-vivo">Estudiando · <span data-crono>${Es.reloj(Es.transcurrido(c))}</span></span>` : c ? "Cronómetro en pausa" : `Media diaria esta semana: ${Es.fDur(sem / nDias)}`}</div>
+          <div class="vd-barras">${barras}</div>
+          <div class="vd-mini">
+            <div>${et("Esta semana", "Semana")}<b>${Es.fDurC(sem)}</b></div>
+            <div>${et("Media diaria · 30 días", "Media 30 d")}<b>${Es.fDurC(Es.rango(t, sumarK(hoy, -29), hoy) / 30)}</b></div>
+          </div>`, "vd-estudio");
+      }
+
+      let vivo = null;
       function pintar() {
         resumen.length = 0;
-        const tarjetas = [cHabitos(), cAgenda(), cDeporte(), cAlimentacion(), cFinanzas(), cInversiones(), cValue()];
+        const tarjetas = [cHabitos(), cAgenda(), cDeporte(), cAlimentacion(), cEstudio(), cFinanzas(), cInversiones(), cValue()];
+        const accesos = [...document.querySelectorAll("#menuLista button")].filter(b => b.dataset.id !== "vida")
+          .map(b => `<button data-ir="${b.dataset.id}" style="--c:${HiperApp.color(b.dataset.id)}"><i>${b.querySelector("svg") ? b.querySelector("svg").outerHTML : ""}</i><span>${esc(b.textContent)}</span></button>`).join("");
         raiz.innerHTML = `${resumen.length ? `<p class="vd-resumen">${resumen.join(" · ").replace(/^./, c => c.toUpperCase())}.</p>` : `<p class="vd-resumen">Tu día de un vistazo.</p>`}
+          ${accesos ? `<nav class="vd-accesos" aria-label="Ir a">${accesos}</nav>` : ""}
           <div class="vd-grid">${tarjetas.join("")}</div>`;
+        // Si el cronómetro de estudio está en marcha, el tiempo se mueve también aquí
+        clearInterval(vivo);
+        if (raiz.querySelector("[data-crono]")) vivo = setInterval(() => {
+          const el = raiz.querySelector("[data-crono]"); if (!el || !raiz.isConnected) return clearInterval(vivo);
+          el.innerHTML = window.Estudio.reloj(window.Estudio.transcurrido(sto("estudio").get({}).crono));
+        }, 1000);
       }
 
       raiz.addEventListener("click", e => {

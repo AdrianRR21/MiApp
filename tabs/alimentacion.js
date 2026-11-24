@@ -24,7 +24,7 @@
   .al-macro .n span:last-child { color:var(--tinta-suave); }
   .al-barra { height:6px; background:var(--papel-2); border-radius:3px; overflow:hidden; }
   .al-barra div { height:100%; background:var(--naranja); border-radius:3px; }
-  .al-barra div.pasado { background:#E5776B; }
+  .al-barra div.pasado { background:var(--rojo); }
   .al-resumen { display:flex; justify-content:space-between; margin-top:14px; font-size:14px; color:var(--tinta-suave); }
 
   .al-peso { display:flex; justify-content:space-between; align-items:center; width:100%; background:var(--papel); border:0; border-radius:18px; padding:16px 20px; margin-bottom:12px; color:inherit; font:inherit; cursor:pointer; text-align:left; }
@@ -51,7 +51,7 @@
   .al-fila .sub { font-size:13px; color:var(--tinta-suave); margin-top:2px; }
   .al-fila .der { font-weight:600; white-space:nowrap; }
   .al-borrar { background:none; border:0; color:var(--tinta-suave); font-size:22px; line-height:1; padding:2px 4px 2px 8px; cursor:pointer; }
-  .al-anadir { width:100%; border:0; background:var(--naranja); color:#1A1411; font:inherit; font-weight:700; font-size:16px; padding:15px; border-radius:14px; cursor:pointer; margin-bottom:12px; }
+  .al-anadir { width:100%; border:0; background:var(--naranja); color:var(--sobre-acento); font:inherit; font-weight:700; font-size:16px; padding:15px; border-radius:14px; cursor:pointer; margin-bottom:12px; }
 
   .al-form label { display:block; font-size:13px; color:var(--tinta-suave); margin:14px 0 6px; }
   .al-form .dos { display:flex; gap:10px; }
@@ -229,7 +229,7 @@
         const frac = Math.min(t.kcal / o.kcal, 1), R = 50, C = 2 * Math.PI * R;
         const pasado = t.kcal > o.kcal * 1.05;
         const anillo = `<div class="al-anillo"><svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="${R}" fill="none" stroke="var(--papel-2)" stroke-width="10"/>
-          <circle cx="60" cy="60" r="${R}" fill="none" stroke="${pasado ? "#E5776B" : "var(--naranja)"}" stroke-width="10" stroke-linecap="round" stroke-dasharray="${C * frac} ${C}"/></svg>
+          <circle cx="60" cy="60" r="${R}" fill="none" stroke="${pasado ? "var(--rojo)" : "var(--naranja)"}" stroke-width="10" stroke-linecap="round" stroke-dasharray="${C * frac} ${C}"/></svg>
           <div><b>${r0(t.kcal)}</b><span>de ${o.kcal} kcal</span></div></div>`;
         const macro = (n, v, obj) => `<div class="al-macro"><div class="n"><span>${n}</span><span>${r0(v)} / ${obj} g</span></div>
           <div class="al-barra"><div class="${v > obj * 1.1 ? "pasado" : ""}" style="width:${Math.min(v / obj, 1) * 100}%"></div></div></div>`;
@@ -404,7 +404,7 @@
           paso.querySelectorAll("[data-g]").forEach(b => b.addEventListener("click", () => { inp.value = String(r1(num(b.dataset.g))).replace(".", ","); actualizar(); }));
           paso.querySelector("[data-h=volver]").addEventListener("click", () => pasoBuscar(""));
           paso.querySelector("[data-h=anadir]").addEventListener("click", () => {
-            const g = num(inp.value); if (!(g > 0)) { inp.style.borderColor = "#E5776B"; return; }
+            const g = num(inp.value); if (!(g > 0)) { inp.style.borderColor = "var(--rojo)"; return; }
             const f = g / 100, momento = paso.querySelector("#alMom").value;
             // Guardar en tus habituales
             const idH = a.id;
@@ -426,7 +426,7 @@
           paso.querySelector("[data-h=crear-ok]").addEventListener("click", () => {
             const v = id => num(paso.querySelector(id).value);
             const nombre = paso.querySelector("#alNN").value.trim(), kcal = v("#alNK");
-            if (!nombre || !(kcal >= 0)) { paso.querySelector(nombre ? "#alNK" : "#alNN").style.borderColor = "#E5776B"; return; }
+            if (!nombre || !(kcal >= 0)) { paso.querySelector(nombre ? "#alNK" : "#alNN").style.borderColor = "var(--rojo)"; return; }
             pasoCantidad({ id: "u" + nuevoId(), nombre, kcal, p: v("#alNP") || 0, c: v("#alNC") || 0, g: v("#alNG") || 0, u: v("#alNU") || null });
           });
           setTimeout(() => paso.querySelector("#alNN").focus(), 50);
@@ -457,7 +457,7 @@
         else if (a === "t-gym" || a === "t-padel") { b.classList.toggle("on"); return; }
         else if (a === "calcular") {
           const inp = raiz.querySelector("#alPeso"); const peso = num(inp.value || inp.placeholder);
-          if (!(peso > 25 && peso < 300)) { inp.style.borderColor = "#E5776B"; inp.focus(); return; }
+          if (!(peso > 25 && peso < 300)) { inp.style.borderColor = "var(--rojo)"; inp.focus(); return; }
           const dd = dia(diaSel);
           dd.peso = r1(peso); dd.gym = raiz.querySelector("#alTGym").classList.contains("on"); dd.padel = raiz.querySelector("#alTPadel").classList.contains("on");
           dd.obj = calcular(dd.peso, dd.gym, dd.padel); editPeso = false; guardar();
@@ -471,7 +471,7 @@
           const v = id => raiz.querySelector(id).value.trim();
           const P = { sexo: v("#alSexo"), edad: v("#alEdad"), altura: v("#alAltura"), objetivo: v("#alObj"), actividad: v("#alAct"), minGym: v("#alMinGym") || 60, minPadel: v("#alMinPadel") || 90 };
           const mal = !P.sexo ? "#alSexo" : !(num(P.edad) >= 14 && num(P.edad) <= 100) ? "#alEdad" : !(num(P.altura) >= 120 && num(P.altura) <= 230) ? "#alAltura" : null;
-          if (mal) { raiz.querySelector(mal).style.borderColor = "#E5776B"; raiz.querySelector(mal).focus(); return; }
+          if (mal) { raiz.querySelector(mal).style.borderColor = "var(--rojo)"; raiz.querySelector(mal).focus(); return; }
           d.perfil = P;
           const dh = d.dias[hoy]; if (dh && dh.peso) dh.obj = calcular(dh.peso, dh.gym, dh.padel);
           guardar(); vista = "hoy";

@@ -24,10 +24,10 @@
   .gy-serie { display:grid; grid-template-columns:28px 1fr 1fr 44px; gap:8px; align-items:center; margin-top:8px; }
   .gy-serie span { font-size:13px; color:var(--tinta-suave); text-align:center; }
   .gy-serie input { text-align:center; padding:10px 6px; }
-  .gy-serie input::placeholder { color:#5E6366; }
+  .gy-serie input::placeholder { color:var(--tinta-tenue); }
   .gy-ok { height:42px; border-radius:10px; border:0; background:var(--papel-2); color:var(--tinta-suave); cursor:pointer; display:grid; place-items:center; padding:0; }
   .gy-ok svg { width:18px; height:18px; }
-  .gy-serie.hecha .gy-ok { background:var(--naranja); color:#1A1411; }
+  .gy-serie.hecha .gy-ok { background:var(--naranja); color:var(--sobre-acento); }
   .gy-serie.hecha input { background:var(--naranja-suave); }
   .gy-etq { display:grid; grid-template-columns:28px 1fr 1fr 44px; gap:8px; font-size:12px; color:var(--tinta-suave); text-align:center; margin-top:4px; }
   .gy-btns { display:flex; gap:8px; margin-top:12px; }
@@ -38,12 +38,12 @@
   .gy-cal { display:grid; grid-template-columns:repeat(7, 1fr); gap:4px; text-align:center; }
   .gy-cal .l { font-size:12px; color:var(--tinta-suave); padding-bottom:6px; }
   .gy-cal button { aspect-ratio:1; border:0; background:none; color:var(--tinta); font:inherit; font-size:14px; border-radius:50%; cursor:pointer; position:relative; padding:0; }
-  .gy-cal button.gym { background:var(--naranja); color:#1A1411; font-weight:700; }
+  .gy-cal button.gym { background:var(--naranja); color:var(--sobre-acento); font-weight:700; }
   .gy-cal button.padel::after { content:""; position:absolute; bottom:3px; left:50%; width:5px; height:5px; margin-left:-2.5px; border-radius:50%; background:var(--naranja); }
-  .gy-cal button.gym.padel::after { background:#1A1411; }
+  .gy-cal button.gym.padel::after { background:var(--sobre-acento); }
   .gy-cal button.hoy { box-shadow: inset 0 0 0 1.5px var(--tinta-suave); }
   .gy-cal button.sel { box-shadow: inset 0 0 0 2px var(--tinta); }
-  .gy-cal button:disabled { color:#4A4E52; cursor:default; }
+  .gy-cal button:disabled { color:var(--tinta-tenue); cursor:default; }
   .gy-ley { display:flex; gap:16px; font-size:12.5px; color:var(--tinta-suave); margin-top:12px; }
   .gy-ley span { display:inline-flex; align-items:center; gap:6px; }
   .gy-ley i { width:10px; height:10px; border-radius:50%; background:var(--naranja); display:inline-block; }
@@ -65,9 +65,9 @@
   .gy-marcador span { font-size:12.5px; color:var(--tinta-suave); }
   .gy-marcador .g b { color:var(--naranja); }
   .gy-res { font-size:12px; font-weight:700; padding:4px 9px; border-radius:20px; }
-  .gy-res.V { background:var(--naranja); color:#1A1411; }
+  .gy-res.V { background:var(--naranja); color:var(--sobre-acento); }
   .gy-res.E { background:var(--papel-2); color:var(--tinta); }
-  .gy-res.D { background:rgba(229,119,107,.16); color:#E5776B; }
+  .gy-res.D { background:var(--rojo-suave); color:var(--rojo); }
   .gy-tabla { width:100%; border-collapse:collapse; font-size:14px; margin-top:6px; }
   .gy-tabla th { font-weight:600; font-size:12px; color:var(--tinta-suave); text-align:right; padding:6px 0 6px 8px; }
   .gy-tabla th:first-child, .gy-tabla td:first-child { text-align:left; padding-left:0; }
@@ -83,8 +83,36 @@
   .gy-acciones .boton { flex:1; margin:0; }
   .gy-lista-ej .gy-fila { cursor:default; padding:10px 0; }
   .gy-mover { background:var(--papel-2); border:0; color:var(--tinta-suave); width:32px; height:32px; border-radius:8px; cursor:pointer; font-size:14px; }
-  .gy-peligro { background:none; border:0; color:#E5776B; font:inherit; font-weight:600; margin-top:14px; cursor:pointer; padding:6px 0; }
+  .gy-peligro { background:none; border:0; color:var(--rojo); font:inherit; font-weight:600; margin-top:14px; cursor:pointer; padding:6px 0; }
   .panel { max-height:88vh; overflow-y:auto; }
+  /* Descanso entre series */
+  .gy-cab-der { display:flex; align-items:center; gap:6px; flex:none; }
+  .gy-desc-btn { display:inline-flex; align-items:center; gap:5px; border:0; background:var(--papel-2); color:var(--tinta-suave); font:inherit; font-family:var(--mono); font-size:12.5px; font-weight:500; padding:6px 9px; border-radius:999px; cursor:pointer; }
+  .gy-desc-btn svg { width:13px; height:13px; }
+  .gy-desc-btn:hover { color:var(--naranja); }
+  .gy-desc-ops { display:grid; grid-template-columns:repeat(3, 1fr); gap:8px; }
+  .gy-desc-ops button { border:1px solid var(--linea-2); background:none; color:var(--tinta); font:inherit; font-family:var(--mono); font-size:15px; padding:12px 0; border-radius:12px; cursor:pointer; }
+  .gy-desc-ops button.on { background:var(--naranja); border-color:var(--naranja); color:var(--sobre-acento); font-weight:600; }
+  .gy-timer { position:fixed; z-index:15; left:12px; right:12px; bottom:calc(env(safe-area-inset-bottom, 0px) + 12px); max-width:520px; margin:0 auto;
+    background:var(--panel); border:1px solid var(--linea-2); border-radius:20px; box-shadow:var(--sombra-flotante); overflow:hidden;
+    transform:translateY(140%); transition:transform .35s cubic-bezier(.2,.8,.2,1); }
+  .gy-timer.on { transform:none; }
+  body:not([data-pantalla="gimnasio"]) .gy-timer { display:none; }
+  .gy-t-barra { height:3px; background:var(--papel-2); }
+  .gy-t-barra i { display:block; height:100%; background:var(--naranja); transform-origin:left; transition:transform .25s linear; }
+  .gy-t-fila { display:flex; align-items:center; gap:8px; padding:12px 12px 12px 18px; }
+  .gy-t-info { flex:1; min-width:0; display:grid; grid-template-columns:auto 1fr; column-gap:12px; align-items:center; }
+  .gy-t-num { grid-row:span 2; font-family:var(--mono); font-size:30px; font-weight:500; letter-spacing:-0.04em; line-height:1; color:var(--tinta); min-width:3.2ch; }
+  .gy-t-et { font-size:11px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:var(--naranja); }
+  .gy-t-ej { font-size:13px; color:var(--tinta-suave); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .gy-t-fila button { flex:none; height:40px; min-width:46px; padding:0 10px; border:0; border-radius:12px; background:var(--papel-2); color:var(--tinta); font:inherit; font-size:13px; font-weight:600; cursor:pointer; }
+  .gy-t-fila button.gy-t-x { background:var(--naranja); color:var(--sobre-acento); }
+  .gy-timer.listo { border-color:var(--naranja); }
+  .gy-timer.listo .gy-t-num { color:var(--naranja); }
+  .gy-timer.listo { animation:gyLatido 1s ease-in-out 3; }
+  @keyframes gyLatido { 50% { box-shadow:0 0 0 6px var(--naranja-suave), var(--sombra-flotante); } }
+  body.gy-timer-on[data-pantalla="gimnasio"] main { padding-bottom:calc(env(safe-area-inset-bottom, 0px) + 120px); }
+  @media (min-width:1024px) { .gy-timer { left:auto; right:32px; bottom:32px; width:400px; } }
   `;
   const st = document.createElement("style"); st.textContent = css; document.head.appendChild(st);
 
@@ -103,6 +131,61 @@
   const DIAS = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"];
   const diaSemana = k => (aFecha(k).getDay() + 6) % 7; // 0 = lunes
   const tick = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
+
+  // ---------- Cronómetro de descanso (vive fuera de la pantalla para no cortarse al repintar) ----------
+  const DESC_DEF = 120;   // segundos por defecto
+  const reloj = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2.5M9.5 2.5h5"/></svg>';
+  const mmss = s => { s = Math.max(0, Math.ceil(s)); return Math.floor(s / 60) + ":" + String(s % 60).padStart(2, "0"); };
+  const Descanso = (() => {
+    const K = "hiperapp-descanso";
+    let est = null, el = null, int = null, ctx = null, avisado = false;
+    try { est = JSON.parse(localStorage.getItem(K)); if (!est || est.fin < Date.now() - 5000) est = null; } catch (e) { est = null; }
+    const guardarEst = () => { try { if (est) localStorage.setItem(K, JSON.stringify(est)); else localStorage.removeItem(K); } catch (e) {} };
+    // El sonido necesita haberse "desbloqueado" con un toque (lo hace el botón ✓)
+    function audio() { try { ctx = ctx || new (window.AudioContext || window.webkitAudioContext)(); if (ctx.state === "suspended") ctx.resume(); } catch (e) {} }
+    function pitar() {
+      if (navigator.vibrate) try { navigator.vibrate([180, 90, 180]); } catch (e) {}
+      if (!ctx) return;
+      [0, .2, .4].forEach((t, i) => {
+        const o = ctx.createOscillator(), g = ctx.createGain(), t0 = ctx.currentTime + t;
+        o.type = "sine"; o.frequency.value = i === 2 ? 1318 : 880; o.connect(g); g.connect(ctx.destination);
+        g.gain.setValueAtTime(0.0001, t0); g.gain.exponentialRampToValueAtTime(0.3, t0 + 0.02); g.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.17);
+        o.start(t0); o.stop(t0 + 0.19);
+      });
+    }
+    function montar() {
+      if (el) return el;
+      el = document.createElement("div"); el.className = "gy-timer"; el.setAttribute("role", "timer");
+      el.innerHTML = `<div class="gy-t-barra"><i></i></div><div class="gy-t-fila">
+        <div class="gy-t-info"><b class="gy-t-num">2:00</b><span class="gy-t-et">Descanso</span><span class="gy-t-ej"></span></div>
+        <button data-t="-15" aria-label="Quitar 15 segundos">−15</button><button data-t="15" aria-label="Añadir 15 segundos">+15</button>
+        <button data-t="fin" class="gy-t-x">Saltar</button></div>`;
+      el.addEventListener("click", e => { const b = e.target.closest("[data-t]"); if (!b) return; if (b.dataset.t === "fin") parar(); else ajustar(+b.dataset.t); });
+      document.body.appendChild(el); return el;
+    }
+    function empezar(seg, nombre) { audio(); est = { fin: Date.now() + seg * 1000, total: seg, nombre: nombre || "" }; avisado = false; guardarEst(); bucle(); }
+    function ajustar(dif) { if (!est) return; est.fin = Math.max(est.fin + dif * 1000, Date.now()); est.total = Math.max(est.total + dif, 5); avisado = false; guardarEst(); tic(); }
+    function parar() { est = null; guardarEst(); clearInterval(int); int = null; document.body.classList.remove("gy-timer-on"); if (el) el.classList.remove("on", "listo"); }
+    function tic() {
+      if (!est) return;
+      const e = montar(), r = (est.fin - Date.now()) / 1000;
+      e.classList.add("on"); document.body.classList.add("gy-timer-on");
+      e.querySelector(".gy-t-ej").textContent = est.nombre;
+      if (r <= 0) {
+        e.classList.add("listo"); e.querySelector(".gy-t-et").textContent = "¡A por la siguiente!";
+        e.querySelector(".gy-t-num").textContent = "0:00"; e.querySelector(".gy-t-barra i").style.transform = "scaleX(0)";
+        if (!avisado) { avisado = true; pitar(); const fin = est.fin; setTimeout(() => { if (est && est.fin === fin) parar(); }, 6000); }
+        return;
+      }
+      e.classList.remove("listo"); e.querySelector(".gy-t-et").textContent = "Descanso";
+      e.querySelector(".gy-t-num").textContent = mmss(r);
+      e.querySelector(".gy-t-barra i").style.transform = `scaleX(${Math.min(r / est.total, 1)})`;
+    }
+    function bucle() { clearInterval(int); tic(); int = setInterval(tic, 250); }
+    if (est) setTimeout(bucle, 0);
+    document.addEventListener("visibilitychange", () => { if (!document.hidden) tic(); });
+    return { empezar, parar };
+  })();
 
   let vista = "entreno", diaSel = null, mesCal = null, calSel = null, planElegido = {};
 
@@ -138,6 +221,7 @@
         const id = nuevoId(); d.ejercicios[id] = { nombre: nombre.trim() }; return id;
       };
       const nombreEj = id => (d.ejercicios[id] || { nombre: "Ejercicio" }).nombre;
+      const descansoDe = id => (d.ejercicios[id] && d.ejercicios[id].descanso) || DESC_DEF;   // segundos, se puede cambiar por ejercicio
       function ultimaVez(ex, antesDe) {
         const ks = Object.keys(d.sesiones).filter(k => k < antesDe).sort().reverse();
         for (const k of ks) { const e = d.sesiones[k].ejercicios.find(x => x.ex === ex); if (e && e.series.some(serieValida)) return { k, series: e.series.filter(serieValida) }; }
@@ -187,7 +271,7 @@
               <input inputmode="numeric" data-campo="reps" value="${esc(s.reps)}" placeholder="${r ? num(r.reps) : "reps"}" aria-label="Repeticiones serie ${j + 1}">
               <button class="gy-ok" data-accion="ok" data-e="${i}" data-s="${j}" aria-label="Serie hecha">${tick}</button></div>`;
           }).join("");
-          return `<div class="bloque gy-ej"><div class="gy-cab"><h2>${esc(nombreEj(e.ex))}</h2><button class="gy-x" data-accion="quitar-ej" data-e="${i}" aria-label="Quitar de hoy">×</button></div>
+          return `<div class="bloque gy-ej"><div class="gy-cab"><h2>${esc(nombreEj(e.ex))}</h2><div class="gy-cab-der"><button class="gy-desc-btn" data-accion="descanso" data-ex="${e.ex}" aria-label="Descanso entre series">${reloj}${mmss(descansoDe(e.ex))}</button><button class="gy-x" data-accion="quitar-ej" data-e="${i}" aria-label="Quitar de hoy">×</button></div></div>
             ${ref}<div class="gy-etq"><span></span><span>kg</span><span>reps</span><span></span></div>${filas}
             <div class="gy-btns"><button data-accion="menos-serie" data-e="${i}">− Serie</button><button data-accion="mas-serie" data-e="${i}">+ Serie</button></div></div>`;
         }).join("");
@@ -351,6 +435,26 @@
         setTimeout(() => f.querySelector("#gyEjHoy").focus(), 50);
       }
 
+      function hojaDescanso(ex) {
+        let seg = descansoDe(ex);
+        const OPS = [30, 45, 60, 90, 120, 150, 180, 240, 300];
+        const f = hoja(`<h2>Descanso</h2><p class="gy-sub" style="margin:0 0 14px">Entre series de <b style="color:var(--tinta)">${esc(nombreEj(ex))}</b>. Arranca solo al marcar cada serie con ✓. Por defecto, 2:00.</p>
+          <div class="gy-desc-ops">${OPS.map(o => `<button data-seg="${o}" class="${o === seg ? "on" : ""}">${mmss(o)}</button>`).join("")}</div>
+          <label>Otro tiempo (minutos:segundos)</label><input id="gyDescOtro" inputmode="numeric" placeholder="Por ejemplo, 3:30" value="${OPS.includes(seg) ? "" : mmss(seg)}">`,
+          f => {
+            const o = f.querySelector("#gyDescOtro").value.trim();
+            if (o) { const m = o.match(/^(\d{1,2})(?:[:.,'](\d{1,2}))?$/); if (!m) { f.querySelector("#gyDescOtro").style.borderColor = "var(--rojo)"; return false; } seg = (+m[1]) * 60 + (+(m[2] || 0)); if (!m[2] && +m[1] > 15) seg = +m[1]; }
+            if (seg < 5) seg = 5;
+            if (!d.ejercicios[ex]) d.ejercicios[ex] = { nombre: nombreEj(ex) };
+            if (seg === DESC_DEF) delete d.ejercicios[ex].descanso; else d.ejercicios[ex].descanso = seg;
+          }, `<button class="ajustes-enlace" data-h="empezar">Empezar un descanso ahora</button>`);
+        f.addEventListener("click", e => {
+          const b = e.target.closest("[data-seg]");
+          if (b) { seg = +b.dataset.seg; f.querySelector("#gyDescOtro").value = ""; f.querySelectorAll("[data-seg]").forEach(x => x.classList.toggle("on", x === b)); }
+          if (e.target.dataset.h === "empezar") { Descanso.empezar(descansoDe(ex), nombreEj(ex)); f.remove(); }
+        });
+      }
+
       function hojaPartido() {
         const comps = [...new Set(d.partidos.map(p => p.companero).filter(Boolean))];
         const f = hoja(`<h2>Nuevo partido</h2>
@@ -361,7 +465,7 @@
           <p class="gy-sub">Deja vacíos los sets que no jugasteis.</p>`,
           f => {
             const sets = [1, 2, 3].map(i => [parseInt(f.querySelector(`#gyS${i}a`).value), parseInt(f.querySelector(`#gyS${i}b`).value)]).filter(([a, b]) => !isNaN(a) && !isNaN(b));
-            if (!sets.length) { f.querySelector("#gyS1a").style.borderColor = "#E5776B"; return false; }
+            if (!sets.length) { f.querySelector("#gyS1a").style.borderColor = "var(--rojo)"; return false; }
             d.partidos.push({ id: nuevoId(), creado: Date.now(), fecha: f.querySelector("#gyPF").value || hoy, companero: f.querySelector("#gyPC").value.trim(), sets });
           });
         setTimeout(() => f.querySelector("#gyS1a").focus(), 50);
@@ -402,14 +506,16 @@
             const u = ultimaVez(e2.ex, diaSel), r = u ? (u.series[+b.dataset.s] || u.series[u.series.length - 1]) : null;
             if (serie.kg === "" && r) serie.kg = String(num(r.kg) || 0).replace(".", ",");
             if (serie.reps === "" && r) serie.reps = String(num(r.reps));
-            if (!(num(serie.reps) > 0)) { const inp = raiz.querySelector(`.gy-serie[data-e="${b.dataset.e}"][data-s="${b.dataset.s}"] [data-campo=reps]`); inp.style.borderColor = "#E5776B"; inp.focus(); return; }
+            if (!(num(serie.reps) > 0)) { const inp = raiz.querySelector(`.gy-serie[data-e="${b.dataset.e}"][data-s="${b.dataset.s}"] [data-campo=reps]`); inp.style.borderColor = "var(--rojo)"; inp.focus(); return; }
           }
           serie.hecho = !serie.hecho; guardar();
+          if (serie.hecho && diaSel === hoy) Descanso.empezar(descansoDe(e2.ex), nombreEj(e2.ex));
         }
         else if (a === "mas-serie") { const s = asegurarSesion(diaSel); s.ejercicios[+b.dataset.e].series.push({ kg: "", reps: "", hecho: false }); guardar(); }
         else if (a === "menos-serie") { const s = asegurarSesion(diaSel); const ss = s.ejercicios[+b.dataset.e].series; if (ss.length > 1) ss.pop(); guardar(); }
         else if (a === "quitar-ej") { const s = asegurarSesion(diaSel); s.ejercicios.splice(+b.dataset.e, 1); if (!s.ejercicios.length && !seriesSesion(s)) delete d.sesiones[diaSel]; guardar(); }
         else if (a === "anadir-ej") return hojaEjercicioHoy();
+        else if (a === "descanso") return hojaDescanso(b.dataset.ex);
         else if (a === "mes") { const [y, m] = mesCal.split("-").map(Number); const n = new Date(y, m - 1 + +b.dataset.n, 1); mesCal = clave(n).slice(0, 7); calSel = null; }
         else if (a === "cal-dia") calSel = b.dataset.k;
         else if (a === "ir-dia") { diaSel = b.dataset.k; vista = "entreno"; }

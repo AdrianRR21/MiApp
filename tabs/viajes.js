@@ -25,19 +25,19 @@
   const css = `
   .vj-seg { display:flex; background:none; border:1px solid var(--linea); border-radius:11px; padding:3px; margin-bottom:14px; }
   .vj-seg button { flex:1; border:0; background:none; color:var(--tinta-suave); font:inherit; font-weight:500; font-size:13.5px; padding:9px 0; border-radius:8px; cursor:pointer; }
-  .vj-seg button.on { background:#1A1A1E; color:var(--tinta); }
+  .vj-seg button.on { background:var(--papel-3); color:var(--tinta); }
   .vj-stats { display:grid; grid-template-columns:repeat(4, 1fr); gap:8px; margin-bottom:12px; }
   .vj-stats div { border:1px solid var(--linea); border-radius:12px; padding:11px 10px; }
   .vj-stats b { display:block; font-size:22px; font-weight:600; letter-spacing:-0.04em; }
   .vj-stats span { font-size:11.5px; color:var(--tinta-suave); }
   .vj-mapa { position:relative; background:var(--papel); border:1px solid var(--linea); border-radius:14px; overflow:hidden; margin-bottom:12px; touch-action:none; }
   .vj-mapa svg { display:block; width:100%; height:auto; }
-  .vj-mapa path.pais { fill:#26262C; stroke:#000; stroke-width:.5; vector-effect:non-scaling-stroke; cursor:pointer; transition:fill .2s; }
+  .vj-mapa path.pais { fill:var(--mapa-tierra); stroke:var(--fondo); stroke-width:.5; vector-effect:non-scaling-stroke; cursor:pointer; transition:fill .2s; }
   .vj-mapa path.pais.si { fill:var(--naranja); }
-  .vj-mapa path.pais.sel { stroke:#fff; stroke-width:1.2; }
+  .vj-mapa path.pais.sel { stroke:var(--tinta); stroke-width:1.2; }
   .vj-mapa .vj-ayuda { position:absolute; left:10px; bottom:8px; font-size:11px; color:var(--tinta-suave); pointer-events:none; }
   .vj-mapa .vj-zoom { position:absolute; right:8px; bottom:8px; display:flex; gap:4px; }
-  .vj-mapa .vj-zoom button { width:30px; height:30px; border-radius:8px; border:1px solid var(--linea); background:rgba(0,0,0,.7); color:var(--tinta); font-size:16px; cursor:pointer; }
+  .vj-mapa .vj-zoom button { width:30px; height:30px; border-radius:8px; border:1px solid var(--linea); background:var(--capa); color:var(--tinta); font-size:16px; cursor:pointer; }
   .vj-cargando { padding:60px 20px; text-align:center; color:var(--tinta-suave); font-size:14px; }
   .vj-boton { width:100%; border:0; background:none; color:var(--naranja); box-shadow:inset 0 0 0 1px var(--naranja); font:inherit; font-weight:600; font-size:15px; padding:13px; border-radius:12px; cursor:pointer; margin-bottom:12px; }
   .vj-cont { display:flex; align-items:center; gap:10px; font-size:12px; font-weight:600; letter-spacing:.1em; text-transform:uppercase; color:var(--tinta-suave); margin:20px 2px 8px; }
