@@ -259,6 +259,7 @@ const HiperApp = (() => {
   const temaReal = () => { const t = temaElegido(); return t === "auto" ? (sistemaClaro && sistemaClaro.matches ? "claro" : "oscuro") : t; };
   const claroActivo = () => document.documentElement.dataset.tema === "claro";
   // Color de una pantalla en el tema actual
+  function icono(id) { const p = pestanas.find(x => x.id === id); return p ? p.icono || "" : ""; }
   function color(id) { const p = PANTALLAS[id]; return p ? (claroActivo() ? p.claro : p.color) : "#888888"; }
   function aplicarTema(animar) {
     const raiz = document.documentElement, nuevo = temaReal();
@@ -285,6 +286,10 @@ const HiperApp = (() => {
     document.body.dataset.pantalla = p.id;
     const fechaHoy = new Date().toLocaleDateString("es-ES", { weekday: "long", day: "numeric", month: innerWidth < 520 ? "short" : "long" }).replace(".", "");
     const tit = document.getElementById("titulo"); tit.textContent = p.titulo; tit.classList.toggle("largo", p.titulo.length > 11);
+    document.getElementById("tituloIcono").innerHTML = p.icono || "";
+    document.getElementById("bmIcono").innerHTML = p.icono || "";
+    document.getElementById("bmTitulo").textContent = p.titulo;
+    if (!mantenerScroll) document.body.classList.remove("desplazado");
     document.getElementById("supertitulo").textContent = p.id === "vida" ? fechaHoy : (p.grupo || "");
     document.title = p.titulo + " · Mi app";
     document.querySelectorAll("#menuLista button").forEach(b => {
@@ -320,6 +325,9 @@ const HiperApp = (() => {
       lista.appendChild(b);
     });
     document.getElementById("btnMenu").onclick = () => abrirMenu(true);
+    document.querySelectorAll("[data-abrir-menu]").forEach(b => b.onclick = () => abrirMenu(true));
+    // Al bajar, la cabecera grande se va y aparece una barra compacta
+    addEventListener("scroll", () => document.body.classList.toggle("desplazado", scrollY > 96), { passive: true });
     document.getElementById("menuFondo").onclick = () => abrirMenu(false);
     document.getElementById("btnCopias").onclick = () => { abrirMenu(false); abrirAjustes(); };
     document.getElementById("btnNube").onclick = () => { abrirMenu(false); abrirAjustes(); };
@@ -470,5 +478,5 @@ const HiperApp = (() => {
     setInterval(comprobarDia, 60000);
   }
 
-  return { registrar, iniciar, almacen, ir, color, tema: () => document.documentElement.dataset.tema, nombre: "Adrián" };
+  return { registrar, iniciar, almacen, ir, color, icono, tema: () => document.documentElement.dataset.tema, nombre: "Adrián" };
 })();

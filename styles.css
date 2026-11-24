@@ -5,13 +5,13 @@
    El color de acento (--naranja) lo pone cada pantalla: ver PANTALLAS en app.js. */
 :root {
   --fondo: #000000;
-  --papel: #0B0B0D;        /* tarjetas */
-  --papel-2: #16161A;      /* elementos sobre tarjetas */
-  --papel-3: #1F1F24;      /* al pasar el ratón, elegido */
+  --papel: #0F0F12;        /* tarjetas */
+  --papel-2: #19191E;      /* elementos sobre tarjetas */
+  --papel-3: #24242A;      /* al pasar el ratón, elegido */
   --tinta: #F5F5F7;        /* texto principal */
   --tinta-suave: #8E8E93;  /* texto secundario */
   --tinta-tenue: #55555B;  /* texto muy secundario */
-  --linea: #1C1C21;        /* bordes finos */
+  --linea: #1D1D22;        /* bordes finos */
   --linea-2: #2B2B31;
   --rojo: #FF453A;
   --rojo-suave: rgba(255, 69, 58, 0.14);
@@ -30,10 +30,10 @@
   --sombra-flotante: 0 18px 50px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255, 255, 255, 0.04);
   --sombra-poster: 0 10px 24px rgba(0, 0, 0, 0.6);
   --mapa-tierra: #26262C;
-  --titulos: "Geist", -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", sans-serif;
-  --texto: "Geist", -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", sans-serif;
+  --titulos: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", sans-serif;
+  --texto: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", sans-serif;
   --mono: "Geist Mono", ui-monospace, "SF Mono", Menlo, monospace;
-  --radio: 20px;
+  --radio: 24px;
   --barra-alto: 0px;
   --ancho: 860px;          /* ancho del contenido en el ordenador */
   --ancho-vida: 1240px;
@@ -41,7 +41,7 @@
 }
 /* ---------- Tema claro: papel cálido, tarjetas blancas, tinta casi negra ---------- */
 :root[data-tema="claro"] {
-  --fondo: #F3F2EF;
+  --fondo: #F4F3EF;
   --papel: #FFFFFF;
   --papel-2: #F1F0EC;
   --papel-3: #E7E6E1;
@@ -398,9 +398,8 @@ body .pt-neg, body .pt-fila .sub.pt-neg, body .pt-peligro, body .gy-peligro, bod
 body .al-barra div.pasado { background: var(--rojo); }
 body .gy-res.D { background: var(--rojo-suave); color: var(--rojo); }
 /* Esquinas y bordes de las piezas */
-body .hb-dia, body .gy-stats > div, body .al-stats > div, body .iv-tarjetas > div, body .pt-rent div, body .pt-cuadro div, body .al-peso, body .vj-stats > div { border-radius: 16px; }
+body .gy-stats > div, body .al-stats > div, body .iv-tarjetas > div, body .pt-rent div, body .pt-cuadro div, body .al-peso, body .vj-stats > div { border-radius: 16px; }
 body .al-peso, body .al-stats > div, body .gy-stats > div, body .iv-tarjetas > div, body .vj-stats > div { border: 1px solid var(--linea); background: var(--papel); box-shadow: var(--sombra-tarjeta); }
-body .hb-dia { background: var(--papel); border: 1px solid var(--linea); }
 body .vj-mapa, body .es-stats > div { box-shadow: var(--sombra-tarjeta); }
 /* Selectores pequeños (periodos, órdenes, filtros) */
 body .pt-rangos, body .iv-mini-seg, body .hb-mini-seg, body .al-rangos, body .gy-rangos { display: flex; gap: 0; border: 1px solid var(--linea-2); border-radius: 11px; padding: 2px; width: max-content; }
@@ -450,99 +449,176 @@ body .pt-rangos button.on, body .iv-mini-seg button.on, body .hb-mini-seg button
     justify-self: start; width: auto; padding: 12px 22px; margin: 0;
   }
 
-  /* ---------- HÁBITOS ---------- */
-  body[data-pantalla="habitos"] main > div:has(> .hb-dias) > .bloque { grid-column: auto; }
-  body[data-pantalla="habitos"] .hb-dias { gap: 10px; }
-  body[data-pantalla="habitos"] .hb-dia { padding: 14px 0 12px; }
-  body[data-pantalla="habitos"] .hb-dia b { font-size: 20px; }
-  /* Tareas: una columna por categoría */
-  body[data-pantalla="habitos"] main > div:has(> .bloque .hb-nuevo) { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-  body[data-pantalla="habitos"] main > div:has(> .bloque .hb-nuevo) > .bloque:not(:has(.hb-nuevo)) { grid-column: auto; }
-  /* Agenda: calendario fijo a la izquierda, el día a la derecha */
-  body[data-pantalla="habitos"] main > div:has(.ag-cal) { grid-template-columns: minmax(300px, 380px) minmax(0, 1fr); row-gap: 0; column-gap: 36px; }
-  body[data-pantalla="habitos"] main > div:has(.ag-cal) > * { grid-column: 2; margin-bottom: 8px; }
-  body[data-pantalla="habitos"] main > div:has(.ag-cal) > .hb-seg { grid-column: 1 / -1; margin-bottom: 22px; }
-  body[data-pantalla="habitos"] main > div:has(.ag-cal) > .bloque:has(.ag-cal) { grid-column: 1; grid-row: 2 / span 80; position: sticky; top: 140px; }
-  body[data-pantalla="habitos"] main > div:has(.ag-cal) > .ag-anadir { margin-top: 10px; }
-  body[data-pantalla="habitos"] .ag-dia-cab h3 { font-size: 24px; }
-  body[data-pantalla="habitos"] .ag-linea { grid-template-columns: 64px 1fr; }
-
-  /* ---------- FINANZAS ---------- */
-  body[data-pantalla="patrimonio"] main > div:has(> .pt-total) > .bloque { grid-column: auto; }
-  body[data-pantalla="patrimonio"] .pt-total { padding: 8px 2px 10px; }
-  body[data-pantalla="patrimonio"] .pt-total .cifra { font-size: 58px; }
-  body[data-pantalla="patrimonio"] .pt-dist { height: 10px; border-radius: 5px; }
-  /* Movimientos: resumen del mes en una fila; gastos e ingresos lado a lado */
-  body[data-pantalla="patrimonio"] main > div:has(> .pt-mes) > .bloque { grid-column: auto; }
-  body[data-pantalla="patrimonio"] main > div:has(> .pt-mes) > .bloque:has(.pt-cuadro),
-  body[data-pantalla="patrimonio"] main > div:has(> .pt-mes) > .bloque:has(> p:only-child) { grid-column: 1 / -1; }
-  body[data-pantalla="patrimonio"] .pt-cuadro { grid-template-columns: repeat(4, minmax(0, 1fr)); }
-  body[data-pantalla="patrimonio"] .pt-cuadro b { font-size: 24px; }
-  body[data-pantalla="patrimonio"] .pt-mes { justify-content: flex-start; gap: 16px; }
-  /* Evolución: el primer gráfico ancho, los otros dos juntos */
-  body[data-pantalla="patrimonio"] main > div:has(> .pt-graf) > .pt-graf ~ .pt-graf { grid-column: auto; }
-  body[data-pantalla="patrimonio"] main > div:has(> .pt-graf) > div:has(> .pt-rangos) { justify-content: flex-end; }
-
-  /* ---------- INVERSIONES ---------- */
-  body[data-pantalla="inversiones"] main > div:has(> .iv-total) > .iv-total { grid-column: 1; }
-  body[data-pantalla="inversiones"] main > div:has(> .iv-total) > .iv-tarjetas { grid-column: 2; align-self: end; margin-bottom: 14px; }
-  body[data-pantalla="inversiones"] .iv-total .cifra { font-size: 58px; }
-  body[data-pantalla="inversiones"] main > div:has(> .iv-barra-sup) > .bloque:has(.iv-fila) { grid-column: auto; }
-  body[data-pantalla="inversiones"] .bloque:has(> .iv-donut) { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 48px; align-items: center; padding: 34px; }
-  body[data-pantalla="inversiones"] .iv-donut { max-width: 400px; }
-
-  /* ---------- VALUE INVESTING ---------- */
-  body[data-pantalla="value"] main > div > .vi-filtros { grid-column: 1; margin: 0; }
-  body[data-pantalla="value"] main > div > .vi-filtros ~ .vi-dosb { grid-column: 2; }
-  body[data-pantalla="value"] main > div > .vi-emp { grid-column: auto; }
-  body[data-pantalla="value"] .vi-cartera .vi-mini { grid-template-columns: repeat(4, minmax(0, 1fr)); }
-
-  /* ---------- ALIMENTACIÓN ---------- */
-  /* Día: peso, calorías y agua en una fila; las comidas en tres columnas */
-  body[data-pantalla="alimentacion"] main > div:has(> .al-peso) { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-  body[data-pantalla="alimentacion"] main > div:has(> .al-peso) > .al-peso,
-  body[data-pantalla="alimentacion"] main > div:has(> .al-peso) > .bloque:has(.al-kcal),
-  body[data-pantalla="alimentacion"] main > div:has(> .al-peso) > .bloque:has(.al-agua-top) { grid-column: auto; align-self: stretch; }
-  body[data-pantalla="alimentacion"] main > div:has(> .al-peso) > .bloque:has(.al-cab) { grid-column: auto; }
-  body[data-pantalla="alimentacion"] main > div:has(> .al-peso) > .al-peso { flex-direction: column; align-items: flex-start; justify-content: space-between; gap: 18px; padding: 22px; }
-  body[data-pantalla="alimentacion"] .al-peso b { font-size: 40px; letter-spacing: -0.04em; }
-  body[data-pantalla="alimentacion"] .al-peso .al-chips { justify-content: flex-start; }
-  body[data-pantalla="alimentacion"] .bloque:has(.al-agua-top) { display: flex; flex-direction: column; justify-content: space-between; }
-  body[data-pantalla="alimentacion"] .al-dia { justify-content: flex-start; gap: 16px; }
-  body[data-pantalla="alimentacion"] main > div:has(> .al-stats) > .al-graf { grid-column: auto; }
-  body[data-pantalla="alimentacion"] .al-stats { grid-template-columns: repeat(4, minmax(0, 1fr)); }
-  body[data-pantalla="alimentacion"] .al-stats b { font-size: 26px; }
-  body[data-pantalla="alimentacion"] main > div:has(> .al-stats) > .al-rangos { justify-self: end; }
-  body[data-pantalla="alimentacion"] main > div:has(> .al-form) > .bloque { grid-column: auto; }
-
-  /* ---------- DEPORTE ---------- */
-  body[data-pantalla="gimnasio"] main > div:has(> .gy-nav):not(:has(.gy-cal)) > .gy-ej { grid-column: auto; }
-  body[data-pantalla="gimnasio"] .gy-nav { justify-content: flex-start; gap: 16px; }
-  /* Calendario a la izquierda, detalle y gráfico a la derecha */
-  body[data-pantalla="gimnasio"] main > div:has(.gy-cal) { grid-template-columns: minmax(340px, 430px) minmax(0, 1fr); }
-  body[data-pantalla="gimnasio"] main > div:has(.gy-cal) > .bloque:has(.gy-cal) { grid-column: 1; grid-row: span 2; }
-  body[data-pantalla="gimnasio"] main > div:has(.gy-cal) > .bloque:not(:has(.gy-cal)) { grid-column: 2; }
-  /* Rutina: los siete días en dos columnas */
-  body[data-pantalla="gimnasio"] .bloque:has(> .gy-fila[data-accion="editar-dia"]) { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); column-gap: 32px; }
-  body[data-pantalla="gimnasio"] .bloque:has(> .gy-fila[data-accion="editar-dia"]) > :not(.gy-fila) { grid-column: 1 / -1; }
-  /* Pádel: tabla por compañero y partidos lado a lado */
-  body[data-pantalla="gimnasio"] main > div:has(.gy-marcador) > .bloque:has(table),
-  body[data-pantalla="gimnasio"] main > div:has(.gy-marcador) > .bloque:has(> .gy-fila) { grid-column: auto; }
-  body[data-pantalla="gimnasio"] .gy-marcador b { font-size: 44px; }
-
-  /* ---------- OCIO ---------- */
-  body[data-pantalla="ocio"] main > div { grid-template-columns: minmax(0, 1fr); }
-  body[data-pantalla="ocio"] .oc-grid { grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 26px 18px; }
-  body[data-pantalla="ocio"] .oc-tit { font-size: 13.5px; }
-  body[data-pantalla="ocio"] .oc-top { display: flex; align-items: flex-end; justify-content: space-between; }
-  body[data-pantalla="ocio"] .oc-top .cifra { font-size: 52px; }
-  body[data-pantalla="ocio"] .bloque:has(> .oc-fila) { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); column-gap: 32px; }
-  body[data-pantalla="ocio"] .bloque:has(> .oc-fila) > .oc-fila:nth-child(2) { border-top: 0; }
-
-  /* ---------- VIAJES ---------- */
-  body[data-pantalla="viajes"] main > div:has(> .vj-pais), body[data-pantalla="viajes"] main > div:has(> .vj-viaje) { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
   body[data-pantalla="viajes"] main > div > .vj-pais, body[data-pantalla="viajes"] main > div > .vj-viaje { grid-column: auto; margin: 0; }
   body[data-pantalla="viajes"] .vj-cont { margin: 14px 2px 0; }
   body[data-pantalla="viajes"] .vj-stats b { font-size: 30px; }
   body[data-pantalla="viajes"] .vj-mapa { border-radius: 18px; }
 }
+
+
+/* =====================================================================
+   CAPA VISUAL · BLOQUES DE COLOR
+   Lo que da a la app su aspecto: color de cada pantalla en grande,
+   cifras gruesas, iconos en baldosas de color y botones en pastilla.
+   Va al final para mandar sobre todo lo anterior.
+   ===================================================================== */
+:root {
+  --tinte: color-mix(in srgb, var(--naranja) 15%, var(--papel));
+  --tinte-2: color-mix(in srgb, var(--naranja) 26%, var(--papel));
+}
+:root[data-tema="claro"] {
+  --tinte: color-mix(in srgb, var(--naranja) 10%, #FFFFFF);
+  --tinte-2: color-mix(in srgb, var(--naranja) 18%, #FFFFFF);
+}
+body { font-size: 15.5px; letter-spacing: -0.01em; background: transparent; }   /* el fondo lo pone html, para que se vea la franja de color */
+
+/* ---------- Gran franja de color arriba, del color de la pantalla ---------- */
+.cuerpo::before {
+  height: 420px;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--naranja) 34%, var(--fondo)) 0%, color-mix(in srgb, var(--naranja) 12%, var(--fondo)) 50%, var(--fondo) 100%);
+}
+:root[data-tema="claro"] .cuerpo::before {
+  background: linear-gradient(180deg, color-mix(in srgb, var(--naranja) 24%, var(--fondo)) 0%, color-mix(in srgb, var(--naranja) 8%, var(--fondo)) 50%, var(--fondo) 100%);
+}
+/* En Vida, una aurora con los colores de varias pantallas */
+body[data-pantalla="vida"] .cuerpo::before {
+  background:
+    radial-gradient(55% 90% at 0% 0%, rgba(191, 90, 242, .38), transparent 70%),
+    radial-gradient(45% 80% at 52% 0%, rgba(255, 111, 177, .26), transparent 70%),
+    radial-gradient(50% 90% at 100% 0%, rgba(10, 132, 255, .32), transparent 70%);
+}
+:root[data-tema="claro"] body[data-pantalla="vida"] .cuerpo::before {
+  background:
+    radial-gradient(55% 90% at 0% 0%, rgba(154, 59, 214, .2), transparent 70%),
+    radial-gradient(45% 80% at 52% 0%, rgba(214, 38, 111, .14), transparent 70%),
+    radial-gradient(50% 90% at 100% 0%, rgba(0, 98, 214, .17), transparent 70%);
+}
+
+/* ---------- Cabecera: icono grande en baldosa de color + título grueso ---------- */
+.top { background: transparent; -webkit-backdrop-filter: none; backdrop-filter: none; }
+.top h1 { font-weight: 800; letter-spacing: -0.05em; }
+.top h1::before { display: none; }
+.top-sup { font-weight: 700; letter-spacing: .12em; color: color-mix(in srgb, var(--naranja) 55%, var(--tinta)); }
+body[data-pantalla="vida"] .top-sup { color: var(--tinta-suave); }
+.top-icono {
+  width: 52px; height: 52px; border-radius: 17px; flex: none;
+  display: grid; place-items: center;
+  background: var(--naranja); color: var(--sobre-acento);
+  box-shadow: 0 14px 34px -12px var(--naranja), inset 0 1px 0 rgba(255, 255, 255, .25);
+}
+.top-icono svg { width: 26px; height: 26px; stroke-width: 2.1; }
+body[data-pantalla="vida"] .top-icono {
+  background: conic-gradient(from 210deg, #BF5AF2, #FF6FB1, #FF9F0A, #FFD60A, #30D158, #40C8E0, #0A84FF, #BF5AF2); color: #fff;
+  box-shadow: 0 14px 34px -14px rgba(191, 90, 242, .8);
+}
+.menu-btn { background: color-mix(in srgb, var(--papel) 70%, transparent); border-color: color-mix(in srgb, var(--tinta) 10%, transparent); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); }
+.icono-btn, .nube-punto { color: var(--tinta); }
+.icono-btn:hover, .nube-punto:hover { background: color-mix(in srgb, var(--tinta) 8%, transparent); }
+
+/* Móvil: dos pisos — botones arriba; icono y título en grande debajo */
+@media (max-width: 1023px) {
+  .top {
+    position: relative; display: grid; align-items: center; gap: 4px;
+    grid-template-columns: auto 1fr auto auto auto;
+    grid-template-areas: "menu . nube tema aj" "tit tit tit tit tit";
+    padding: calc(env(safe-area-inset-top, 0px) + 10px) 14px 18px 18px;
+  }
+  #btnMenu { grid-area: menu; }
+  #btnNubeTop { grid-area: nube; }
+  #btnTema { grid-area: tema; }
+  #btnAjustes { grid-area: aj; }
+  .top-titulos {
+    grid-area: tit; margin: 18px 0 0;
+    display: grid; grid-template-columns: auto minmax(0, 1fr); grid-template-rows: auto auto; column-gap: 14px; align-items: end;
+  }
+  .top-icono { grid-row: 1 / span 2; }
+  .top-sup { margin-bottom: 4px; }
+  .top h1, .top h1.largo { font-size: 36px; line-height: 1; padding-bottom: 2px; }
+  .top h1.largo { font-size: 30px; }
+  main { padding-top: 4px; }
+  /* Barra compacta al bajar */
+  .barra-mini {
+    position: fixed; z-index: 9; top: 0; left: 0; right: 0;
+    display: flex; align-items: center; gap: 10px;
+    padding: calc(env(safe-area-inset-top, 0px) + 8px) 16px 10px 12px;
+    background: var(--capa); -webkit-backdrop-filter: saturate(170%) blur(22px); backdrop-filter: saturate(170%) blur(22px);
+    border-bottom: 1px solid var(--linea);
+    transform: translateY(-110%); transition: transform .28s cubic-bezier(.2, .8, .2, 1);
+  }
+  .barra-mini .menu-btn { width: 36px; height: 36px; margin: 0; border-radius: 12px; }
+  body.desplazado .barra-mini { transform: none; }
+  .bm-icono { width: 28px; height: 28px; border-radius: 9px; display: grid; place-items: center; background: var(--naranja); color: var(--sobre-acento); flex: none; }
+  body[data-pantalla="vida"] .bm-icono { background: conic-gradient(from 210deg, #BF5AF2, #FF6FB1, #FF9F0A, #30D158, #0A84FF, #BF5AF2); color: #fff; }
+  .bm-icono svg { width: 16px; height: 16px; stroke-width: 2.2; }
+  .barra-mini b { font-size: 17px; font-weight: 800; letter-spacing: -0.035em; }
+}
+@media (min-width: 1024px) {
+  .barra-mini { display: none; }
+  .top-titulos { display: grid; grid-template-columns: auto minmax(0, 1fr); column-gap: 18px; align-items: end; }
+  .top-icono { grid-row: 1 / span 2; width: 60px; height: 60px; border-radius: 19px; }
+  .top-icono svg { width: 30px; height: 30px; }
+  .top h1, .top h1.largo { font-size: 42px; line-height: 1; padding-bottom: 2px; }
+  body.desplazado .top { background: var(--capa); -webkit-backdrop-filter: saturate(170%) blur(22px); backdrop-filter: saturate(170%) blur(22px); }
+}
+
+/* ---------- Menú: iconos en baldosas, la pantalla abierta rellena de su color ---------- */
+.menu-marca { font-weight: 800; font-size: 17px; }
+#menuLista button { font-weight: 600; font-size: 15px; padding: 6px 10px 6px 6px; border-radius: 15px; }
+#menuLista button i { width: 34px; height: 34px; border-radius: 11px; }
+#menuLista button[aria-current="page"] { background: var(--c); color: var(--sobre-acento); font-weight: 700; box-shadow: 0 10px 26px -12px var(--c); }
+#menuLista button[aria-current="page"] i { background: color-mix(in srgb, var(--sobre-acento) 16%, transparent); color: var(--sobre-acento); }
+.menu-grupo { font-weight: 700; color: var(--tinta-tenue); }
+
+/* ---------- Tarjetas ---------- */
+.bloque { border-radius: var(--radio); padding: 22px 20px; border-color: var(--linea); }
+:root:not([data-tema="claro"]) .bloque { box-shadow: inset 0 1px 0 rgba(255, 255, 255, .035); }
+.bloque h2 { font-weight: 800; font-size: 18px; letter-spacing: -0.035em; }
+.cifra { font-weight: 800; letter-spacing: -0.055em; }
+body .pt-total .cifra, body .iv-total .cifra { font-size: 48px; font-weight: 800; letter-spacing: -0.06em; }
+.etiqueta { font-weight: 500; }
+.vacio h2 { font-size: 21px; }
+
+/* ---------- Botones en pastilla ---------- */
+.boton { border-radius: 999px; padding: 13px 22px; font-weight: 700; box-shadow: 0 10px 24px -14px var(--naranja); }
+.boton.secundario { box-shadow: inset 0 0 0 1.5px var(--linea-2); }
+/* Los botones principales de añadir, en bloque de color */
+body .al-anadir, body .oc-anadir, body .ag-anadir {
+  background: var(--naranja); color: var(--sobre-acento); border: 0; border-radius: 18px; font-weight: 700; box-shadow: 0 12px 28px -14px var(--naranja);
+}
+body .gy-anadir, body .es-anadir { background: var(--tinte); color: var(--naranja); border: 0; box-shadow: none; border-radius: 18px; font-weight: 700; }
+body .al-anadir:hover, body .oc-anadir:hover, body .ag-anadir:hover { filter: brightness(1.08); }
+body .gy-anadir:hover, body .es-anadir:hover { background: var(--tinte-2); }
+input, select, textarea { border-radius: 14px; }
+
+/* ---------- Pestañas de cada pantalla: pastilla rellena del color ---------- */
+body .hb-seg, body .pt-seg, body .al-seg, body .gy-seg, body .oc-seg, body .iv-seg, body .vj-seg, body .vi-seg, body .es-seg { background: color-mix(in srgb, var(--papel) 80%, transparent); border-radius: 999px; padding: 4px; -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); box-shadow: inset 0 0 0 1px var(--linea); }
+body .hb-seg button, body .pt-seg button, body .al-seg button, body .gy-seg button, body .oc-seg button, body .iv-seg button, body .vj-seg button, body .vi-seg button, body .es-seg button { border-radius: 999px; font-weight: 600; }
+body main .hb-seg button.on, body main .pt-seg button.on, body main .al-seg button.on, body main .gy-seg button.on, body main .oc-seg button.on, body main .iv-seg button.on, body main .vj-seg button.on, body main .vi-seg button.on, body main .es-seg button.on, body .hb-seg button.on, body .pt-seg button.on, body .al-seg button.on, body .gy-seg button.on, body .oc-seg button.on, body .iv-seg button.on, body .vj-seg button.on, body .vi-seg button.on, body .es-seg button.on {
+  background: var(--naranja) !important; color: var(--sobre-acento) !important; font-weight: 700;
+  box-shadow: 0 8px 20px -10px var(--naranja) !important;
+}
+body main .vi-seg button.on i, body .vi-seg button.on i { color: inherit !important; opacity: .7; }
+@media (min-width: 1024px) {
+  body main .hb-seg, body main .pt-seg, body main .al-seg, body main .gy-seg, body main .oc-seg, body main .iv-seg, body main .vj-seg, body main .vi-seg, body main .es-seg {
+    width: max-content; max-width: 100%; border: 0; border-radius: 999px; padding: 4px; gap: 2px; margin-bottom: 10px;
+    background: color-mix(in srgb, var(--papel) 80%, transparent); box-shadow: inset 0 0 0 1px var(--linea);
+  }
+  body main .hb-seg button, body main .pt-seg button, body main .al-seg button, body main .gy-seg button, body main .oc-seg button, body main .iv-seg button, body main .vj-seg button, body main .vi-seg button, body main .es-seg button { border-radius: 999px; padding: 9px 20px; font-size: 14px; }
+}
+
+/* ---------- Cifras resumen: la primera en bloque de color, el resto teñidas ---------- */
+body .gy-stats > div, body .al-stats > div, body .es-stats > div, body .vj-stats > div, body .iv-tarjetas > div { background: var(--tinte) !important; border: 0 !important; box-shadow: none !important; border-radius: 20px; }
+body .gy-stats > div b, body .al-stats > div b, body .es-stats > div b, body .vj-stats > div b, body .iv-tarjetas > div b { font-weight: 800; letter-spacing: -0.045em; }
+body .gy-stats > div:first-child, body .al-stats > div:first-child, body .es-stats > div:first-child, body .vj-stats > div:first-child { background: var(--naranja) !important; color: var(--sobre-acento); box-shadow: 0 14px 30px -16px var(--naranja) !important; }
+body .gy-stats > div:first-child *, body .al-stats > div:first-child *, body .es-stats > div:first-child *, body .vj-stats > div:first-child * * { color: inherit !important; }
+body .gy-stats > div:first-child span, body .al-stats > div:first-child span, body .es-stats > div:first-child span, body .vj-stats > div:first-child span span, body .gy-stats > div:first-child small, body .al-stats > div:first-child small, body .es-stats > div:first-child small, body .vj-stats > div:first-child small small, body .gy-stats > div:first-child .etiqueta, body .al-stats > div:first-child .etiqueta, body .es-stats > div:first-child .etiqueta, body .vj-stats > div:first-child .etiqueta .etiqueta, body .gy-stats > div:first-child .iv-exp, body .al-stats > div:first-child .iv-exp, body .es-stats > div:first-child .iv-exp, body .vj-stats > div:first-child .iv-exp .iv-exp { opacity: .72; }
+body .pt-cuadro > div, body .pt-rent > div { background: var(--tinte); border: 0; border-radius: 18px; }
+
+/* ---------- Formularios ---------- */
+.panel { border-radius: 30px 30px 0 0; }
+.panel h2 { font-weight: 800; font-size: 24px; }
+@media (min-width: 1024px) { .panel { border-radius: 28px; } }
+
+/* ---------- Gráficos y barras algo más gruesos ---------- */
+body .al-barra, body .vd-barra { height: 8px; border-radius: 4px; }
